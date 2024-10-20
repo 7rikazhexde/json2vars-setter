@@ -1,37 +1,61 @@
 name: Dependabot PR Check
 
 # Workflow Processing Flow:
-# 1. trigger condition: # - on pull request to main branch
+# 1. trigger condition:
 # - On pull request to main branch
 # - Execution by Dependabot
 # - Commit message does not start with “Bump version”.
 # 2. job condition check: check for PR by Dependabot
-# 3. setup environment for each OS (macos-13, ubuntu-latest, windows-latest)
-# 4. setup Python environment (3.11, 3.12)
-# 5. Set up your time zone (Asia/Tokyo)
-# 6. Repository Checkout
-# 7. Installing Poetry
-# 8. Dependency cache
-# 9. Install Project Dependencies
-# 10. Test execution and coverage calculation
-# 11. Check that coverage is at least 90%.
-# 12. Generate test results and coverage reports
-# 13. Check test results and display warnings
-# 14. Creating Job Summaries
-# 15. Confirmation of all test results
-# 16. Sending LINE notifications
+# 3. Set variables using 7rikazhexde/json2vars-setter action
+# 4. Set up your time zone (Asia/Tokyo)
+# 5. Repository Checkout
+# 6. Installing Poetry
+# 7. Dependency cache
+# 8. Install Project Dependencies
+# 9. Test execution and coverage calculation
+# 10. Check that coverage is at least 90%.
+# 11. Generate test results and coverage reports
+# 12. Check test results and display warnings
+# 13. Creating Job Summaries
+# 14. Confirmation of all test results
+# 15. Sending LINE notifications
 
 on:
   pull_request:
     branches: "main"
 
 jobs:
-  test:
+  set_variables:
     if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.1
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@main
+        with:
+          json-file: .github/workflows/matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  test:
+    needs: set_variables
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: ['3.10', '3.11', '3.12']
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
     runs-on: ${{ matrix.os }}
     env:
       TZ: 'Asia/Tokyo'
