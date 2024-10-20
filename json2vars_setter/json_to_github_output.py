@@ -58,6 +58,8 @@ def parse_json(data: Any, prefix: str = "", debug: bool = False) -> Dict[str, st
                 outputs[f"{prefix}{index}"] = str(item)
                 if debug:
                     print(f"Debug: Parsed list item '{prefix}{index}' value='{item}'")
+    else:
+        raise TypeError("Unsupported data type encountered. Expected dict or list.")
 
     return outputs
 

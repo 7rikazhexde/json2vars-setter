@@ -1,25 +1,25 @@
 name: Dependabot PR Check
 
-# ワークフローの処理の流れ:
-# 1. トリガー条件:
-#    - mainブランチへのプルリクエスト時
-#    - Dependabotによる実行であること
-#    - コミットメッセージが"Bump version"で始まっていないこと
-# 2. ジョブの条件判定: Dependabot によるPRであることをチェック
-# 3. OS毎の環境設定 (macos-13, ubuntu-latest, windows-latest)
-# 4. Python環境のセットアップ (3.11, 3.12)
-# 5. タイムゾーンの設定 (Asia/Tokyo)
-# 6. リポジトリのチェックアウト
-# 7. Poetry のインストール
-# 8. 依存関係のキャッシュ
-# 9. プロジェクト依存関係のインストール
-# 10. テストの実行とカバレッジの計算
-# 11. カバレッジが90%以上であることのチェック
-# 12. テスト結果とカバレッジレポートの生成
-# 13. テスト結果の確認と警告の表示
-# 14. ジョブサマリーの作成
-# 15. 全テストの結果確認
-# 16. LINE通知の送信
+# Workflow Processing Flow:
+# 1. trigger condition: # - on pull request to main branch
+# - On pull request to main branch
+# - Execution by Dependabot
+# - Commit message does not start with “Bump version”.
+# 2. job condition check: check for PR by Dependabot
+# 3. setup environment for each OS (macos-13, ubuntu-latest, windows-latest)
+# 4. setup Python environment (3.11, 3.12)
+# 5. Set up your time zone (Asia/Tokyo)
+# 6. Repository Checkout
+# 7. Installing Poetry
+# 8. Dependency cache
+# 9. Install Project Dependencies
+# 10. Test execution and coverage calculation
+# 11. Check that coverage is at least 90%.
+# 12. Generate test results and coverage reports
+# 13. Check test results and display warnings
+# 14. Creating Job Summaries
+# 15. Confirmation of all test results
+# 16. Sending LINE notifications
 
 on:
   pull_request:
@@ -30,8 +30,8 @@ jobs:
     if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     strategy:
       matrix:
-        os: [macos-13, ubuntu-latest, windows-latest]
-        python-version: ['3.11', '3.12']
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        python-version: ['3.10', '3.11', '3.12']
     runs-on: ${{ matrix.os }}
     env:
       TZ: 'Asia/Tokyo'

@@ -20,9 +20,10 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        # 暫定でローカル環境指定にする
-        # リポジトリ公開後はリモートURL形式に変更する
+        # Temporarily specify local environment.
+        # Change to remote URL format after repository is published
         uses: ./
+        # uses: 7rikazhexde/json2vars-setter@main
         with:
           json-file: .github/workflows/matrix.json
 
