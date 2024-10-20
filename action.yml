@@ -1,0 +1,36 @@
+name: 'JSON to Variables Setter'
+description: 'Parse JSON file and set GitHub Actions outputs'
+author: '7rikazhexde'
+branding:
+  icon: 'file'
+  color: 'green'
+inputs:
+  json-file:
+    description: 'Path to the JSON file'
+    required: true
+    default: '.github/workflows/matrix.json'
+outputs:
+  os:
+    description: 'List of operating systems'
+    value: ${{ steps.set_outputs.outputs.os }}
+  versions_python:
+    description: 'List of Python versions'
+    value: ${{ steps.set_outputs.outputs.versions_python }}
+  ghpages_branch:
+    description: 'GitHub Pages branch'
+    value: ${{ steps.set_outputs.outputs.ghpages_branch }}
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5.2.0
+      with:
+        python-version: '3.12'
+
+    - name: Parse JSON and set outputs
+      id: set_outputs
+      shell: bash
+      run: |
+        python json2vars_setter/json_to_github_output.py ${{ inputs.json-file }}
+      env:
+        GITHUB_OUTPUT: $GITHUB_OUTPUT

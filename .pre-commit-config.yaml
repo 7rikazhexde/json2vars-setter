@@ -1,0 +1,72 @@
+# pre-commit stop running hooks after the first failure.
+fail_fast: true
+# A list of repository mappings
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    # Specify version or tag to use (as of 24.8.3)
+    rev: v4.6.0
+    hooks:
+      # Remove spaces at end of lines except markdown
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      # Make the last line of the file a newline code
+      - id: end-of-file-fixer
+        exclude: '^(requirements.txt|requirements-dev.txt)$'
+      # Unify line break code to LF
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      # toml syntax check
+      - id: check-toml
+      # yaml syntax check
+      - id: check-yaml
+
+  # https://github.com/shellcheck-py/shellcheck-py?tab=readme-ov-file#usage
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
+    hooks:
+      - id: shellcheck
+
+  #- repo: https://github.com/rhysd/actionlint
+  #  rev: v1.7.3
+  #  hooks:
+  #    - id: actionlint
+
+  # https://python-poetry.org/docs/pre-commit-hooks/#usage
+  - repo: https://github.com/python-poetry/poetry
+    # Cannot be executed with local designation (as of 24.8.3)
+    rev: 1.8.3
+    hooks:
+      - id: poetry-check
+        verbose: true
+      - id: poetry-lock
+        verbose: true
+      - id: poetry-export
+        args: ["-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes"]
+        verbose: true
+        files: ^pyproject\.toml$
+      - id: poetry-export
+        args: ["--with", "dev", "-f", "requirements.txt", "-o", "requirements-dev.txt", "--without-hashes"]
+        verbose: true
+        files: ^pyproject\.toml$
+
+  # Reference: https://github.com/DavidAnson/markdownlint-cli2#overview
+  # > markdownlint-cli is a traditional command-line interface for markdownlint.
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.42.0
+    hooks:
+      - id: markdownlint
+        args: ["--config", ".markdownlint.json", "README.md"]
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: ["--fix","json2vars_setter"]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.2
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-requests==2.32.0.20240622]
+        args: [--config-file=pyproject.toml]
