@@ -31,6 +31,6 @@ runs:
       id: set_outputs
       shell: bash
       run: |
-        python json2vars_setter/json_to_github_output.py ${{ inputs.json-file }}
+        python ${{ github.action_path }}/json2vars_setter/json_to_github_output.py ${{ inputs.json-file }}
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
