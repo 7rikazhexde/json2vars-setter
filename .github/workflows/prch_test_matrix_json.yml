@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 jobs:
-  generate_matrix:
+  set_variables:
     if: github.actor != 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     runs-on: ubuntu-latest
     outputs:
@@ -20,10 +20,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        # Temporarily specify local environment.
-        # Change to remote URL format after repository is published
-        uses: ./
-        # uses: 7rikazhexde/json2vars-setter@main
+        uses: 7rikazhexde/json2vars-setter@main
         with:
           json-file: .github/workflows/matrix.json
 
@@ -35,11 +32,11 @@ jobs:
 
 
   run_tests:
-    needs: generate_matrix
+    needs: set_variables
     strategy:
       matrix:
-        os: ${{ fromJson(needs.generate_matrix.outputs.os) }}
-        python-version: ${{ fromJson(needs.generate_matrix.outputs.versions_python) }}
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -80,11 +77,11 @@ jobs:
         shell: bash
         run: |
           # For list case
-          ghpages_branch=${{ needs.generate_matrix.outputs.ghpages_branch }}
+          ghpages_branch=${{ needs.set_variables.outputs.ghpages_branch }}
 
           # For lists, explicitly enclose the list in “” to make it a string. (Note that it is not ''.)
-          os='${{ needs.generate_matrix.outputs.os }}'
-          versions_python='${{ needs.generate_matrix.outputs.versions_python }}'
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_python='${{ needs.set_variables.outputs.versions_python }}'
 
           echo "os: $os"
           echo "versions_python: $versions_python"
