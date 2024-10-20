@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "python": [
+            "3.11",
+            "3.12"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}

@@ -1,0 +1,150 @@
+name: Dependabot PR Check
+
+# ワークフローの処理の流れ:
+# 1. トリガー条件:
+#    - mainブランチへのプルリクエスト時
+#    - Dependabotによる実行であること
+#    - コミットメッセージが"Bump version"で始まっていないこと
+# 2. ジョブの条件判定: Dependabot によるPRであることをチェック
+# 3. OS毎の環境設定 (macos-13, ubuntu-latest, windows-latest)
+# 4. Python環境のセットアップ (3.11, 3.12)
+# 5. タイムゾーンの設定 (Asia/Tokyo)
+# 6. リポジトリのチェックアウト
+# 7. Poetry のインストール
+# 8. 依存関係のキャッシュ
+# 9. プロジェクト依存関係のインストール
+# 10. テストの実行とカバレッジの計算
+# 11. カバレッジが90%以上であることのチェック
+# 12. テスト結果とカバレッジレポートの生成
+# 13. テスト結果の確認と警告の表示
+# 14. ジョブサマリーの作成
+# 15. 全テストの結果確認
+# 16. LINE通知の送信
+
+on:
+  pull_request:
+    branches: "main"
+
+jobs:
+  test:
+    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
+    strategy:
+      matrix:
+        os: [macos-13, ubuntu-latest, windows-latest]
+        python-version: ['3.11', '3.12']
+    runs-on: ${{ matrix.os }}
+    env:
+      TZ: 'Asia/Tokyo'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4.2.1
+      - name: Set up Python
+        uses: actions/setup-python@v5.2.0
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+      - name: Check timezone
+        shell: bash
+        run: |
+          echo "System date: $(date)"
+          echo "TZ environment variable: $TZ"
+          python -c "import datetime, platform; print(f'Python timezone: {datetime.datetime.now().astimezone().tzinfo}'); print(f'OS: {platform.system()}')"
+      - name: Install poetry
+        run: pip install poetry
+      - name: Cache dependencies
+        uses: actions/cache@v4.1.1
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install
+      - name: Run test
+        shell: bash
+        id: pytest
+        # Mac / Linux
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | tee pytest-coverage.txt
+        # Windowss
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
+        run: |
+          poetry run task test_ci_xml
+          coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          echo "Current coverage: $coverage_percentage%"
+          echo "COVERAGE=$coverage_percentage" >> "$GITHUB_ENV"
+      - name: Check coverage
+        shell: bash
+        #if: ${{ env.COVERAGE < 90 }}
+        #run: |
+        #  echo "Test coverage is below 90%. Current coverage: ${{ env.COVERAGE }}%"
+        #  exit 1
+        run: |
+          if [ "$COVERAGE" -lt 90 ]; then
+            echo "Test coverage is below 90%. Current coverage: $COVERAGE%"
+            exit 1
+          else
+            echo "Test coverage is above or equal to 90%. Current coverage: $COVERAGE%"
+          fi
+      - name: Pytest coverage comment
+        id: coverageComment
+        uses: MishaKav/pytest-coverage-comment@v1.1.53
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt
+          pytest-xml-coverage-path: ./coverage.xml
+          title: Coverage Report (${{ matrix.os }} / Python ${{ matrix.python-version }})
+          badge-title: coverage
+          hide-badge: false
+          hide-report: false
+          create-new-comment: true
+          hide-comment: false
+          report-only-changed-files: false
+          remove-link-from-badge: false
+          junitxml-path: ./pytest.xml
+          junitxml-title: "Pytest Result Summary (os: ${{ matrix.os }} / python-version: ${{ matrix.python-version }})"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check test results
+        if: steps.pytest.outcome == 'failure'
+        run: |
+          echo "Tests failed. This will be reported in the workflow summary."
+          echo "::warning::Tests failed on ${{ matrix.os }} with Python ${{ matrix.python-version }}"
+      - name: Write job summary
+        id: check_status
+        shell: bash
+        run: |
+          echo -e ${{ steps.coverageComment.outputs.summaryReport }} >> "$GITHUB_STEP_SUMMARY"
+
+  check_all_tests:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
+    steps:
+      - name: Check test results
+        if: contains(needs.test.result, 'failure')
+        run: |
+          echo "Some tests failed. Please check the test results and fix any issues before merging."
+          exit 1
+
+  send_notification:
+    needs: [test, check_all_tests]
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
+    steps:
+      # https://docs.github.com/ja/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-environment
+      - name: Send LINE Notify
+        env:
+          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_ACCESS_TOKEN }}
+        run: |
+          status="${{ contains(needs.test.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
+          message="'dependabot_prch' workflow completed with status: $status
+
+          Check URL:
+          https://github.com/7rikazhexde/python-project-sandbox/actions/workflows/dependabot_prch.yml"
+
+          curl -X POST https://notify-api.line.me/api/notify \
+            -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+            -F "message=${message}"

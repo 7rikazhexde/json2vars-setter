@@ -1,0 +1,60 @@
+{
+    "files.exclude": {
+        // ファイルとフォルダーを除外するための glob パターン 設定
+        // エクスプローラーでは、この設定に基づいて表示または非表示にするファイルとフォルダーが決定される。(trueが非表示)
+        // .gitフォルダを表示する（デフォルトでは非表示）
+        "**/.git": false
+    },
+    // GitHub Actions ワークフローのピン留め設定
+    // この設定により、指定されたワークフローファイルに対して拡張機能がより詳細な検証と支援を提供する
+    "github-actions.workflows.pinned.workflows": [
+        "prch_test_matrix_json.yml"
+        //".github/workflows/update-version-and-release.yml",
+        //".github/workflows/dependabot_prch.yml",
+        //".github/workflows/pullrequest_check.yml",
+        //".github/workflows/test_multi_os.yml",
+        //".github/workflows/test_pytest-testmon_deploy_multi_os.yml",
+        //".github/workflows/test_pytest-cov-report_deploy_multi_os.yml",
+        //".github/workflows/test_pytest-cov-report_deploy_multi_os.yml",
+        //".github/workflows/update-requirements-after-dependabot.yml"
+    ],
+    // ピン留めされたワークフローの自動リフレッシュを有効にする
+    // これにより、拡張機能は最新のリポジトリ状態（シークレットの存在など）を反映する
+    "github-actions.workflows.pinned.refresh.enabled": true,
+    // リフレッシュの間隔を65秒に設定します
+    "github-actions.workflows.pinned.refresh.interval": 65,
+    // 拡張機能が参照すべきGitリモートを指定します
+    // これにより、拡張機能はGitHubリポジトリの実際の設定と同期する
+    "github-actions.remote-name": "origin",
+    // Python固有の設定
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            // コード保存時にimport行を整理
+            "source.organizeImports": "explicit"
+        },
+        // FormatterにRuffを使用
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        // コード保存時にフォーマットを実行
+        "editor.formatOnSave": true
+    },
+    // Pythonの解析パスに現在のワークスペースフォルダを追加
+    // これにより、プロジェクト内のモジュールをより適切に解析する
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}"
+    ],
+    // プロジェクトの.envファイルを指定
+    // これにより、環境変数の設定がプロジェクト固有になる
+    "python.envFile": "${workspaceFolder}/.env",
+    // ターミナルを開いたときに自動的に Python 環境をアクティブ化する
+    "python.terminal.activateEnvironment": true,
+    // pytestを実行するときに使用される引数を指定しています。この場合、testsディレクトリ内のテストを実行するように設定される
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    // unittestフレームワークを無効にする設定です。
+    // VSCodeでは複数のテストフレームワークをサポートしていますが、この設定によりunittestが使われないようにします。
+    "python.testing.unittestEnabled": false,
+    // VSCodeがテストフレームワークとしてpytestを使用するように設定されます。p
+    // ytestを使ってテストを検出し、実行することになります。
+    "python.testing.pytestEnabled": true
+}
