@@ -44,7 +44,18 @@
     ],
     // プロジェクトの.envファイルを指定
     // これにより、環境変数の設定がプロジェクト固有になる
-    "python.envFile": "${workspaceFolder}/.env",
+    // プロジェクトの.envファイルを指定
+    // これにより、環境変数の設定がプロジェクト固有になる
+    "python.envFile": "",
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}"
+    },
+    "terminal.integrated.env.osx": {
+        "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}"
+    },
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}"
+    },
     // ターミナルを開いたときに自動的に Python 環境をアクティブ化する
     "python.terminal.activateEnvironment": true,
     // pytestを実行するときに使用される引数を指定しています。この場合、testsディレクトリ内のテストを実行するように設定される
