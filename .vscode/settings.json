@@ -44,8 +44,6 @@
     ],
     // プロジェクトの.envファイルを指定
     // これにより、環境変数の設定がプロジェクト固有になる
-    // プロジェクトの.envファイルを指定
-    // これにより、環境変数の設定がプロジェクト固有になる
     "python.envFile": "",
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}"
@@ -56,16 +54,14 @@
     "terminal.integrated.env.windows": {
         "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}"
     },
-    // ターミナルを開いたときに自動的に Python 環境をアクティブ化する
+    // ターミナルを開いたときに自動的に Python 環境をアクティブ化
     "python.terminal.activateEnvironment": true,
-    // pytestを実行するときに使用される引数を指定しています。この場合、testsディレクトリ内のテストを実行するように設定される
+    // pytestで指定したディレクトリ内をテスト対象にする
     "python.testing.pytestArgs": [
         "tests"
     ],
-    // unittestフレームワークを無効にする設定です。
-    // VSCodeでは複数のテストフレームワークをサポートしていますが、この設定によりunittestが使われないようにします。
+    // VSCodeがテストフレームワークとしてunittestを無効化
     "python.testing.unittestEnabled": false,
-    // VSCodeがテストフレームワークとしてpytestを使用するように設定されます。p
-    // ytestを使ってテストを検出し、実行することになります。
+    // VSCodeがテストフレームワークとしてpytestを無効化
     "python.testing.pytestEnabled": true
 }
