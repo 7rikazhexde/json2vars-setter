@@ -72,6 +72,11 @@ warn_redundant_casts = true
 testpaths = ["json2vars_setter", "tests"]
 pythonpath = ["."]
 
+# Enable log output during test execution.
+log_cli = true
+log_cli_level = "INFO"
+log_cli_format = "%(asctime)s [%(levelname)s] %(message)s"
+
 [tool.taskipy.tasks]
 test_coverage_verbose = "pytest -s -vv --cov=. --cov-branch --cov-report term-missing --cov-report html"
 test_html_report = "pytest --html=htmlcov/report_page.html"
@@ -80,16 +85,11 @@ test_ci_term = "python scripts/run_tests.py --report term"
 test_testmon = "pytest --testmon"
 test_coverage = "pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=html"
 
-# Enable log output during test execution.
-log_cli = true
-log_cli_level = "INFO"
-log_cli_format = "%(asctime)s [%(levelname)s] %(message)s"
-
 [tool.coverage.run]
 source = ["json2vars_setter"]
-# testmonとpytest-covの互換性の問題に対応するため明示的にfalseにする
-# testmonとpytest-covは、どちらもPythonコードの実行を追跡するために内部的にトレーシングメカニズムを使用する。
-# branch coverageが有効な場合、pytest-covはより詳細なトレーシングを行うが、testmonの動作と競合する。これはtestmonの制限である。
+# explicitly false to address compatibility issues with testmon and pytest-cov
+# testmon and pytest-cov both use internal tracing mechanisms to track Python code execution.
+# When branch coverage is enabled, pytest-cov provides more detailed tracing, but conflicts with testmon's behavior. This is a limitation of testmon.
 branch = false
 
 [tool.coverage.report]
