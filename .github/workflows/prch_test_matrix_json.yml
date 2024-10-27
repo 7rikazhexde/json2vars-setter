@@ -87,6 +87,16 @@ jobs:
           echo "versions_python: $versions_python"
           echo "ghpages_branch: $ghpages_branch"
 
+          # Bash For Loop
+          os_list=$(echo "$os" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          python_versions_list=$(echo "$versions_python" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for os in $os_list; do
+            for version in $python_versions_list; do
+              echo "Current OS: $os, Current Python Version: $version"
+            done
+          done
+
       - name: Run pytest
         id: pytest
         shell: bash
