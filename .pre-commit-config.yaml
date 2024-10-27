@@ -26,10 +26,10 @@ repos:
     hooks:
       - id: shellcheck
 
-  #- repo: https://github.com/rhysd/actionlint
-  #  rev: v1.7.3
-  #  hooks:
-  #    - id: actionlint
+  - repo: https://github.com/rhysd/actionlint
+    rev: v1.7.3
+    hooks:
+      - id: actionlint
 
   # https://python-poetry.org/docs/pre-commit-hooks/#usage
   - repo: https://github.com/python-poetry/poetry
