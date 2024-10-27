@@ -126,10 +126,10 @@ jobs:
       - name: Show variables
         shell: bash
         run: |
-          # For list case
+          # For non-list case
           ghpages_branch=${{ needs.set_variables.outputs.ghpages_branch }}
 
-          # For lists, explicitly enclose the list in "" to make it a string. (Note that it is not '').(*2)
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not '').(*2)
           os='${{ needs.set_variables.outputs.os }}'
           versions_python='${{ needs.set_variables.outputs.versions_python }}'
 
@@ -137,7 +137,7 @@ jobs:
           echo "versions_python: $versions_python"
           echo "ghpages_branch: $ghpages_branch"
 
-          # For loop
+          # For loop case
           os_list=$(echo "$os" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
           python_versions_list=$(echo "$versions_python" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
 
