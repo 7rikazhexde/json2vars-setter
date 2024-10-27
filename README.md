@@ -127,23 +127,23 @@ jobs:
         shell: bash
         run: |
           # For non-list case
-          ghpages_branch=${{ needs.set_variables.outputs.ghpages_branch }}
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
 
-          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not '').(*2)
+          # For list case, explicitly enclose the list in “” to make it a string. (Note that it is not ''.)
           os='${{ needs.set_variables.outputs.os }}'
           versions_python='${{ needs.set_variables.outputs.versions_python }}'
 
           echo "os: $os"
-          echo "versions_python: $versions_python"
-          echo "ghpages_branch: $ghpages_branch"
+          echo "versions_python: ${versions_python}"
+          echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case
-          os_list=$(echo "$os" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
-          python_versions_list=$(echo "$versions_python" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          python_versions_list=$(echo "${versions_python}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
 
-          for os in $os_list; do
-            for version in $python_versions_list; do
-              echo "Current OS: $os, Current Python Version: $version"
+          for current_os in ${os_list}; do
+            for version in ${python_versions_list}; do
+              echo "Current OS: ${current_os}, Current Python Version: ${version}"
             done
           done
 
@@ -151,8 +151,8 @@ jobs:
         id: pytest
         shell: bash
         run: |
-          output=$(poetry run pytest)
-          echo "$output"
+          output="$(poetry run pytest)"
+          echo "${output}"
 ```
 
 ## License
