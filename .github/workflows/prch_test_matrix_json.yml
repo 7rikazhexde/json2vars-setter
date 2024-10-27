@@ -87,7 +87,7 @@ jobs:
           echo "versions_python: $versions_python"
           echo "ghpages_branch: $ghpages_branch"
 
-          # Bash For Loop
+          # For loop
           os_list=$(echo "$os" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
           python_versions_list=$(echo "$versions_python" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
 
