@@ -2,7 +2,8 @@ name: Test on PR by matrix.json (Except Dependabot)
 
 on:
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
 
 jobs:
   set_variables:
