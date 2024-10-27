@@ -129,7 +129,7 @@ jobs:
           # For non-list case
           ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
 
-          # For list case, explicitly enclose the list in “” to make it a string. (Note that it is not ''.)
+          # For list case, explicitly enclose the list in “” to make it a string. (Note that it is not ''.)(*2)
           os='${{ needs.set_variables.outputs.os }}'
           versions_python='${{ needs.set_variables.outputs.versions_python }}'
 
