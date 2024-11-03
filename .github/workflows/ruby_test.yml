@@ -1,0 +1,99 @@
+name: Ruby Test
+
+on:
+  push:
+    branches:
+      - 'issue_no17'
+    paths:
+      - 'examples/ruby/**'
+      - '.github/workflows/ruby_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_ruby: ${{ steps.json2vars.outputs.versions_ruby }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: ./
+        with:
+          json-file: .github/workflows/matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "versions_ruby: ${{ steps.json2vars.outputs.versions_ruby }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        ruby-version: ${{ fromJson(needs.set_variables.outputs.versions_ruby) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1.171.0
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+          working-directory: './examples/ruby'
+
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Ruby version
+        run: |
+          ruby --version
+          bundle --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_ruby='${{ needs.set_variables.outputs.versions_ruby }}'
+
+          echo "os: $os"
+          echo "versions_ruby: ${versions_ruby}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          ruby_versions_list=$(echo "${versions_ruby}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${ruby_versions_list}; do
+              echo "Current OS: ${current_os}, Current Ruby Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: ruby_test
+        working-directory: ./examples/ruby
+        shell: bash
+        run: |
+          bundle install
+          output="$(bundle exec rake test)"
+          echo "${output}"
