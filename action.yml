@@ -46,3 +46,15 @@ runs:
         python ${{ github.action_path }}/json2vars_setter/json_to_github_output.py ${{ inputs.json-file }}
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
+
+    - name: Debug Output Values
+      shell: bash
+      run: |
+        echo "Debug: Checking output values"
+        echo "OS: ${{ steps.set_outputs.outputs.os }}"
+        echo "Python Versions: ${{ steps.set_outputs.outputs.versions_python }}"
+        echo "Ruby Versions: ${{ steps.set_outputs.outputs.versions_ruby }}"
+        echo "Node.js Versions: ${{ steps.set_outputs.outputs.versions_nodejs }}"
+        echo "Go Versions: ${{ steps.set_outputs.outputs.versions_go }}"
+        echo "Rust Versions: ${{ steps.set_outputs.outputs.versions_rust }}"
+        echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"
