@@ -10,6 +10,7 @@ fn test_parse_valid_config() {
         .join("workflows")
         .join("rust_project_matrix.json");
 
+    #[allow(clippy::needless_borrows_for_generic_args)]
     let config = parse_config(&config_path, false).expect("Failed to parse config");
 
     assert!(config.os.contains(&"ubuntu-latest".to_string()));
