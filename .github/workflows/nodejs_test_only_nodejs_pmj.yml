@@ -6,7 +6,7 @@ on:
       - 'issue_no17'
     paths:
       - 'examples/nodejs/**'
-      - '.github/workflows/nodejs_test.yml'
+      - '.github/workflows/nodejs_test_only_nodejs_pmj.yml'
 
 jobs:
   set_variables:
