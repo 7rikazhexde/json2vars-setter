@@ -1,0 +1,26 @@
+{
+    "name": "nodejs-project-sandbox",
+    "version": "1.0.0",
+    "description": "An experimental Node.js project to test out various tools.",
+    "main": "src/index.js",
+    "engines": {
+      "node": ">=16.0.0"
+    },
+    "scripts": {
+      "test": "jest",
+      "start": "node src/index.js"
+    },
+    "keywords": [
+      "github-actions",
+      "json",
+      "example"
+    ],
+    "author": "7rikazhexde",
+    "license": "MIT",
+    "devDependencies": {
+      "jest": "^29.7.0"
+    },
+    "overrides": {
+      "glob": "^9.0.0"
+    }
+  }

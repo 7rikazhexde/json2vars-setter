@@ -31,7 +31,6 @@ jobs:
           echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
-
   run_tests:
     needs: set_variables
     strategy:
