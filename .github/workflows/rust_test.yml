@@ -1,0 +1,107 @@
+name: Rust Test
+
+on:
+  push:
+    branches:
+      - 'issue_no17'
+    paths:
+      - 'examples/rust/**'
+      - '.github/workflows/rust_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_rust: ${{ steps.json2vars.outputs.versions_rust }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: ./
+        with:
+          json-file: .github/workflows/matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "versions_rust: ${{ steps.json2vars.outputs.versions_rust }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        rust-version: ${{ fromJson(needs.set_variables.outputs.versions_rust) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust-version }}
+          components: rustfmt, clippy
+
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Rust version
+        run: |
+          rustc --version
+          cargo --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_rust='${{ needs.set_variables.outputs.versions_rust }}'
+
+          echo "os: $os"
+          echo "versions_rust: ${versions_rust}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          rust_versions_list=$(echo "${versions_rust}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${rust_versions_list}; do
+              echo "Current OS: ${current_os}, Current Rust Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: rust_test
+        working-directory: ./examples/rust
+        shell: bash
+        run: |
+          output="$(cargo test --verbose)"
+          echo "${output}"
+
+      # Optional: Add code format check
+      - name: Check formatting
+        working-directory: ./examples/rust
+        run: cargo fmt -- --check
+
+      # Optional: Run clippy
+      - name: Run clippy
+        working-directory: ./examples/rust
+        run: cargo clippy -- -D warnings
