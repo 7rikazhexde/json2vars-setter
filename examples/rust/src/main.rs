@@ -9,6 +9,7 @@ fn main() {
         .join("workflows")
         .join("rust_project_matrix.json");
 
+    #[allow(clippy::needless_borrows_for_generic_args)]
     match parse_config(&config_path, false) {
         Some(config) => {
             println!("{}", serde_json::to_string_pretty(&config).unwrap());
