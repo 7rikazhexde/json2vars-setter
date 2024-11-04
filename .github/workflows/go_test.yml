@@ -1,0 +1,105 @@
+name: Go Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/go/**'
+      - '.github/workflows/go_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_go: ${{ steps.json2vars.outputs.versions_go }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: ./
+        with:
+          #json-file: .github/workflows/matrix.json
+          json-file: .github/workflows/go_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "versions_go: ${{ steps.json2vars.outputs.versions_go }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        go-version: ${{ fromJson(needs.set_variables.outputs.versions_go) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5.1.0
+        with:
+          go-version: ${{ matrix.go-version }}
+          # Cache is disabled because:
+          # 1. Currently no external package dependencies
+          # 2. No go.sum file exists
+          # 3. To avoid warning messages in the workflow
+          # Note: Can be enabled when external dependencies are added in the future
+          cache: false
+
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Go version
+        run: go version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_go='${{ needs.set_variables.outputs.versions_go }}'
+
+          echo "os: $os"
+          echo "versions_go: ${versions_go}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          go_versions_list=$(echo "${versions_go}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${go_versions_list}; do
+              echo "Current OS: ${current_os}, Current Go Version: ${version}"
+            done
+          done
+
+      - name: Get dependencies
+        working-directory: ./examples/go
+        run: go mod download
+
+      - name: Run tests
+        id: go_test
+        working-directory: ./examples/go
+        shell: bash
+        run: |
+          output="$(go test -v ./...)"
+          echo "${output}"

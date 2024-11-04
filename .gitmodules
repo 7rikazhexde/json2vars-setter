@@ -1,0 +1,3 @@
+[submodule "examples/go/gomvm"]
+	path = examples/go/gomvm
+	url = https://github.com/7rikazhexde/go-multi-version-manager.git

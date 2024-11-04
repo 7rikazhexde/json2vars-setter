@@ -57,5 +57,61 @@
     // VSCodeがテストフレームワークとしてunittestを無効化
     "python.testing.unittestEnabled": false,
     // VSCodeがテストフレームワークとしてpytestを無効化
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    // Node.js固有設定
+    "editor.formatOnSave": true,
+    "editor.insertSpaces": true,
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "javascript.validate.enable": false, // ESLintでのチェックに一任するためにVSCodeのJavaScriptバリデーションを無効化
+    "typescript.validate.enable": false,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit" // ESLintによるすべての修正を保存時に実行
+    },
+    "prettier.singleQuote": true, // シングルクオートを使用
+    "prettier.trailingComma": "es5", // ES5スタイルで末尾のカンマを追加
+    // Rust固有の設定
+    "[rust]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        //"editor.inlayHints.enabled": "offUnlessPressed"
+    },
+    "rust-analyzer.checkOnSave": true,
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.check.extraArgs": ["--", "-A", "clippy::needless_return"],
+    // Rubyの固有設定
+    "[ruby]": {
+        "editor.defaultFormatter": "Shopify.ruby-lsp", // Use the Ruby LSP as the default formatter
+        "editor.formatOnSave": true, // Format files automatically when saving
+        "editor.tabSize": 2, // Use 2 spaces for indentation
+        "editor.insertSpaces": true, // Use spaces and not tabs for indentation
+        "editor.semanticHighlighting.enabled": true, // Enable semantic highlighting
+        "editor.formatOnType": true, // Enable formatting while typing
+    },
+    "rubyLsp.formatter": "rubocop",
+    "files.insertFinalNewline": true,
+    // golangの固有設定
+    "go.gopath": "", // 必要に応じて設定してください
+    "go.useLanguageServer": true,
+    "go.lintOnSave": "file",
+    "go.lintTool": "golangci-lint", // golangci-lintを推奨しますが、go vetなども選択可能
+    "go.formatTool": "gofmt", // フォーマッターとしてgofmtを使用
+    "[go]": {
+        "editor.formatOnSave": true, // 保存時に自動フォーマット
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit", // インポートの自動整列（"true"の代わりに"explicit"を使用）
+            "source.fixAll": "explicit" // リントやフォーマットに基づいた自動補正（"true"の代わりに"explicit"を使用）
+        }
+    },
+    "editor.defaultFormatter": "golang.go", // Go用のデフォルトフォーマッター
+    "editor.tabSize": 4, // タブサイズの指定
+    "files.eol": "\n", // 行末記号の統一
+    "go.testOnSave": true, // 保存時にテストを自動実行
+    "go.testFlags": ["-v"] // テストの詳細表示オプション
 }

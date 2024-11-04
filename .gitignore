@@ -131,3 +131,18 @@ dmypy.json
 
 # pytest
 .coverage
+
+# Node.js
+examples/nodejs/node_modules/
+#examples/nodejs/package-lock.json
+
+# ruby
+# examples/ruby/libは除外から除く（含める）
+!examples/ruby/lib/
+
+# rust
+# Compiled binary
+/target/
+
+# Rust package manager files
+**/Cargo.lock

@@ -1,20 +1,29 @@
-
 # JSON to Variables Setter
 
 ## Overview
 
-**JSON to Variables Setter (json2vars-setter)** is a GitHub Action designed to parse a JSON file and set the resulting variables (such as operating systems, Python versions, and GitHub Pages branch) as outputs in a GitHub Actions workflow.
+**JSON to Variables Setter (json2vars-setter)** is a GitHub Action designed to parse a JSON file and set the resulting variables (such as operating systems, programming language versions, and GitHub Pages branch) as outputs in a GitHub Actions workflow.
+
+## Supported GitHub Actions Matrix Components
+
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](#example-workflow)
+[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](.github/workflows/nodejs_test.yml)
+[![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](.github/workflows/ruby_test.yml)
+[![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](.github/workflows/go_test.yml)
+[![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](.github/workflows/rust_test.yml)
 
 ## Table of contents
 
 - [JSON to Variables Setter](#json-to-variables-setter)
   - [Overview](#overview)
+  - [Supported GitHub Actions Matrix Components](#supported-github-actions-matrix-components)
   - [Table of contents](#table-of-contents)
   - [Usage](#usage)
     - [Inputs](#inputs)
     - [Outputs](#outputs)
   - [Example JSON File](#example-json-file)
   - [Example Workflow](#example-workflow)
+  - [Language-specific Workflows](#language-specific-workflows)
   - [License](#license)
 
 ## Usage
@@ -25,6 +34,7 @@ This action reads a JSON file (default path: `.github/workflows/matrix.json`) an
 > - Please create the JSON file by referring to the [Example JSON File](#example-json-file).
 > - By default, the JSON file path is `.github/workflows/matrix.json`. If you create a custom file, specify it in the `7rikazhexde/json2vars-setter` action.
 > - In the workflow, only the variables specified in the Outputs section are available.
+> - Language versions are optional. If a language is not defined in the JSON, its corresponding output will be empty.
 
 ### Inputs
 
@@ -35,19 +45,23 @@ This action reads a JSON file (default path: `.github/workflows/matrix.json`) an
 ### Outputs
 
 > [!IMPORTANT]  
-> Please chack [Example Workflow](#example-workflow)\
+> Please check [Example Workflow](#example-workflow).\
 > (*1): In order to reference them in both steps and jobs, outputs must be specified.\
 > (*2): For lists, explicitly enclose the list in "" to make it a string. (Note that it is not '').
 
-| Input             | Description                |
+| Output            | Description                |
 |-------------------|----------------------------|
 | `os`              | List of operating systems  |
 | `versions_python` | List of Python versions    |
+| `versions_ruby`   | List of Ruby versions      |
+| `versions_nodejs` | List of Node.js versions   |
+| `versions_go`     | List of Go versions        |
+| `versions_rust`   | List of Rust versions      |
 | `ghpages_branch`  | GitHub Pages branch name   |
 
 ## Example JSON File
 
-Here is an example of a JSON file that can be used with this action
+Here is an example of a JSON file that can be used with this action.
 
 ```json
 {
@@ -61,7 +75,52 @@ Here is an example of a JSON file that can be used with this action
             "3.10",
             "3.11",
             "3.12"
+        ],
+        "ruby": [
+            "3.0.6",
+            "3.1.6",
+            "3.2.6"
+        ],
+        "nodejs": [
+            "16",
+            "18",
+            "20",
+            "22"
+        ],
+        "go": [
+            "1.23.0",
+            "1.23.1",
+            "1.23.2"
+        ],
+        "rust": [
+            "1.79.0",
+            "1.80.0",
+            "1.81.0",
+            "1.82.0",
+            "stable"
         ]
+    },
+    "ghpages_branch": "ghgapes"
+}
+```
+
+You can also define only specific languages.\
+Undefined language versions will result in empty outputs(*3).
+
+```jsonc
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "python": [
+            "3.10",
+            "3.11",
+            "3.12"
+        ]
+        //(*3)
     },
     "ghpages_branch": "ghgapes"
 }
@@ -69,7 +128,9 @@ Here is an example of a JSON file that can be used with this action
 
 ## Example Workflow
 
-Below is an example of how to use the ***name: Set variables from JSON*** in a GitHub Actions workflow
+Below is a **Python Example** of how to use the ***name: Set variables from JSON*** in a GitHub Actions workflow.  
+
+See [Language-specific Workflows](#language-specific-workflows) for workflow examples in other languages(**Node.js**, **Ruby**, **Go**, **Rust**).  
 
 ```yaml
 name: Test on PR by matrix.json (Except Dependabot)
@@ -154,6 +215,15 @@ jobs:
           output="$(poetry run pytest)"
           echo "${output}"
 ```
+
+## Language-specific Workflows
+
+For language-specific workflow examples, please refer to
+
+- Node.js: [nodejs_test.yml](.github/workflows/nodejs_test.yml)
+- Ruby: [ruby_test.yml](.github/workflows/ruby_test.yml)
+- Go: [go_test.yml](.github/workflows/go_test.yml)
+- Rust: [rust_test.yml](.github/workflows/rust_test.yml)
 
 ## License
 
