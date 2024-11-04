@@ -1,17 +1,19 @@
-name: Test on PR by matrix.json (Except Dependabot)
+name: Ruby Test
 
 on:
   pull_request:
     branches:
-      - main
+      - 'main'
+    paths:
+      - 'examples/ruby/**'
+      - '.github/workflows/ruby_test.yml'
 
 jobs:
   set_variables:
-    if: github.actor != 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     runs-on: ubuntu-latest
     outputs:
       os: ${{ steps.json2vars.outputs.os }}
-      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      versions_ruby: ${{ steps.json2vars.outputs.versions_ruby }}
       ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
     steps:
       - name: Checkout repository
@@ -21,14 +23,15 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@main
+        uses: ./
         with:
-          json-file: .github/workflows/matrix.json
+          #json-file: .github/workflows/matrix.json
+          json-file: .github/workflows/ruby_project_matrix.json
 
       - name: Debug output values
         run: |
           echo "os: ${{ steps.json2vars.outputs.os }}"
-          echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+          echo "versions_ruby: ${{ steps.json2vars.outputs.versions_ruby }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -36,7 +39,7 @@ jobs:
     strategy:
       matrix:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
-        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+        ruby-version: ${{ fromJson(needs.set_variables.outputs.versions_ruby) }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
@@ -44,10 +47,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5.3.0
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1.199.0
         with:
-          python-version: ${{ matrix.python-version }}
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+          working-directory: './examples/ruby'
 
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
@@ -56,22 +61,10 @@ jobs:
           timezoneMacos: "Asia/Tokyo"
           timezoneWindows: "Tokyo Standard Time"
 
-      - name: Install poetry
+      - name: Display Ruby version
         run: |
-          pip install poetry
-          echo "Poetry version: $(poetry --version)"
-
-      - name: Cache dependencies
-        uses: actions/cache@v4.1.2
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
-
-      - name: Install dependencies
-        run: |
-          poetry install
-          echo "Installed dependencies:"
-          poetry show --tree
+          ruby --version
+          bundle --version
 
       - name: Show matrix
         shell: bash
@@ -79,27 +72,29 @@ jobs:
           # For non-list case
           ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
 
-          # For list case, explicitly enclose the list in “” to make it a string. (Note that it is not ''.)
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
           os='${{ needs.set_variables.outputs.os }}'
-          versions_python='${{ needs.set_variables.outputs.versions_python }}'
+          versions_ruby='${{ needs.set_variables.outputs.versions_ruby }}'
 
           echo "os: $os"
-          echo "versions_python: ${versions_python}"
+          echo "versions_ruby: ${versions_ruby}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case
           os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
-          python_versions_list=$(echo "${versions_python}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          ruby_versions_list=$(echo "${versions_ruby}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
 
           for current_os in ${os_list}; do
-            for version in ${python_versions_list}; do
-              echo "Current OS: ${current_os}, Current Python Version: ${version}"
+            for version in ${ruby_versions_list}; do
+              echo "Current OS: ${current_os}, Current Ruby Version: ${version}"
             done
           done
 
-      - name: Run pytest
-        id: pytest
+      - name: Run tests
+        id: ruby_test
+        working-directory: ./examples/ruby
         shell: bash
         run: |
-          output="$(poetry run pytest)"
+          bundle install
+          output="$(bundle exec rake test)"
           echo "${output}"
