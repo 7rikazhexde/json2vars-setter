@@ -1,0 +1,16 @@
+# メインのPythonプロジェクト
+json2vars_setter/** linguist-detectable=true
+
+# 各言語の実装例
+examples/nodejs/** linguist-detectable=true
+examples/ruby/** linguist-detectable=true
+examples/go/** linguist-detectable=true
+examples/rust/** linguist-detectable=true
+
+# シェルスクリプトを言語統計に含める
+*.sh linguist-detectable=true
+
+# 設定ファイルは言語統計から除外
+*.json linguist-detectable=false
+*.yml linguist-detectable=false
+*.yaml linguist-detectable=false
