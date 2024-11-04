@@ -1,9 +1,9 @@
 name: Rust Test
 
 on:
-  push:
+  pull_request:
     branches:
-      - 'issue_no17'
+      - 'main'
     paths:
       - 'examples/rust/**'
       - '.github/workflows/rust_test.yml'
