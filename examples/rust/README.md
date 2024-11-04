@@ -54,7 +54,8 @@ cargo test -- --nocapture
 
 ### src/lib.rs
 
-Contains the core functionality:
+Contains the core functionality
+
 - `MatrixConfig` struct: Represents the JSON structure
 - `parse_config`: Function to parse JSON configuration file
   - Parameters:

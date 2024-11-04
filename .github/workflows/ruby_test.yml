@@ -25,7 +25,8 @@ jobs:
         id: json2vars
         uses: ./
         with:
-          json-file: .github/workflows/matrix.json
+          #json-file: .github/workflows/matrix.json
+          json-file: .github/workflows/ruby_project_matrix.json
 
       - name: Debug output values
         run: |
