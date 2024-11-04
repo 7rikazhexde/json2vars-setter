@@ -23,7 +23,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: ./
+        uses: 7rikazhexde/json2vars-setter@main
         with:
           #json-file: .github/workflows/matrix.json
           json-file: .github/workflows/ruby_project_matrix.json

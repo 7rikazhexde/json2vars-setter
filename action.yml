@@ -37,7 +37,7 @@ runs:
     - name: Set up Python
       uses: actions/setup-python@v5.3.0
       with:
-        python-version: '3.12'
+        python-version: '3.13'
 
     - name: Parse JSON and set outputs
       id: set_outputs
