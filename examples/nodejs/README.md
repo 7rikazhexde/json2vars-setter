@@ -1,4 +1,4 @@
-# nodejs-project-sandbox
+# JSON Parser Node.js Example
 
 This is a Node.js implementation example for parsing JSON configuration files in GitHub Actions matrix testing.
 
@@ -27,68 +27,81 @@ This is a Node.js implementation example for parsing JSON configuration files in
 ## Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/7rikazhexde/json2vars-setter.git
-cd json2vars-setter/examples/nodejs
-
 # Install dependencies
 npm ci
 ```
 
 ## Usage
 
-Run the application
+Run the application:
 
 ```bash
 # Using npm script
 npm start
-
-# Or directly with Node.js
-node sample.js
 ```
 
-Run tests
+Run tests:
 
 ```bash
 npm test
 ```
 
-## Package Scripts
-
-- `npm start`: Run the JSON parser
-- `npm test`: Run the test suite
-
 ## Implementation Details
 
-### config.js
+### Configuration (`src/config/`)
 
-Provides configuration settings, specifically the path to the JSON configuration file.
+#### paths.js
 
-### sample.js
+- Defines path resolution for project files
+- Resolves the path to JSON configuration file relative to project root
 
-Contains the main JSON parsing functionality
+#### index.js
 
+- Exports configuration modules
+- Centralizes configuration management
+
+### Utilities (`src/utils/`)
+
+#### jsonParser.js
+
+- Main JSON parsing functionality
 - `parseConfigJson(filePath, silent)`: Parse JSON configuration file
-- `filePath`: Path to JSON file (optional, defaults to matrix configuration)
-- `silent`: Boolean to suppress error messages (optional, defaults to false)
+  - `filePath`: Path to JSON file (defaults to matrix configuration)
+  - `silent`: Boolean to suppress error messages (defaults to false)
+- Returns parsed JSON object or null on error
 
-### test.js
+### Testing (`tests/`)
 
-Contains test cases using Jest framework.
+#### jsonParser.test.js
 
-## JSON Configuration Format
+- Test suite using Jest framework
+- Validates JSON parsing functionality
+- Tests error handling and edge cases
 
-Plaese create `.github/workflows/nodejs_project_matrix.json`
+## JSON Configuration
+
+The parser expects a JSON file with the following structure:
 
 ```json
 {
-  "os": ["ubuntu-latest", "windows-latest", "macos-latest"],
+  "os": [
+    "ubuntu-latest",
+    "windows-latest",
+    "macos-latest"
+  ],
   "versions": {
-    "nodejs": ["16", "18", "20", "22"]
+    "nodejs": [
+      "16",
+      "18",
+      "20",
+      "22"
+    ]
   },
   "ghpages_branch": "ghgapes"
 }
 ```
+
+The default path for this configuration is `.github/workflows/nodejs_project_matrix.json` relative to the project root.
 
 ## Development
 
@@ -98,11 +111,16 @@ This project uses
 - Node.js native `fs` module for file operations
 - Node.js native `path` module for path resolution
 
-To add new features or modify existing ones
+Development workflow
 
-1. Make your changes
-2. Add/update tests as needed
-3. Run tests to ensure everything works
-4. Update documentation if necessary
+1. Make changes to source code
+2. Update tests if necessary
+3. Run `npm test` to verify changes
+4. Update documentation if needed
 
-Note: The project is configured to override the `glob` package version to ^9.0.0 to avoid memory leaks.
+## Dependencies
+
+Main dependencies:
+- jest: Testing framework
+
+Note: The project uses npm workspaces and is part of a larger monorepo demonstrating matrix configuration parsing in various languages.

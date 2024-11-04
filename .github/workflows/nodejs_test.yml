@@ -24,8 +24,8 @@ jobs:
       - name: Set variables from JSON
         id: json2vars
         uses: ./
-        #with:
-        #  json-file: .github/workflows/matrix.json
+        with:
+          json-file: .github/workflows/matrix.json
 
       - name: Debug output values
         run: |
