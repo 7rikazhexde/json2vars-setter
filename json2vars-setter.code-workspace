@@ -12,6 +12,11 @@
     "settings": {
         "rust-analyzer.linkedProjects": [
             "./examples/rust/Cargo.toml"
+        ],
+        "github-actions.workflows.pinned.workflows": [
+            "Project Root/.github/workflows/dependabot_prch.yml",
+            "Project Root/dynamic/dependabot/dependabot-updates",
+            "Project Root/.github/workflows/update-version-and-release.yml"
         ]
     }
 }

@@ -5,21 +5,6 @@
         // .gitフォルダを表示する（デフォルトでは非表示）
         "**/.git": false
     },
-    // GitHub Actions ワークフローのピン留め設定
-    // この設定により、指定されたワークフローファイルに対して拡張機能がより詳細な検証と支援を提供する
-    "github-actions.workflows.pinned.workflows": [
-        "prch_test_matrix_json.yml",
-        "dependabot_prch.yml",
-        "update-version-and-release.yml"
-    ],
-    // ピン留めされたワークフローの自動リフレッシュを有効にする
-    // これにより、拡張機能は最新のリポジトリ状態（シークレットの存在など）を反映する
-    "github-actions.workflows.pinned.refresh.enabled": true,
-    // リフレッシュの間隔を65秒に設定します
-    "github-actions.workflows.pinned.refresh.interval": 65,
-    // 拡張機能が参照すべきGitリモートを指定します
-    // これにより、拡張機能はGitHubリポジトリの実際の設定と同期する
-    "github-actions.remote-name": "origin",
     // Python固有の設定
     "[python]": {
         "editor.codeActionsOnSave": {
@@ -84,7 +69,11 @@
     },
     "rust-analyzer.checkOnSave": true,
     "rust-analyzer.check.command": "clippy",
-    "rust-analyzer.check.extraArgs": ["--", "-A", "clippy::needless_return"],
+    "rust-analyzer.check.extraArgs": [
+        "--",
+        "-A",
+        "clippy::needless_return"
+    ],
     // Rubyの固有設定
     "[ruby]": {
         "editor.defaultFormatter": "Shopify.ruby-lsp", // Use the Ruby LSP as the default formatter
@@ -113,5 +102,7 @@
     "editor.tabSize": 4, // タブサイズの指定
     "files.eol": "\n", // 行末記号の統一
     "go.testOnSave": true, // 保存時にテストを自動実行
-    "go.testFlags": ["-v"] // テストの詳細表示オプション
+    "go.testFlags": [
+        "-v"
+    ] // テストの詳細表示オプション
 }
