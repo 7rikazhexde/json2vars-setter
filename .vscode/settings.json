@@ -104,5 +104,10 @@
     "go.testOnSave": true, // 保存時にテストを自動実行
     "go.testFlags": [
         "-v"
-    ] // テストの詳細表示オプション
+    ], // テストの詳細表示オプション
+    "github-actions.workflows.pinned.workflows": [
+        ".github/workflows/dependabot_prch.yml",
+        ".github/workflows/prch_test_matrix_json.yml",
+        ".github/workflows/update-version-and-release.yml"
+    ]
 }
