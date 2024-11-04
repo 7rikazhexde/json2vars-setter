@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Python dependencies
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
@@ -10,6 +11,51 @@ updates:
           - "*"
     open-pull-requests-limit: 10
 
+  # Node.js dependencies
+  - package-ecosystem: "npm"
+    directory: "/examples/nodejs"
+    schedule:
+      interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+
+  # Ruby dependencies
+  - package-ecosystem: "bundler"
+    directory: "/examples/ruby"
+    schedule:
+      interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+
+  # Go dependencies
+  - package-ecosystem: "gomod"
+    directory: "/examples/go"
+    schedule:
+      interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+
+  # Rust dependencies
+  - package-ecosystem: "cargo"
+    directory: "/examples/rust"
+    schedule:
+      interval: "daily"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+
+  # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
