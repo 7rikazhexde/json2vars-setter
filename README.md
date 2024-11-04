@@ -74,7 +74,8 @@ Here is an example of a JSON file that can be used with this action.
         "python": [
             "3.10",
             "3.11",
-            "3.12"
+            "3.12",
+            "3.13"
         ],
         "ruby": [
             "3.0.6",
@@ -118,7 +119,8 @@ Undefined language versions will result in empty outputs(*3).
         "python": [
             "3.10",
             "3.11",
-            "3.12"
+            "3.12",
+            "3.13"
         ]
         //(*3)
     },
