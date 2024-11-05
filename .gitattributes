@@ -1,16 +1,21 @@
 # メインのPythonプロジェクト
-json2vars_setter/** linguist-detectable=true
+json2vars_setter/**/*.py linguist-detectable=true linguist-vendored=false
 
-# 各言語の実装例
-examples/nodejs/** linguist-detectable=true
-examples/ruby/** linguist-detectable=true
-examples/go/** linguist-detectable=true
-examples/rust/** linguist-detectable=true
+# 各言語の実装例を言語統計に含める
+examples/go/**/*.go linguist-detectable=true linguist-vendored=false
+examples/nodejs/**/*.js linguist-detectable=true linguist-vendored=false
+examples/ruby/**/*.rb linguist-detectable=true linguist-vendored=false
+examples/rust/**/*.rs linguist-detectable=true linguist-vendored=false
 
 # シェルスクリプトを言語統計に含める
-*.sh linguist-detectable=true
+*.sh linguist-detectable=true linguist-vendored=false
 
-# 設定ファイルは言語統計から除外
+# 設定ファイル（json, yml, yaml）は言語統計から除外
 *.json linguist-detectable=false
 *.yml linguist-detectable=false
 *.yaml linguist-detectable=false
+
+# 依存関係やビルド生成物は言語統計から除外
+examples/nodejs/node_modules/** linguist-detectable=false
+examples/rust/target/** linguist-detectable=false
+htmlcov/** linguist-detectable=false
