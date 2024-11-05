@@ -8,11 +8,13 @@
 
 ## Supported GitHub Actions Matrix Components
 
-[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](#example-workflow)
-[![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](.github/workflows/nodejs_test.yml)
-[![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white)](.github/workflows/ruby_test.yml)
-[![Go](https://img.shields.io/badge/Go-00ADD8?style=for-the-badge&logo=go&logoColor=white)](.github/workflows/go_test.yml)
-[![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)](.github/workflows/rust_test.yml)
+| Languages | Test Status |
+|-------|-------|
+| [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](.github/workflows/python_test.yml) | [![Python Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/python_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/python_test.yml) |
+| [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)](.github/workflows/nodejs_test.yml) | [![Node.js Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/nodejs_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/nodejs_test.yml) |
+| [![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=flat&logo=ruby&logoColor=white)](.github/workflows/ruby_test.yml) | [![Ruby Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ruby_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ruby_test.yml) |
+| [![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](.github/workflows/go_test.yml) | [![Go Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/go_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/go_test.yml) |
+| [![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)](.github/workflows/rust_test.yml) | [![Rust Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/rust_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/rust_test.yml) |
 
 ## Table of contents
 
