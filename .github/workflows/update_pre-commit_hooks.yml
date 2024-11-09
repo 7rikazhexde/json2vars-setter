@@ -1,0 +1,69 @@
+name: Update pre-commit Hooks
+
+on:
+  schedule:
+    - cron: '0 0 * * 5'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_FOR_PUSHES }}
+      - name: Set up Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: '3.13'
+      - name: Install poetry
+        run: pip install poetry
+      - name: Cache dependencies
+        uses: actions/cache@v4.1.2
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install
+
+      # Update pre-commit hooks and check for changes
+      - name: Update pre-commit hooks
+        id: update_hooks
+        run: |
+          poetry run pre-commit autoupdate
+          if git diff --exit-code .pre-commit-config.yaml; then
+            echo "has_updates=false" >> "$GITHUB_OUTPUT"
+            echo "No updates to pre-commit hooks. Exiting workflow."
+          else
+            echo "has_updates=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Testing and Coverage Measurement
+      - name: Run test
+        id: pytest
+        if: steps.update_hooks.outputs.has_updates == 'true'
+        shell: bash
+        run: |
+          poetry run task test_ci_xml
+          coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          echo "Current coverage: ${coverage_percentage}%"
+          echo "COVERAGE=${coverage_percentage}" >> "$GITHUB_ENV"
+
+      # Coverage check and commit/push
+      - name: Commit changes if coverage is above 90%
+        if: steps.update_hooks.outputs.has_updates == 'true'
+        shell: bash
+        run: |
+          if [[ ! "$COVERAGE" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid coverage value: ${COVERAGE}"
+          elif [ "$COVERAGE" -lt 90 ]; then
+            echo "Test coverage is below 90%. Current coverage: ${COVERAGE}%"
+          else
+            echo "Test coverage is above or equal to 90%. Current coverage: ${COVERAGE}%"
+            git config --local user.email "33836132+github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add .pre-commit-config.yaml
+            git commit -m ":arrow_up: Update pre-commit hooks [skip ci]" || echo "No changes to commit"
+            git push
+          fi
