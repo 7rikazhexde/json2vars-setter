@@ -38,6 +38,9 @@ jobs:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
