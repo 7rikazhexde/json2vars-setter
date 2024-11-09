@@ -104,14 +104,11 @@ jobs:
           echo "COVERAGE=$coverage_percentage" >> "$GITHUB_ENV"
       - name: Check coverage
         shell: bash
-        #if: ${{ env.COVERAGE < 90 }}
-        #run: |
-        #  echo "Test coverage is below 90%. Current coverage: ${{ env.COVERAGE }}%"
-        #  exit 1
         run: |
-          if [ "$COVERAGE" -lt 90 ]; then
-            echo "Test coverage is below 90%. Current coverage: $COVERAGE%"
-            exit 1
+          if [[ ! "$COVERAGE" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid coverage value: ${COVERAGE}"
+          elif [ "$COVERAGE" -lt 90 ]; then
+            echo "Test coverage is below 90%. Current coverage: ${COVERAGE}%"
           else
             echo "Test coverage is above or equal to 90%. Current coverage: $COVERAGE%"
           fi
@@ -146,7 +143,6 @@ jobs:
   check_all_tests:
     needs: run_tests
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
       - name: Check test results
         if: contains(needs.run_tests.result, 'failure')
@@ -157,7 +153,6 @@ jobs:
   send_notification:
     needs: [run_tests, check_all_tests]
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
       # https://docs.github.com/ja/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-environment
       - name: Send LINE Notify
@@ -168,7 +163,7 @@ jobs:
           message="'dependabot_prch' workflow completed with status: $status
 
           Check URL:
-          https://github.com/7rikazhexde/python-project-sandbox/actions/workflows/dependabot_prch.yml"
+          https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dependabot_prch.yml"
 
           curl -X POST https://notify-api.line.me/api/notify \
             -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \

@@ -1,4 +1,6 @@
 import json
+import os
+import platform
 import subprocess
 from typing import Any
 
@@ -141,3 +143,91 @@ def test_main_execution_with_matrix_json(monkeypatch: MonkeyPatch, tmpdir: Any) 
 
     assert result.returncode == 0
     assert "Written to GITHUB_OUTPUT" in result.stdout
+
+
+def test_windows_path_handling(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+    """Test handling of Windows-style paths"""
+    # Normalize path using platform-specific separator
+    output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
+
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+    # Create empty file
+    with open(output_file, "w") as f:
+        pass
+
+    monkeypatch.setenv("GITHUB_OUTPUT", output_file)
+
+    # Test with Windows-specific data
+    test_data = {
+        "PATH": os.path.normpath("C:/Program Files/Python"),
+        "NESTED": {"SUB_PATH": os.path.normpath("D:/data/test")},
+    }
+
+    outputs = parse_json(test_data, debug=True)
+    set_github_output(outputs, debug=True)
+
+    with open(output_file, "r") as f:
+        content = f.read()
+
+    expected_path = os.path.normpath("C:/Program Files/Python")
+    expected_sub_path = os.path.normpath("D:/data/test")
+
+    assert f"PATH={expected_path}\n" in content
+    assert f"NESTED_SUB_PATH={expected_sub_path}\n" in content
+
+
+@pytest.mark.skipif(platform.system() != "Windows", reason="Windows-specific test")
+def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+    """Test Windows-specific environment variable handling"""
+    output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
+
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+    # Create empty file
+    with open(output_file, "w") as f:
+        pass
+
+    monkeypatch.setenv("GITHUB_OUTPUT", output_file)
+    monkeypatch.setenv("TEMP", str(tmpdir))
+
+    test_data = {
+        "WINDOWS_VAR": os.path.normpath("%TEMP%/test"),
+        "MIXED_PATH": os.path.normpath("C:/Program Files/Python"),
+    }
+
+    outputs = parse_json(test_data)
+    set_github_output(outputs, debug=False)
+
+    with open(output_file, "r") as f:
+        content = f.read()
+
+    expected_temp_path = os.path.normpath("%TEMP%/test")
+    expected_mixed_path = os.path.normpath("C:/Program Files/Python")
+
+    assert f"WINDOWS_VAR={expected_temp_path}\n" in content
+    assert f"MIXED_PATH={expected_mixed_path}\n" in content
+
+
+def test_empty_file_handling(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+    """Test handling of empty files"""
+    output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
+
+    # Create the directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+
+    # Create empty file
+    with open(output_file, "w") as f:
+        pass
+
+    monkeypatch.setenv("GITHUB_OUTPUT", output_file)
+
+    outputs = {"TEST": "value"}
+    set_github_output(outputs, debug=False)
+
+    with open(output_file, "r") as f:
+        content = f.read()
+
+    assert "TEST=value\n" in content
