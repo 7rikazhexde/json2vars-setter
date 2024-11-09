@@ -38,6 +38,9 @@ jobs:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -97,9 +100,81 @@ jobs:
             done
           done
 
-      - name: Run pytest
+      - name: Run test
+        shell: bash
         id: pytest
+        # Mac / Linux
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | tee pytest-coverage.txt
+        # Windowss
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
+        run: |
+          poetry run task test_ci_xml
+          coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          echo "Current coverage: $coverage_percentage%"
+          echo "COVERAGE=$coverage_percentage" >> "$GITHUB_ENV"
+      - name: Check coverage
         shell: bash
         run: |
-          output="$(poetry run pytest)"
-          echo "${output}"
+          if [[ ! "$COVERAGE" =~ ^[0-9]+$ ]]; then
+            echo "Error: Invalid coverage value: ${COVERAGE}"
+          elif [ "$COVERAGE" -lt 90 ]; then
+            echo "Test coverage is below 90%. Current coverage: ${COVERAGE}%"
+          else
+            echo "Test coverage is above or equal to 90%. Current coverage: $COVERAGE%"
+          fi
+      - name: Pytest coverage comment
+        id: coverageComment
+        uses: MishaKav/pytest-coverage-comment@v1.1.53
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt
+          pytest-xml-coverage-path: ./coverage.xml
+          title: Coverage Report (${{ matrix.os }} / Python ${{ matrix.python-version }})
+          badge-title: coverage
+          hide-badge: false
+          hide-report: false
+          create-new-comment: true
+          hide-comment: false
+          report-only-changed-files: false
+          remove-link-from-badge: false
+          junitxml-path: ./pytest.xml
+          junitxml-title: "Pytest Result Summary (os: ${{ matrix.os }} / python-version: ${{ matrix.python-version }})"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check test results
+        if: steps.pytest.outcome == 'failure'
+        run: |
+          echo "Tests failed. This will be reported in the workflow summary."
+          echo "::warning::Tests failed on ${{ matrix.os }} with Python ${{ matrix.python-version }}"
+      - name: Write job summary
+        id: check_status
+        shell: bash
+        run: |
+          echo -e ${{ steps.coverageComment.outputs.summaryReport }} >> "$GITHUB_STEP_SUMMARY"
+
+  check_all_tests:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test results
+        if: contains(needs.run_tests.result, 'failure')
+        run: |
+          echo "Some tests failed. Please check the test results and fix any issues before merging."
+          exit 1
+
+  send_notification:
+    needs: [run_tests, check_all_tests]
+    runs-on: ubuntu-latest
+    steps:
+      # https://docs.github.com/ja/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-environment
+      - name: Send LINE Notify
+        env:
+          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
+        run: |
+          status="${{ contains(needs.run_tests.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
+          message="'dependabot_prch' workflow completed with status: $status
+
+          Check URL:
+          https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dependabot_prch.yml"
+
+          curl -X POST https://notify-api.line.me/api/notify \
+            -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+            -F "message=${message}"
