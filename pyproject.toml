@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "json2vars-setter"
-version = "0.2.2"
+version = "0.2.3"
 description = ""
 authors = ["7rikazhexde"]
 readme = "README.md"
