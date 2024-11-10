@@ -51,7 +51,7 @@ jobs:
           echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
-  run_tests:
+  test:
     needs: set_variables
     strategy:
       matrix:
@@ -79,7 +79,7 @@ jobs:
         shell: bash
         run: |
           echo "System date: $(date)"
-          echo "TZ environment variable: $TZ"
+          echo "TZ environment variable: ${TZ}"
           python -c "import datetime, platform; print(f'Python timezone: {datetime.datetime.now().astimezone().tzinfo}'); print(f'OS: {platform.system()}')"
       - name: Install poetry
         run: pip install poetry
@@ -100,17 +100,16 @@ jobs:
         run: |
           poetry run task test_ci_xml
           coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
-          echo "Current coverage: $coverage_percentage%"
-          echo "COVERAGE=$coverage_percentage" >> "$GITHUB_ENV"
+          echo "Current coverage: ${coverage_percentage}%"
+          echo "COVERAGE=${coverage_percentage}" >> "$GITHUB_ENV"
       - name: Check coverage
         shell: bash
         run: |
-          if [[ ! "$COVERAGE" =~ ^[0-9]+$ ]]; then
-            echo "Error: Invalid coverage value: ${COVERAGE}"
-          elif [ "$COVERAGE" -lt 90 ]; then
+          if [ "${COVERAGE}" -lt 90 ]; then
             echo "Test coverage is below 90%. Current coverage: ${COVERAGE}%"
+            exit 1
           else
-            echo "Test coverage is above or equal to 90%. Current coverage: $COVERAGE%"
+            echo "Test coverage is above or equal to 90%. Current coverage: ${COVERAGE}%"
           fi
       - name: Pytest coverage comment
         id: coverageComment
@@ -141,30 +140,31 @@ jobs:
           echo -e ${{ steps.coverageComment.outputs.summaryReport }} >> "$GITHUB_STEP_SUMMARY"
 
   check_all_tests:
-    needs: run_tests
+    needs: test
     runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
       - name: Check test results
-        if: contains(needs.run_tests.result, 'failure')
+        if: contains(needs.test.result, 'failure')
         run: |
           echo "Some tests failed. Please check the test results and fix any issues before merging."
           exit 1
 
   send_notification:
-    needs: [run_tests, check_all_tests]
+    needs: [test, check_all_tests]
     runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
-      # https://docs.github.com/ja/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-environment
       - name: Send LINE Notify
         env:
           LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
         run: |
-          status="${{ contains(needs.run_tests.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
-          message="'dependabot_prch' workflow completed with status: $status
+          status="${{ contains(needs.test.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
+          message="'dependabot_prch' workflow completed with status: ${status}
 
           Check URL:
-          https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dependabot_prch.yml"
+          https://github.com/7rikazhexde/python-project-sandbox/actions/workflows/dependabot_prch.yml"
 
           curl -X POST https://notify-api.line.me/api/notify \
-            -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \
+            -H "Authorization: Bearer ${LINE_NOTIFY_TOKEN}" \
             -F "message=${message}"
