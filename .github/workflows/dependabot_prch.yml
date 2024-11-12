@@ -51,7 +51,7 @@ jobs:
           echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
-  test:
+  run_tests:
     needs: set_variables
     strategy:
       matrix:
@@ -140,18 +140,18 @@ jobs:
           echo -e ${{ steps.coverageComment.outputs.summaryReport }} >> "$GITHUB_STEP_SUMMARY"
 
   check_all_tests:
-    needs: test
+    needs: run_tests
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
       - name: Check test results
-        if: contains(needs.test.result, 'failure')
+        if: contains(needs.run_tests.result, 'failure')
         run: |
           echo "Some tests failed. Please check the test results and fix any issues before merging."
           exit 1
 
   send_notification:
-    needs: [test, check_all_tests]
+    needs: [run_tests, check_all_tests]
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
@@ -159,7 +159,7 @@ jobs:
         env:
           LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
         run: |
-          status="${{ contains(needs.test.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
+          status="${{ contains(needs.run_tests.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
           message="'dependabot_prch' workflow completed with status: ${status}
 
           Check URL:
