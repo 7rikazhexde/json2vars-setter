@@ -141,6 +141,7 @@ jobs:
       - name: Set test status
         id: set_status
         if: always()
+        shell: bash
         run: |
           if [ "${{ job.status }}" == "cancelled" ]; then
             echo "status=cancelled" >> "$GITHUB_OUTPUT"
@@ -161,6 +162,7 @@ jobs:
     steps:
       - name: Set color
         id: set_color
+        shell: bash
         run: |
           status="${{ needs.run_tests.outputs.test_status }}"
           if [ "$status" == "passing" ]; then
