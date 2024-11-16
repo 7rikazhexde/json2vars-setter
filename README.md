@@ -10,7 +10,7 @@
 
 | Languages | Test Status |
 |-------|-------|
-| [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](.github/workflows/python_test.yml) | [![Python Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/python_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/python_test.yml) |
+| [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](.github/workflows/python_test.yml) | [![Python Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/26cb492ab0cfff920c516a622b2bfa44/raw/python-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/python_test.yml) |
 | [![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white)](.github/workflows/nodejs_test.yml) | [![Node.js Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/nodejs_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/nodejs_test.yml) |
 | [![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=flat&logo=ruby&logoColor=white)](.github/workflows/ruby_test.yml) | [![Ruby Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ruby_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ruby_test.yml) |
 | [![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](.github/workflows/go_test.yml) | [![Go Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/go_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/go_test.yml) |
