@@ -48,7 +48,14 @@ jobs:
       - name: Debug output values
         run: |
           echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
           echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+          echo "versions_python[0]: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}"
+          echo "versions_python[1]: ${{ fromJson(steps.json2vars.outputs.versions_python)[1] }}"
+          echo "versions_python[2]: ${{ fromJson(steps.json2vars.outputs.versions_python)[2] }}"
+          echo "versions_python[3]: ${{ fromJson(steps.json2vars.outputs.versions_python)[3] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:

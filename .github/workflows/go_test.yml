@@ -31,7 +31,13 @@ jobs:
       - name: Debug output values
         run: |
           echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
           echo "versions_go: ${{ steps.json2vars.outputs.versions_go }}"
+          echo "versions_go[0]: ${{ fromJson(steps.json2vars.outputs.versions_go)[0] }}"
+          echo "versions_go[1]: ${{ fromJson(steps.json2vars.outputs.versions_go)[1] }}"
+          echo "versions_go[2]: ${{ fromJson(steps.json2vars.outputs.versions_go)[2] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -78,8 +84,23 @@ jobs:
           os='${{ needs.set_variables.outputs.os }}'
           versions_go='${{ needs.set_variables.outputs.versions_go }}'
 
-          echo "os: $os"
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
+
+          versions_go_0="${{ fromJson(needs.set_variables.outputs.versions_go)[0] }}"
+          versions_go_1="${{ fromJson(needs.set_variables.outputs.versions_go)[1] }}"
+          versions_go_2="${{ fromJson(needs.set_variables.outputs.versions_go)[2] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "os_2: ${os_2}"
           echo "versions_go: ${versions_go}"
+          echo "versions_go_0: ${versions_go_0}"
+          echo "versions_go_1: ${versions_go_1}"
+          echo "versions_go_2: ${versions_go_2}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case
