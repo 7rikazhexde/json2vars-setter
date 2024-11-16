@@ -8,14 +8,11 @@ on:
 jobs:
   update:
     runs-on: ubuntu-latest
-    permissions:
-      # Enable file changes, commits, and pushes
-      contents: write
     steps:
       - uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_FOR_PUSHES }}
       - name: Set up Python
         uses: actions/setup-python@v5.3.0
         with:
