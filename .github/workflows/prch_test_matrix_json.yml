@@ -28,7 +28,14 @@ jobs:
       - name: Debug output values
         run: |
           echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
           echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+          echo "versions_python[0]: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}"
+          echo "versions_python[1]: ${{ fromJson(steps.json2vars.outputs.versions_python)[1] }}"
+          echo "versions_python[2]: ${{ fromJson(steps.json2vars.outputs.versions_python)[2] }}"
+          echo "versions_python[3]: ${{ fromJson(steps.json2vars.outputs.versions_python)[3] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -86,8 +93,25 @@ jobs:
           os='${{ needs.set_variables.outputs.os }}'
           versions_python='${{ needs.set_variables.outputs.versions_python }}'
 
-          echo "os: $os"
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
+
+          versions_python_0="${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}"
+          versions_python_1="${{ fromJson(needs.set_variables.outputs.versions_python)[1] }}"
+          versions_python_2="${{ fromJson(needs.set_variables.outputs.versions_python)[2] }}"
+          versions_python_3="${{ fromJson(needs.set_variables.outputs.versions_python)[3] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "os_2: ${os_2}"
           echo "versions_python: ${versions_python}"
+          echo "versions_python_0: ${versions_python_0}"
+          echo "versions_python_1: ${versions_python_1}"
+          echo "versions_python_2: ${versions_python_2}"
+          echo "versions_python_3: ${versions_python_3}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case
@@ -151,8 +175,9 @@ jobs:
           echo -e ${{ steps.coverageComment.outputs.summaryReport }} >> "$GITHUB_STEP_SUMMARY"
 
   check_all_tests:
-    needs: run_tests
-    runs-on: ubuntu-latest
+    needs: [set_variables, run_tests]
+    #runs-on: ubuntu-latest
+    runs-on: ${{ fromJson(needs.set_variables.outputs.os)[0] }}
     steps:
       - name: Check test results
         if: contains(needs.run_tests.result, 'failure')
@@ -161,8 +186,9 @@ jobs:
           exit 1
 
   send_notification:
-    needs: [run_tests, check_all_tests]
-    runs-on: ubuntu-latest
+    needs: [set_variables, run_tests, check_all_tests]
+    #runs-on: ubuntu-latest
+    runs-on: ${{ fromJson(needs.set_variables.outputs.os)[0] }}
     steps:
       # https://docs.github.com/ja/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-an-environment
       - name: Send LINE Notify

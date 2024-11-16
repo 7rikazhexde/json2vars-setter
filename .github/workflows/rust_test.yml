@@ -31,7 +31,15 @@ jobs:
       - name: Debug output values
         run: |
           echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
           echo "versions_rust: ${{ steps.json2vars.outputs.versions_rust }}"
+          echo "versions_rust[0]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[0] }}"
+          echo "versions_rust[1]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[1] }}"
+          echo "versions_rust[2]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[2] }}"
+          echo "versions_rust[3]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[3] }}"
+          echo "versions_rust[4]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[4] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -75,8 +83,27 @@ jobs:
           os='${{ needs.set_variables.outputs.os }}'
           versions_rust='${{ needs.set_variables.outputs.versions_rust }}'
 
-          echo "os: $os"
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
+
+          versions_rust_0="${{ fromJson(needs.set_variables.outputs.versions_rust)[0] }}"
+          versions_rust_1="${{ fromJson(needs.set_variables.outputs.versions_rust)[1] }}"
+          versions_rust_2="${{ fromJson(needs.set_variables.outputs.versions_rust)[2] }}"
+          versions_rust_3="${{ fromJson(needs.set_variables.outputs.versions_rust)[3] }}"
+          versions_rust_4="${{ fromJson(needs.set_variables.outputs.versions_rust)[4] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "os_2: ${os_2}"
           echo "versions_rust: ${versions_rust}"
+          echo "versions_rust_0: ${versions_rust_0}"
+          echo "versions_rust_1: ${versions_rust_1}"
+          echo "versions_rust_2: ${versions_rust_2}"
+          echo "versions_rust_3: ${versions_rust_3}"
+          echo "versions_rust_4: ${versions_rust_4}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case
