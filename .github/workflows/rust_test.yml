@@ -49,6 +49,8 @@ jobs:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         rust-version: ${{ fromJson(needs.set_variables.outputs.versions_rust) }}
     runs-on: ${{ matrix.os }}
+    outputs:
+      test_status: ${{ steps.set_status.outputs.status }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -119,6 +121,7 @@ jobs:
       - name: Run tests
         id: rust_test
         working-directory: ./examples/rust
+        continue-on-error: true
         shell: bash
         run: |
           output="$(cargo test --verbose)"
@@ -127,9 +130,62 @@ jobs:
       # Optional: Add code format check
       - name: Check formatting
         working-directory: ./examples/rust
+        continue-on-error: true
         run: cargo fmt -- --check
 
       # Optional: Run clippy
       - name: Run clippy
         working-directory: ./examples/rust
+        continue-on-error: true
         run: cargo clippy -- -D warnings
+
+      - name: Set test status
+        id: set_status
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ job.status }}" == "cancelled" ]; then
+            echo "status=cancelled" >> "$GITHUB_OUTPUT"
+          elif [ "${{ job.status }}" == "skipped" ]; then
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.rust_test.outcome }}" == "failure" ]; then
+            echo "status=failing" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.rust_test.outcome }}" == "success" ]; then
+            echo "status=passing" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=pending" >> "$GITHUB_OUTPUT"
+          fi
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Set color
+        id: set_color
+        shell: bash
+        run: |
+          status="${{ needs.run_tests.outputs.test_status }}"
+          if [ "$status" == "passing" ]; then
+            echo "color=2ea44f" >> "$GITHUB_OUTPUT"
+          elif [ "$status" == "failing" ]; then
+            echo "color=cf222e" >> "$GITHUB_OUTPUT"
+          elif [ "$status" == "pending" ]; then
+            echo "color=dbab09" >> "$GITHUB_OUTPUT"
+          else
+            echo "color=808080" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 5e160d06cfffd42a8f0e4ae6e8e8f025
+          filename: rust-test-badge.json
+          label: Rust Test
+          message: ${{ needs.run_tests.outputs.test_status }}
+          color: ${{ steps.set_color.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

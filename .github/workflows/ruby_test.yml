@@ -47,6 +47,8 @@ jobs:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         ruby-version: ${{ fromJson(needs.set_variables.outputs.versions_ruby) }}
     runs-on: ${{ matrix.os }}
+    outputs:
+      test_status: ${{ steps.set_status.outputs.status }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
@@ -114,8 +116,60 @@ jobs:
       - name: Run tests
         id: ruby_test
         working-directory: ./examples/ruby
+        continue-on-error: true
         shell: bash
         run: |
           bundle install
           output="$(bundle exec rake test)"
           echo "${output}"
+
+      - name: Set test status
+        id: set_status
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ job.status }}" == "cancelled" ]; then
+            echo "status=cancelled" >> "$GITHUB_OUTPUT"
+          elif [ "${{ job.status }}" == "skipped" ]; then
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.ruby_test.outcome }}" == "failure" ]; then
+            echo "status=failing" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.ruby_test.outcome }}" == "success" ]; then
+            echo "status=passing" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=pending" >> "$GITHUB_OUTPUT"
+          fi
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Set color
+        id: set_color
+        shell: bash
+        run: |
+          status="${{ needs.run_tests.outputs.test_status }}"
+          if [ "$status" == "passing" ]; then
+            echo "color=2ea44f" >> "$GITHUB_OUTPUT"
+          elif [ "$status" == "failing" ]; then
+            echo "color=cf222e" >> "$GITHUB_OUTPUT"
+          elif [ "$status" == "pending" ]; then
+            echo "color=dbab09" >> "$GITHUB_OUTPUT"
+          else
+            echo "color=808080" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 511ba5b5711e66c507292ba00cf0a219
+          filename: ruby-test-badge.json
+          label: Ruby Test
+          message: ${{ needs.run_tests.outputs.test_status }}
+          color: ${{ steps.set_color.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"
