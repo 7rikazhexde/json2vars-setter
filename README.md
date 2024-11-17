@@ -184,19 +184,38 @@ The simplest way to access variables is within the same job using the `steps` co
 <summary>Code Example</summary>
 
 ```yaml
-steps:
-  - name: Access Variables
-    run: |
-      # Direct access to list variables
-      echo "os: ${{ steps.json2vars.outputs.os }}"
-      echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
 
-      # Access individual elements
-      echo "First OS: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
-      echo "First Python version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
 
-      # Access non-list variables
-      echo "Branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@main
+        with:
+          json-file: .github/workflows/python_project_matrix.json
+
+      - name: Access Variables
+        run: |
+          # Direct access to list variables from json2vars output
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+
+          # Access individual elements from json2vars output
+          echo "First OS: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "First Python version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}"
+
+          # Access non-list variables from json2vars output
+          echo "Branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 ```
 
 </details>
@@ -222,31 +241,47 @@ To use variables across different jobs, use the `needs` context and ensure outpu
 <summary>Matrix Strategy Usage</summary>
 
 ```yaml
-strategy:
-  matrix:
-    os: ${{ fromJson(needs.job1.outputs.os) }}
-    python-version: ${{ fromJson(needs.job1.outputs.versions_python) }}
+  test_job_2:
+    needs: set_variables
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
 ```
 
 </details>
 
 <details>
-<summary>Variable Access in Steps</summary>
+<summary>Variable Access in Job and Steps</summary>
 
 ```yaml
-steps:
-  - name: Access Variables
-    run: |
-      # Non-list variables
-      branch="${{ needs.job1.outputs.ghpages_branch }}"
+  test_job_3:
+    needs: set_variables
+    # Referenced from output variables from set_variables job (e.g. runs-on: ubuntu-latest)
+    runs-on: ${{ fromJson(needs.set_variables.outputs.os)[0] }}
+    steps:
+      - name: Access Variables
+        run: |
+          # Non-list variables
+          branch="${{ needs.set_variables.outputs.ghpages_branch }}"
 
-      # List variables (note the single quotes)
-      os='${{ needs.job1.outputs.os }}'
-      versions_python='${{ needs.job1.outputs.versions_python }}'
+          # List variables (note the single quotes)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_python='${{ needs.set_variables.outputs.versions_python }}'
 
-      # Individual elements
-      first_os="${{ fromJson(needs.job1.outputs.os)[0] }}"
-      first_version="${{ fromJson(needs.job1.outputs.versions_python)[0] }}"
+          # Individual elements
+          first_os="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          first_version="${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}"
 ```
 
 </details>
@@ -259,19 +294,21 @@ For more complex operations, you can process the JSON arrays using shell command
 <summary>Processing Arrays in Shell</summary>
 
 ```yaml
-steps:
-  - name: Process Variables
-    run: |
-      # Convert JSON arrays to space-separated lists
-      os_list=$(echo '${{ needs.job1.outputs.os }}' | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
-      versions_list=$(echo '${{ needs.job1.outputs.versions_python }}' | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+  test_job_3:
+    needs: set_variables
+    steps:
+      - name: Process Variables
+        run: |
+          # Convert JSON arrays to space-separated lists
+          os_list=$(echo '${{ needs.set_variables.outputs.os }}' | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          versions_list=$(echo '${{ needs.set_variables.outputs.versions_python }}' | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
 
-      # Example: Generate combinations
-      for os in ${os_list}; do
-        for version in ${versions_list}; do
-          echo "OS: ${os}, Python Version: ${version}"
-        done
-      done
+          # Example: Generate combinations
+          for os in ${os_list}; do
+            for version in ${versions_list}; do
+              echo "OS: ${os}, Python Version: ${version}"
+            done
+          done
 ```
 
 </details>
