@@ -39,7 +39,7 @@
 This action reads a JSON file (default path: `.github/workflows/matrix.json`) and sets GitHub Actions outputs based on the parsed data.
 
 > [!NOTE]
-> - Please create the JSON file by referring to the [Example JSON File](#example-json-file).
+> - Please create the JSON file by referring to the [Examples](#examples).
 > - By default, the JSON file path is `.github/workflows/matrix.json`. If you create a custom file, specify it in the `7rikazhexde/json2vars-setter` action.
 > - In the workflow, only the variables specified in the Outputs section are available.
 > - Language versions are optional. If a language is not defined in the JSON, its corresponding output will be empty.
@@ -76,7 +76,7 @@ jobs:
 ### Outputs
 
 > [!IMPORTANT]  
-> - In order to reference them in both steps and jobs, outputs must be specified.<br>Please check the [Example JSON File](#example-json-file) section for details.
+> - In order to reference them in both steps and jobs, outputs must be specified.<br>Please check the [Examples](#examples) section for details.
 
 | Output            | Description                |
 |-------------------|----------------------------|
@@ -90,7 +90,7 @@ jobs:
 
 ## Examples
 
-This action uses a JSON configuration file to define your matrix testing environments.
+This action uses a JSON configuration file (e.g. [matrix.json](.github/workflows/matrix.json)) to define your matrix testing environments.
 
 <details>
 <summary>Complete Configuration Example</summary>
@@ -135,7 +135,7 @@ This action uses a JSON configuration file to define your matrix testing environ
 
 </details>
 
-You can also create a simplified configuration by including only the languages you need. For example, if your project only uses `Python`.
+You can also create a simplified configuration by including only the languages you need. For example, if your project only uses `Python`(e.g. [python_project_matrix.json](.github/workflows/python_project_matrix.json)).
 
 > [!TIP]
 > - Only specify the languages you actually use.
