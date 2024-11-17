@@ -294,7 +294,7 @@ For more complex operations, you can process the JSON arrays using shell command
 <summary>Processing Arrays in Shell</summary>
 
 ```yaml
-  test_job_3:
+  test_job_4:
     needs: set_variables
     steps:
       - name: Process Variables
