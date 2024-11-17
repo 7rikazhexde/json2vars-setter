@@ -6,6 +6,24 @@
 
 **JSON to Variables Setter (json2vars-setter)** is a GitHub Action designed to parse a JSON file and set the resulting variables (such as operating systems, programming language versions, and GitHub Pages branch) as outputs in a GitHub Actions workflow.
 
+## Table of Contents
+
+- [JSON to Variables Setter](#json-to-variables-setter)
+  - [Overview](#overview)
+  - [Table of Contents](#table-of-contents)
+  - [Supported GitHub Actions Matrix Components](#supported-github-actions-matrix-components)
+  - [Usage](#usage)
+    - [Action Configuration](#action-configuration)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
+  - [Examples](#examples)
+    - [Variable Reference Examples](#variable-reference-examples)
+    - [1. Basic Usage (Within Same Job)](#1-basic-usage-within-same-job)
+    - [2. Cross-Job Usage (Using needs Context)](#2-cross-job-usage-using-needs-context)
+    - [3. Advanced Shell Processing](#3-advanced-shell-processing)
+  - [Language-specific Workflows](#language-specific-workflows)
+  - [License](#license)
+
 ## Supported GitHub Actions Matrix Components
 
 | Languages | Test Status |
@@ -15,20 +33,6 @@
 | [![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=flat&logo=ruby&logoColor=white)](.github/workflows/ruby_test.yml) | [![Ruby Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/511ba5b5711e66c507292ba00cf0a219/raw/ruby-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ruby_test.yml) |
 | [![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)](.github/workflows/go_test.yml) | [![Go Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/c334da204406866563668140885d170e/raw/go-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/go_test.yml) |
 | [![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)](.github/workflows/rust_test.yml) | [![Rust Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/5e160d06cfffd42a8f0e4ae6e8e8f025/raw/rust-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/rust_test.yml) |
-
-## Table of contents
-
-- [JSON to Variables Setter](#json-to-variables-setter)
-  - [Overview](#overview)
-  - [Supported GitHub Actions Matrix Components](#supported-github-actions-matrix-components)
-  - [Table of contents](#table-of-contents)
-  - [Usage](#usage)
-    - [Inputs](#inputs)
-    - [Outputs](#outputs)
-  - [Example JSON File](#example-json-file)
-  - [Example Workflow](#example-workflow)
-  - [Language-specific Workflows](#language-specific-workflows)
-  - [License](#license)
 
 ## Usage
 
@@ -40,6 +44,29 @@ This action reads a JSON file (default path: `.github/workflows/matrix.json`) an
 > - In the workflow, only the variables specified in the Outputs section are available.
 > - Language versions are optional. If a language is not defined in the JSON, its corresponding output will be empty.
 
+### Action Configuration
+
+```yml
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@main
+        with:
+          json-file: .github/workflows/python_project_matrix.json
+```
+
 ### Inputs
 
 | Input             | Description                                                        | Required |
@@ -49,9 +76,7 @@ This action reads a JSON file (default path: `.github/workflows/matrix.json`) an
 ### Outputs
 
 > [!IMPORTANT]  
-> Please check [Example Workflow](#example-workflow).\
-> (*1): In order to reference them in both steps and jobs, outputs must be specified.\
-> (*2): For lists, explicitly enclose the list in "" to make it a string. (Note that it is not '').
+> - In order to reference them in both steps and jobs, outputs must be specified.<br>Please check the [Example JSON File](#example-json-file) section for details.
 
 | Output            | Description                |
 |-------------------|----------------------------|
@@ -63,9 +88,12 @@ This action reads a JSON file (default path: `.github/workflows/matrix.json`) an
 | `versions_rust`   | List of Rust versions      |
 | `ghpages_branch`  | GitHub Pages branch name   |
 
-## Example JSON File
+## Examples
 
-Here is an example of a JSON file that can be used with this action.
+This action uses a JSON configuration file to define your matrix testing environments.
+
+<details>
+<summary>Complete Configuration Example</summary>
 
 ```json
 {
@@ -89,28 +117,33 @@ Here is an example of a JSON file that can be used with this action.
         "nodejs": [
             "16",
             "18",
-            "20",
-            "22"
+            "20"
         ],
         "go": [
-            "1.23.0",
-            "1.23.1",
-            "1.23.2"
+            "1.21.0",
+            "1.22.0"
         ],
         "rust": [
-            "1.79.0",
-            "1.80.0",
-            "1.81.0",
-            "1.82.0",
+            "1.75.0",
+            "1.76.0",
             "stable"
         ]
     },
-    "ghpages_branch": "ghgapes"
+    "ghpages_branch": "gh-pages"
 }
 ```
 
-You can also define only specific languages.\
-Undefined language versions will result in empty outputs(*3).
+</details>
+
+You can also create a simplified configuration by including only the languages you need. For example, if your project only uses `Python`.
+
+> [!TIP]
+> - Only specify the languages you actually use.
+> - Outputs for undefined languages will be empty arrays.
+> - This helps keep your JSON configuration concise and maintainable.
+
+<details>
+<summary>Simplified Configuration Example</summary>
 
 ```jsonc
 {
@@ -126,130 +159,148 @@ Undefined language versions will result in empty outputs(*3).
             "3.12",
             "3.13"
         ]
-        //(*3)
+        // Other language versions can be omitted if not used
     },
-    "ghpages_branch": "ghgapes"
+    "ghpages_branch": "gh-pages"
 }
 ```
 
-## Example Workflow
+</details>
 
-Below is a **Python Example** of how to use the ***name: Set variables from JSON*** in a GitHub Actions workflow.  
+### Variable Reference Examples
 
-See [Language-specific Workflows](#language-specific-workflows) for workflow examples in other languages(**Node.js**, **Ruby**, **Go**, **Rust**).  
+This section demonstrates various ways to reference the output variables in your workflow.
+
+> [!TIP]
+> - For list variables, always remember to use `fromJson()` when accessing individual elements
+> - When setting list variables in shell scripts, use single quotes (`'`) to preserve the JSON structure
+> - Use `jq` for complex JSON array manipulations in shell scripts
+
+### 1. Basic Usage (Within Same Job)
+
+The simplest way to access variables is within the same job using the `steps` context:
+
+<details>
+<summary>Code Example</summary>
 
 ```yaml
-name: Test on PR by matrix.json (Except Dependabot)
+steps:
+  - name: Access Variables
+    run: |
+      # Direct access to list variables
+      echo "os: ${{ steps.json2vars.outputs.os }}"
+      echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
 
-on:
-  pull_request:
-    branches: ["main"]
+      # Access individual elements
+      echo "First OS: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+      echo "First Python version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}"
 
-jobs:
-  set_variables:
-    if: github.actor != 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
-    runs-on: ubuntu-latest
-    outputs: # (*1)
-      os: ${{ steps.json2vars.outputs.os }}
-      versions_python: ${{ steps.json2vars.outputs.versions_python }}
-      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.1
-        with:
-          fetch-depth: 0
-
-      - name: Set variables from JSON
-        id: json2vars
-        uses: 7rikazhexde/json2vars-setter@main
-        # Not required if using .github/workflows/matrix.json
-        with:
-          json-file: .github/workflows/python_project_matrix.json
-
-      - name: Debug output values
-        run: |
-          echo "os: ${{ steps.json2vars.outputs.os }}"
-          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
-          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
-          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
-          echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
-          echo "versions_python[0]: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}"
-          echo "versions_python[1]: ${{ fromJson(steps.json2vars.outputs.versions_python)[1] }}"
-          echo "versions_python[2]: ${{ fromJson(steps.json2vars.outputs.versions_python)[2] }}"
-          echo "versions_python[3]: ${{ fromJson(steps.json2vars.outputs.versions_python)[3] }}"
-          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
-
-  run_tests:
-    needs: set_variables
-    strategy:
-      matrix:
-        os: ${{ fromJson(needs.set_variables.outputs.os) }}
-        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4.2.1
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python
-        uses: actions/setup-python@v5.2.0
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Show variables
-        shell: bash
-        run: |
-          # For non-list case
-          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
-
-          # For list case, explicitly enclose the list in “” to make it a string. (Note that it is not ''.)(*2)
-          os='${{ needs.set_variables.outputs.os }}'
-          versions_python='${{ needs.set_variables.outputs.versions_python }}'
-
-          # For list index case
-          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
-          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
-          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
-
-          versions_python_0="${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}"
-          versions_python_1="${{ fromJson(needs.set_variables.outputs.versions_python)[1] }}"
-          versions_python_2="${{ fromJson(needs.set_variables.outputs.versions_python)[2] }}"
-          versions_python_3="${{ fromJson(needs.set_variables.outputs.versions_python)[3] }}"
-
-          echo "os: ${os}"
-          echo "os_0: ${os_0}"
-          echo "os_1: ${os_1}"
-          echo "os_2: ${os_2}"
-          echo "versions_python: ${versions_python}"
-          echo "versions_python_0: ${versions_python_0}"
-          echo "versions_python_1: ${versions_python_1}"
-          echo "versions_python_2: ${versions_python_2}"
-          echo "versions_python_3: ${versions_python_3}"
-          echo "ghpages_branch: ${ghpages_branch}"
-
-          # For loop case
-          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
-          python_versions_list=$(echo "${versions_python}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
-
-          for current_os in ${os_list}; do
-            for version in ${python_versions_list}; do
-              echo "Current OS: ${current_os}, Current Python Version: ${version}"
-            done
-          done
-
-      - name: Run pytest
-        id: pytest
-        shell: bash
-        run: |
-          output="$(poetry run pytest)"
-          echo "${output}"
+      # Access non-list variables
+      echo "Branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 ```
+
+</details>
+
+<details>
+<summary>Example Output</summary>
+
+```bash
+os: ["ubuntu-latest", "windows-latest", "macos-latest"]
+versions_python: ["3.10", "3.11", "3.12", "3.13"]
+First OS: ubuntu-latest
+First Python version: 3.10
+Branch: ghpages
+```
+
+</details>
+
+### 2. Cross-Job Usage (Using needs Context)
+
+To use variables across different jobs, use the `needs` context and ensure outputs are properly defined in the source job.
+
+<details>
+<summary>Matrix Strategy Usage</summary>
+
+```yaml
+strategy:
+  matrix:
+    os: ${{ fromJson(needs.job1.outputs.os) }}
+    python-version: ${{ fromJson(needs.job1.outputs.versions_python) }}
+```
+
+</details>
+
+<details>
+<summary>Variable Access in Steps</summary>
+
+```yaml
+steps:
+  - name: Access Variables
+    run: |
+      # Non-list variables
+      branch="${{ needs.job1.outputs.ghpages_branch }}"
+
+      # List variables (note the single quotes)
+      os='${{ needs.job1.outputs.os }}'
+      versions_python='${{ needs.job1.outputs.versions_python }}'
+
+      # Individual elements
+      first_os="${{ fromJson(needs.job1.outputs.os)[0] }}"
+      first_version="${{ fromJson(needs.job1.outputs.versions_python)[0] }}"
+```
+
+</details>
+
+### 3. Advanced Shell Processing
+
+For more complex operations, you can process the JSON arrays using shell commands with `jq`.
+
+<details>
+<summary>Processing Arrays in Shell</summary>
+
+```yaml
+steps:
+  - name: Process Variables
+    run: |
+      # Convert JSON arrays to space-separated lists
+      os_list=$(echo '${{ needs.job1.outputs.os }}' | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+      versions_list=$(echo '${{ needs.job1.outputs.versions_python }}' | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+      # Example: Generate combinations
+      for os in ${os_list}; do
+        for version in ${versions_list}; do
+          echo "OS: ${os}, Python Version: ${version}"
+        done
+      done
+```
+
+</details>
+
+<details>
+<summary>Example Output</summary>
+
+```bash
+OS: ubuntu-latest, Python Version: 3.10
+OS: ubuntu-latest, Python Version: 3.11
+OS: ubuntu-latest, Python Version: 3.12
+OS: ubuntu-latest, Python Version: 3.13
+OS: windows-latest, Python Version: 3.10
+OS: windows-latest, Python Version: 3.11
+OS: windows-latest, Python Version: 3.12
+OS: windows-latest, Python Version: 3.13
+OS: macos-latest, Python Version: 3.10
+OS: macos-latest, Python Version: 3.11
+OS: macos-latest, Python Version: 3.12
+OS: macos-latest, Python Version: 3.13
+```
+
+</details>
 
 ## Language-specific Workflows
 
-For language-specific workflow examples, please refer to
+For language-specific workflow examples, please refer to:
 
+- Python: [python_test.yml](.github/workflows/python_test.yml)
 - Node.js: [nodejs_test.yml](.github/workflows/nodejs_test.yml)
 - Ruby: [ruby_test.yml](.github/workflows/ruby_test.yml)
 - Go: [go_test.yml](.github/workflows/go_test.yml)
