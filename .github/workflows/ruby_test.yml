@@ -56,7 +56,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1.206.0
+        uses: ruby/setup-ruby@v1.207.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
