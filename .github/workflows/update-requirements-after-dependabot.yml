@@ -29,6 +29,8 @@ jobs:
         run: pip install poetry
       - name: Install dependencies
         run: poetry install
+      - name: Add plugin
+        run: poetry self add poetry-plugin-export
       - name: Update requirements files
         run: |
           poetry export -f requirements.txt -o requirements.txt --without-hashes
