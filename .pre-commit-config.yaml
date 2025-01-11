@@ -34,7 +34,7 @@ repos:
   # https://python-poetry.org/docs/pre-commit-hooks/#usage
   - repo: https://github.com/python-poetry/poetry
     # Cannot be executed with local designation (as of 24.8.3)
-    rev: 1.8.0
+    rev: 2.0.0
     hooks:
       - id: poetry-check
         verbose: true
