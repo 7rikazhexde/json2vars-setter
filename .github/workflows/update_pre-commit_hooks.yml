@@ -26,6 +26,8 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
         run: poetry install
+      - name: Add plugin
+        run: poetry self add poetry-plugin-export
 
       # Update pre-commit hooks and check for changes
       - name: Update pre-commit hooks
