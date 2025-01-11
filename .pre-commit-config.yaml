@@ -27,7 +27,7 @@ repos:
       - id: shellcheck
 
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.5
+    rev: v1.7.6
     hooks:
       - id: actionlint
 
@@ -40,14 +40,25 @@ repos:
         verbose: true
       - id: poetry-lock
         verbose: true
+
+  - repo: local
+    hooks:
       - id: poetry-export
-        args: ["-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes"]
-        verbose: true
-        files: ^pyproject\.toml$
-      - id: poetry-export
-        args: ["--with", "dev", "-f", "requirements.txt", "-o", "requirements-dev.txt", "--without-hashes"]
-        verbose: true
-        files: ^pyproject\.toml$
+        name: Export requirements.txt
+        entry: poetry export -f requirements.txt -o requirements.txt --without-hashes
+        language: python
+        pass_filenames: false
+        additional_dependencies:
+          - "poetry"
+          - "poetry-plugin-export"
+      - id: poetry-export-dev
+        name: Export dev requirements.txt
+        entry: poetry export --with dev -f requirements.txt -o requirements-dev.txt --without-hashes
+        language: python
+        pass_filenames: false
+        additional_dependencies:
+          - "poetry"
+          - "poetry-plugin-export"
 
   # Reference: https://github.com/DavidAnson/markdownlint-cli2#overview
   # > markdownlint-cli is a traditional command-line interface for markdownlint.
@@ -58,7 +69,7 @@ repos:
         args: ["--config", ".markdownlint.json", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.8.5
+    rev: v0.9.1
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
