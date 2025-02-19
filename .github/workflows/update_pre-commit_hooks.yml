@@ -22,7 +22,7 @@ jobs:
       - name: Add plugin
         run: poetry self add poetry-plugin-export
       - name: Cache dependencies
-        uses: actions/cache@v4.2.0
+        uses: actions/cache@v4.2.1
         with:
           path: ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
