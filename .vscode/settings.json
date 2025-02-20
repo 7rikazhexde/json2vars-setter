@@ -74,6 +74,9 @@
         "-A",
         "clippy::needless_return"
     ],
+    "rust-analyzer.linkedProjects": [
+        "./examples/rust/Cargo.toml"
+    ],
     // Rubyの固有設定
     "[ruby]": {
         "editor.defaultFormatter": "Shopify.ruby-lsp", // Use the Ruby LSP as the default formatter
@@ -86,7 +89,7 @@
     "rubyLsp.formatter": "rubocop",
     "files.insertFinalNewline": true,
     // golangの固有設定
-    "go.gopath": "", // 必要に応じて設定してください
+    "go.gopath": "",
     "go.useLanguageServer": true,
     "go.lintOnSave": "file",
     "go.lintTool": "golangci-lint", // golangci-lintを推奨しますが、go vetなども選択可能
@@ -105,6 +108,7 @@
     "go.testFlags": [
         "-v"
     ], // テストの詳細表示オプション
+    // GitHub Actionsの固有設定
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/dependabot_prch.yml",
         ".github/workflows/prch_test_matrix_json.yml",

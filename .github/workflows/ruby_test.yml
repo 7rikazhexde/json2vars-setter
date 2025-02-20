@@ -38,6 +38,12 @@ jobs:
           echo "versions_ruby[0]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[0] }}"
           echo "versions_ruby[1]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[1] }}"
           echo "versions_ruby[2]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[2] }}"
+          echo "versions_ruby[3]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[3] }}"
+          echo "versions_ruby[4]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[4] }}"
+          echo "versions_ruby[5]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[5] }}"
+          echo "versions_ruby[6]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[6] }}"
+          echo "versions_ruby[7]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[7] }}"
+          echo "versions_ruby[8]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[8] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -46,6 +52,9 @@ jobs:
       matrix:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         ruby-version: ${{ fromJson(needs.set_variables.outputs.versions_ruby) }}
+        exclude:
+          - os: windows-latest
+            ruby-version: '3.4.0'
     runs-on: ${{ matrix.os }}
     outputs:
       test_status: ${{ steps.set_status.outputs.status }}
@@ -92,6 +101,12 @@ jobs:
           versions_ruby_0="${{ fromJson(needs.set_variables.outputs.versions_ruby)[0] }}"
           versions_ruby_1="${{ fromJson(needs.set_variables.outputs.versions_ruby)[1] }}"
           versions_ruby_2="${{ fromJson(needs.set_variables.outputs.versions_ruby)[2] }}"
+          versions_ruby_3="${{ fromJson(needs.set_variables.outputs.versions_ruby)[3] }}"
+          versions_ruby_4="${{ fromJson(needs.set_variables.outputs.versions_ruby)[4] }}"
+          versions_ruby_5="${{ fromJson(needs.set_variables.outputs.versions_ruby)[5] }}"
+          versions_ruby_6="${{ fromJson(needs.set_variables.outputs.versions_ruby)[6] }}"
+          versions_ruby_7="${{ fromJson(needs.set_variables.outputs.versions_ruby)[7] }}"
+          versions_ruby_8="${{ fromJson(needs.set_variables.outputs.versions_ruby)[8] }}"
 
           echo "os: ${os}"
           echo "os_0: ${os_0}"
@@ -101,6 +116,12 @@ jobs:
           echo "versions_ruby_0: ${versions_ruby_0}"
           echo "versions_ruby_1: ${versions_ruby_1}"
           echo "versions_ruby_2: ${versions_ruby_2}"
+          echo "versions_ruby_3: ${versions_ruby_3}"
+          echo "versions_ruby_4: ${versions_ruby_4}"
+          echo "versions_ruby_5: ${versions_ruby_5}"
+          echo "versions_ruby_6: ${versions_ruby_6}"
+          echo "versions_ruby_7: ${versions_ruby_7}"
+          echo "versions_ruby_8: ${versions_ruby_8}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case

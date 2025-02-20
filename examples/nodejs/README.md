@@ -78,9 +78,9 @@ npm test
 - Validates JSON parsing functionality
 - Tests error handling and edge cases
 
-## JSON Configuration
+## JSON Configuration Format
 
-The parser expects a JSON file with the following structure:
+Please check [Node.js Releases](https://nodejs.org/en/about/previous-releases) and create `.github/workflows/nodejs_project_matrix.json`
 
 ```json
 {
@@ -94,7 +94,8 @@ The parser expects a JSON file with the following structure:
       "16",
       "18",
       "20",
-      "22"
+      "22",
+      "23"
     ]
   },
   "ghpages_branch": "ghgapes"

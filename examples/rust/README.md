@@ -68,6 +68,8 @@ Command-line interface to parse and display JSON configuration.
 
 ## JSON Configuration Format
 
+Please check [Releases](https://github.com/rust-lang/rust/releases) and create `.github/workflows/rust_project_matrix.json`
+
 ```json
 {
     "os": [
@@ -81,6 +83,9 @@ Command-line interface to parse and display JSON configuration.
             "1.80.0",
             "1.81.0",
             "1.82.0",
+            "1.83.0",
+            "1.84.0",
+            "1.84.1",
             "stable"
         ]
     },
