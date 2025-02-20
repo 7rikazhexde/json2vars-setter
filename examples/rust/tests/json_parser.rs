@@ -21,6 +21,9 @@ fn test_parse_valid_config() {
     assert!(rust_versions.contains(&"1.80.0".to_string()));
     assert!(rust_versions.contains(&"1.81.0".to_string()));
     assert!(rust_versions.contains(&"1.82.0".to_string()));
+    assert!(rust_versions.contains(&"1.83.0".to_string()));
+    assert!(rust_versions.contains(&"1.84.0".to_string()));
+    assert!(rust_versions.contains(&"1.84.1".to_string()));
     assert!(rust_versions.contains(&"stable".to_string()));
 
     assert_eq!(config.ghpages_branch, "ghgapes");

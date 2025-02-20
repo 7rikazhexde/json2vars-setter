@@ -32,7 +32,7 @@ source ~/.bashrc
 git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
 
 # Install Ruby
-rbenv install 3.0.6
+rbenv install 3.4.2
 ```
 
 Clone the repository and install
@@ -43,7 +43,7 @@ git clone https://github.com/7rikazhexde/json2vars-setter.git
 cd json2vars-setter/examples/ruby
 
 # Set .ruby-version
-rbenv local 3.0.6
+rbenv local 3.4.2
 
 # Install dependencies
 gem install bundler
@@ -93,6 +93,8 @@ Contains RSpec test cases.
 
 ## JSON Configuration Format
 
+Please check [Ruby Releases](https://www.ruby-lang.org/en/downloads/releases/) and create `.github/workflows/ruby_project_matrix.json`
+
 ```json
 {
     "os": [
@@ -104,7 +106,13 @@ Contains RSpec test cases.
         "ruby": [
             "3.0.6",
             "3.1.6",
-            "3.2.6"
+            "3.2.6",
+            "3.3.6",
+            "3.4.0",
+            "3.4.1",
+            "3.3.7",
+            "3.2.7",
+            "3.4.2"
         ]
     },
     "ghpages_branch": "ghgapes"

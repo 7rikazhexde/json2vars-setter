@@ -89,7 +89,7 @@ The `jsonparser` package provides functionality to parse JSON configuration file
 
 ## JSON Configuration Format
 
-Plaese create `.github/workflows/go_project_matrix.json`
+Please check [All Releases](https://go.dev/dl/) and create `.github/workflows/go_project_matrix.json`
 
 ```json
 {
@@ -102,7 +102,12 @@ Plaese create `.github/workflows/go_project_matrix.json`
         "go": [
             "1.23.0",
             "1.23.1",
-            "1.23.2"
+            "1.23.2",
+            "1.23.3",
+            "1.23.4",
+            "1.23.5",
+            "1.23.6",
+            "1.24.0"
         ]
     },
     "ghpages_branch": "ghgapes"

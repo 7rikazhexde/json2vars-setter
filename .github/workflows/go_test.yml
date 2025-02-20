@@ -38,6 +38,11 @@ jobs:
           echo "versions_go[0]: ${{ fromJson(steps.json2vars.outputs.versions_go)[0] }}"
           echo "versions_go[1]: ${{ fromJson(steps.json2vars.outputs.versions_go)[1] }}"
           echo "versions_go[2]: ${{ fromJson(steps.json2vars.outputs.versions_go)[2] }}"
+          echo "versions_go[3]: ${{ fromJson(steps.json2vars.outputs.versions_go)[3] }}"
+          echo "versions_go[4]: ${{ fromJson(steps.json2vars.outputs.versions_go)[4] }}"
+          echo "versions_go[5]: ${{ fromJson(steps.json2vars.outputs.versions_go)[5] }}"
+          echo "versions_go[6]: ${{ fromJson(steps.json2vars.outputs.versions_go)[6] }}"
+          echo "versions_go[7]: ${{ fromJson(steps.json2vars.outputs.versions_go)[7] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -94,6 +99,11 @@ jobs:
           versions_go_0="${{ fromJson(needs.set_variables.outputs.versions_go)[0] }}"
           versions_go_1="${{ fromJson(needs.set_variables.outputs.versions_go)[1] }}"
           versions_go_2="${{ fromJson(needs.set_variables.outputs.versions_go)[2] }}"
+          versions_go_3="${{ fromJson(needs.set_variables.outputs.versions_go)[3] }}"
+          versions_go_4="${{ fromJson(needs.set_variables.outputs.versions_go)[4] }}"
+          versions_go_5="${{ fromJson(needs.set_variables.outputs.versions_go)[5] }}"
+          versions_go_6="${{ fromJson(needs.set_variables.outputs.versions_go)[6] }}"
+          versions_go_7="${{ fromJson(needs.set_variables.outputs.versions_go)[7] }}"
 
           echo "os: ${os}"
           echo "os_0: ${os_0}"
@@ -103,6 +113,11 @@ jobs:
           echo "versions_go_0: ${versions_go_0}"
           echo "versions_go_1: ${versions_go_1}"
           echo "versions_go_2: ${versions_go_2}"
+          echo "versions_go_3: ${versions_go_3}"
+          echo "versions_go_4: ${versions_go_4}"
+          echo "versions_go_5: ${versions_go_5}"
+          echo "versions_go_6: ${versions_go_6}"
+          echo "versions_go_7: ${versions_go_7}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case

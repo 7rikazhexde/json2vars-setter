@@ -31,7 +31,7 @@ func TestParseConfig(t *testing.T) {
 			check: func(c *MatrixConfig) bool {
 				// JSONファイルの実際の値と一致するように更新
 				expectedOS := []string{"ubuntu-latest", "windows-latest", "macos-latest"}
-				expectedVersions := []string{"1.23.0", "1.23.1", "1.23.2"}
+				expectedVersions := []string{"1.23.0", "1.23.1", "1.23.2", "1.23.3", "1.23.4", "1.23.5", "1.23.6", "1.24.0"}
 
 				if !reflect.DeepEqual(c.OS, expectedOS) {
 					t.Errorf("Expected OS %v, got %v", expectedOS, c.OS)

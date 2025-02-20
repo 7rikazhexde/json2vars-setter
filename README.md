@@ -17,6 +17,7 @@
     - [Inputs](#inputs)
     - [Outputs](#outputs)
   - [Examples](#examples)
+    - [Releases Info Link](#releases-info-link)
     - [Variable Reference Examples](#variable-reference-examples)
     - [1. Basic Usage (Within Same Job)](#1-basic-usage-within-same-job)
     - [2. Cross-Job Usage (Using needs Context)](#2-cross-job-usage-using-needs-context)
@@ -95,6 +96,16 @@ This action uses a JSON configuration file (e.g. [matrix.json](.github/workflows
 <details>
 <summary>Complete Configuration Example</summary>
 
+### Releases Info Link
+
+| Lang      | Release link                                                            |
+|-----------|-------------------------------------------------------------------------|
+| ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)  | [Python Documentation by Version](https://www.python.org/doc/versions/) |
+| ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white) | [Node.js Releases](https://nodejs.org/en/about/previous-releases)       |
+| [![Ruby](https://img.shields.io/badge/Ruby-CC342D?style=flat&logo=ruby&logoColor=white)](.github/workflows/ruby_test.yml)    | [Ruby Releases](https://www.ruby-lang.org/en/downloads/releases/)       |
+| ![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white)     | [All Releases](https://go.dev/dl/)                                      |
+| ![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)    | [Releases](https://github.com/rust-lang/rust/releases)                  |
+
 ```json
 {
     "os": [
@@ -144,6 +155,8 @@ You can also create a simplified configuration by including only the languages y
 
 <details>
 <summary>Simplified Configuration Example</summary>
+
+Please check [Python Documentation by Version](https://www.python.org/doc/versions/) and create `.github/workflows/python_project_matrix.json`
 
 ```jsonc
 {
