@@ -43,6 +43,7 @@ jobs:
           echo "versions_rust[5]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[5] }}"
           echo "versions_rust[6]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[6] }}"
           echo "versions_rust[7]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[7] }}"
+          echo "versions_rust[8]: ${{ fromJson(steps.json2vars.outputs.versions_rust)[8] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -101,6 +102,7 @@ jobs:
           versions_rust_5="${{ fromJson(needs.set_variables.outputs.versions_rust)[5] }}"
           versions_rust_6="${{ fromJson(needs.set_variables.outputs.versions_rust)[6] }}"
           versions_rust_7="${{ fromJson(needs.set_variables.outputs.versions_rust)[7] }}"
+          versions_rust_8="${{ fromJson(needs.set_variables.outputs.versions_rust)[8] }}"
 
           echo "os: ${os}"
           echo "os_0: ${os_0}"
@@ -115,6 +117,7 @@ jobs:
           echo "versions_rust_5: ${versions_rust_5}"
           echo "versions_rust_6: ${versions_rust_6}"
           echo "versions_rust_7: ${versions_rust_7}"
+          echo "versions_rust_8: ${versions_rust_8}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case
