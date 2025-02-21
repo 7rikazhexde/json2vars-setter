@@ -5,8 +5,10 @@ name: Update Requirements after Dependabot Merge
 #    - プルリクエストマージ時
 #    - Dependabotによる実行であること
 # 2. 環境のセットアップ（Ubuntu、Python、Poetry）
-# 3. requirements.txtとrequirements-dev.txtの作成
-# 4. 変更のコミットとプッシュ
+# 3. poetry.lockファイルの更新
+# 4. 依存関係のインストール（更新されたlockファイルを使用）
+# 5. requirements.txtとrequirements-dev.txtの生成
+# 6. 変更のコミットとプッシュ（poetry.lockを含む）
 
 on:
   pull_request:
@@ -21,24 +23,36 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_FOR_PUSHES }}
+
       - name: Set up Python
         uses: actions/setup-python@v5.4.0
         with:
           python-version: '3.13'
+
       - name: Install Poetry
         run: pip install poetry
+
       - name: Add plugin
         run: poetry self add poetry-plugin-export
+
+      # poetry.lockを最新化
+      - name: Update lock file
+        run: poetry lock
+
+      # 最新のlockファイルを使用して依存関係をインストール
       - name: Install dependencies
         run: poetry install
+
       - name: Update requirements files
         run: |
           poetry export -f requirements.txt -o requirements.txt --without-hashes
           poetry export -f requirements.txt -o requirements-dev.txt --without-hashes --with dev
+
+      # poetry.lockも含めてコミット
       - name: Commit and push changes
         run: |
           git config --local user.email "33836132+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add requirements.txt requirements-dev.txt
-          git commit -m ":wrench:Update requirements files after dependency update [skip ci]" || echo "No changes to commit"
+          git add requirements.txt requirements-dev.txt poetry.lock
+          git commit -m ":wrench:Update requirements files and lock after dependency update [skip ci]" || echo "No changes to commit"
           git push
