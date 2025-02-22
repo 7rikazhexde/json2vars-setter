@@ -4,7 +4,7 @@
 
 ## Overview
 
-**JSON to Variables Setter (json2vars-setter)** is a GitHub Action that parses a JSON file and sets its values as output variables (such as operating systems, Python versions, and GitHub Pages branch) in GitHub Actions workflows..
+**JSON to Variables Setter (json2vars-setter)** is a GitHub Action that parses a JSON file and sets its values as output variables (such as operating systems, Python versions, and GitHub Pages branch) in GitHub Actions workflows.
 
 ## Table of Contents
 
