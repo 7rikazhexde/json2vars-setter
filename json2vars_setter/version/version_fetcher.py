@@ -3,11 +3,11 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Union
 
-from .go_fetch import fetch_go_versions
-from .nodejs_fetch import fetch_nodejs_versions
-from .python_fetch import fetch_python_versions
-from .ruby_fetch import fetch_ruby_versions
-from .rust_fetch import fetch_rust_versions
+from json2vars_setter.version.go_fetch import fetch_go_versions
+from json2vars_setter.version.nodejs_fetch import fetch_nodejs_versions
+from json2vars_setter.version.python_fetch import fetch_python_versions
+from json2vars_setter.version.ruby_fetch import fetch_ruby_versions
+from json2vars_setter.version.rust_fetch import fetch_rust_versions
 
 
 class VersionType(Enum):
