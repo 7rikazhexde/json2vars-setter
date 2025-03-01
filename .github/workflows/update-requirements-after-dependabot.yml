@@ -2,17 +2,19 @@ name: Update Requirements after Dependabot Merge
 
 # ワークフローの処理の流れ:
 # 1. トリガー条件:
-#    - プルリクエストマージ時
-#    - Dependabotによる実行であること
+#    - プルリクエストがマージされたとき、かつ、Dependabot によるマージであること
+#    - 手動でワークフローをトリガーするとき
 # 2. 環境のセットアップ（Ubuntu、Python、Poetry）
-# 3. poetry.lockファイルの更新
-# 4. 依存関係のインストール（更新されたlockファイルを使用）
-# 5. requirements.txtとrequirements-dev.txtの生成
-# 6. 変更のコミットとプッシュ（poetry.lockを含む）
+# 3. poetry.lock ファイルの更新
+# 4. 依存関係のインストール（更新された lock ファイルを使用）
+# 5. requirements.txt と requirements-dev.txt の生成
+# 6. Gist にファイル（requirements.txt と requirements-dev.txt）をアップロード
+# 7. requirements.txt と requirements-dev.txt を削除
 
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
 
 jobs:
   update-requirements:
@@ -35,24 +37,38 @@ jobs:
       - name: Add plugin
         run: poetry self add poetry-plugin-export
 
-      # poetry.lockを最新化
       - name: Update lock file
         run: poetry lock
 
-      # 最新のlockファイルを使用して依存関係をインストール
       - name: Install dependencies
         run: poetry install
 
-      - name: Update requirements files
+      - name: Generate requirements files
         run: |
           poetry export -f requirements.txt -o requirements.txt --without-hashes
           poetry export -f requirements.txt -o requirements-dev.txt --without-hashes --with dev
 
-      # poetry.lockも含めてコミット
-      - name: Commit and push changes
+      - name: Upload requirements files to Gist
+        env:
+          GIST_TOKEN: ${{ secrets.PAT_FOR_PUSHES }}
         run: |
-          git config --local user.email "33836132+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add requirements.txt requirements-dev.txt poetry.lock
-          git commit -m ":wrench:Update requirements files and lock after dependency update [skip ci]" || echo "No changes to commit"
-          git push
+          upload_to_gist() {
+            local file="$1"
+            local gist_id="$2"
+            local json_payload
+            # jqにfileとcontentを渡してJSONを構築
+            json_payload=$(jq -n --arg fname "$file" --arg content "$(cat "$file")" '{"files": {($fname): {"content": $content}}}')
+            curl -X PATCH \
+              -H "Authorization: token $GIST_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "$json_payload" \
+              "https://api.github.com/gists/$gist_id" || echo "Failed to upload $file to Gist"
+          }
+          # https://gist.github.com/7rikazhexde/1b8a23a0b26d913aeda1b900e903f3d5
+          upload_to_gist "requirements.txt" "1b8a23a0b26d913aeda1b900e903f3d5"
+          # https://gist.github.com/7rikazhexde/ee63b33bcb6bb21ac872c5ed41dbf4a6
+          upload_to_gist "requirements-dev.txt" "ee63b33bcb6bb21ac872c5ed41dbf4a6"
+
+      - name: Clean up local requirements files
+        run: |
+          rm requirements.txt requirements-dev.txt
