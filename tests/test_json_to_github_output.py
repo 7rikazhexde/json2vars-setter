@@ -9,14 +9,14 @@ from _pytest.monkeypatch import MonkeyPatch
 
 from json2vars_setter.json_to_github_output import parse_json, set_github_output
 
-MATRIX_JSON_PATH = ".github/workflows/matrix.json"
+MATRIX_JSON_PATH = ".github/workflows/matrix_static.json"
 
 
 # --- Test case for parse_json() ---
 
 
-def test_parse_matrix_json() -> None:
-    """Read matrix.json and test parse_json"""
+def test_parse_matrix_static_json() -> None:
+    """Read matrix_static.json.json and test parse_json"""
     with open(MATRIX_JSON_PATH, "r") as f:
         data = json.load(f)
 
