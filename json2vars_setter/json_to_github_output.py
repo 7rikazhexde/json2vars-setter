@@ -8,8 +8,12 @@ def set_github_output(outputs: Dict[str, str], debug: bool) -> None:
     """
     Set multiple GitHub Actions output variables by appending them to the GITHUB_OUTPUT file at once.
 
-    :param outputs: Dictionary of output variables to set.
-    :param debug: If True, print debug information to standard output.
+    Args:
+        outputs: Dictionary of output variables to set.
+        debug: If True, print debug information to standard output.
+
+    Returns:
+        None
     """
     github_output = os.getenv("GITHUB_OUTPUT")
     if github_output is None:
@@ -30,10 +34,13 @@ def parse_json(data: Any, prefix: str = "", debug: bool = False) -> Dict[str, st
     """
     Recursively parse JSON data and collect GitHub Actions outputs.
 
-    :param data: The JSON data to be parsed.
-    :param prefix: Prefix to add to the variable names (used for nested dictionaries).
-    :param debug: If True, print debug information to standard output.
-    :return: A dictionary of parsed output variables.
+    Args:
+        data: The JSON data to be parsed.
+        prefix: Prefix to add to the variable names (used for nested dictionaries).
+        debug: If True, print debug information to standard output.
+
+    Returns:
+        A dictionary of parsed output variables.
     """
     outputs = {}
     if isinstance(data, dict):

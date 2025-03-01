@@ -16,8 +16,6 @@ from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 from json2vars_setter.version.core.base import BaseVersionFetcher, VersionInfo
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
-
-# Import version fetchers
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher
@@ -55,7 +53,7 @@ class VersionCache:
         self.version_count: int = self._get_version_count()
         self.new_versions_found: DefaultDict[str, int] = defaultdict(
             int
-        )  # 新しく見つかったバージョンの数
+        )  # Number of newly found versions
 
     def _load_cache(self) -> Dict[str, Any]:
         """
@@ -82,7 +80,7 @@ class VersionCache:
         }
 
     def _get_version_count(self) -> int:
-        """取得済みのバージョン数を取得"""
+        """Get the number of versions obtained"""
         if "metadata" in self.data and "version_count" in self.data["metadata"]:
             version_count: int = self.data["metadata"]["version_count"]
             return version_count
@@ -109,42 +107,44 @@ class VersionCache:
         Args:
             language: The programming language to check
             max_age_days: Maximum age in days before cache is considered stale
-            requested_count: 要求されたバージョン数（0以外の場合はキャッシュ済みの数と比較）
+            requested_count: Number of requested versions (if non-zero, compare with cached count)
 
         Returns:
             True if update is needed, False otherwise
         """
-        # キャッシュが存在しない場合は更新が必要
+        # Update is needed if cache does not exist
         if "languages" not in self.data:
-            logger.debug("言語情報のキャッシュが存在しないため更新が必要")
+            logger.debug("Update needed because language cache does not exist")
             return True
 
         if language not in self.data.get("languages", {}):
-            logger.debug(f"{language}: キャッシュが存在しないため更新が必要")
+            logger.debug(f"{language}: Update needed because cache does not exist")
             return True
 
-        # 該当言語のキャッシュがない場合も更新が必要
+        # Update is needed if there is no cache for the language
         language_info = self.data["languages"].get(language, {})
         if (
             not language_info
             or "recent_releases" not in language_info
             or not language_info["recent_releases"]
         ):
-            logger.debug(f"{language}: リリース情報がないため更新が必要")
+            logger.debug(
+                f"{language}: Update needed because there is no release information"
+            )
             return True
 
-        # 要求されたバージョン数がキャッシュよりも多い場合は更新が必要
+        # Update is needed if the number of requested versions is greater than the cached count
         if requested_count > 0:
             current_versions = len(
                 self.data["languages"][language].get("recent_releases", [])
             )
             if current_versions < requested_count:
                 logger.info(
-                    f"{language}: バージョン取得数が増えました: {current_versions} → {requested_count}"
+                    f"{language}: Number of versions to fetch increased: {current_versions} → {requested_count}"
                 )
                 return True
 
-        # 最終更新日のチェック
+        # Check the last update date
         last_updated = self.data["languages"][language].get("last_updated")
         if not last_updated:
             return True
@@ -155,7 +155,7 @@ class VersionCache:
             is_stale = (datetime.utcnow() - last_updated_dt) > max_age
             if is_stale:
                 logger.debug(
-                    f"{language}: 最終更新日から{max_age_days}日以上経過しています"
+                    f"{language}: More than {max_age_days} days have passed since the last update"
                 )
             return is_stale
         except (ValueError, TypeError):
@@ -174,11 +174,11 @@ class VersionCache:
         Args:
             language: The programming language to update
             version_info: The new version information to cache
-            count: 取得したバージョン数
-            incremental: インクリメンタルモードの場合True
+            count: Number of versions obtained
+            incremental: True if in incremental mode
 
         Returns:
-            (変更があったか, 新しく追加されたバージョンのセット)
+            (Whether there were changes, Set of newly added versions)
         """
         if "languages" not in self.data:
             self.data["languages"] = {}
@@ -186,7 +186,7 @@ class VersionCache:
         if language not in self.data["languages"]:
             self.data["languages"][language] = {}
 
-        # 既存のバージョンリストを取得
+        # Get the existing version list
         existing_versions = set()
         existing_releases = []
 
@@ -196,26 +196,26 @@ class VersionCache:
                 if isinstance(release, dict) and "version" in release:
                     existing_versions.add(release["version"])
 
-        # 新しいリリース情報をシリアライズ
+        # Serialize new release information
         new_releases = [vars(r) for r in version_info.recent_releases]
 
-        # 追加された新しいバージョンを追跡
+        # Track newly added versions
         new_versions = set()
         for release in new_releases:
             if release["version"] not in existing_versions:
                 new_versions.add(release["version"])
 
-        # インクリメンタルモードの場合、既存と新しいリリースをマージ
+        # Merge existing and new releases in incremental mode
         if incremental:
-            # 既存のリリースに新しいリリースを追加
+            # Add new releases to existing releases
             merged_releases = existing_releases.copy()
 
-            # 重複を避けるため、既存にないバージョンのみ追加
+            # Add only versions that do not exist in the existing releases to avoid duplicates
             for release in new_releases:
                 if release["version"] not in existing_versions:
                     merged_releases.append(release)
 
-            # バージョンでソート（新しい順）して最新のN件を保持
+            # Sort by version (newest first) and keep the latest N releases
             if count > 0:
                 merged_releases.sort(
                     key=lambda x: [
@@ -226,27 +226,27 @@ class VersionCache:
                 )
                 merged_releases = merged_releases[:count]
         else:
-            # インクリメンタルでない場合は新しいリリースのみ使用
+            # Use only new releases if not in incremental mode
             merged_releases = new_releases
 
-        # 最新と安定版の情報を更新
+        # Update latest and stable information
         latest = version_info.latest
         stable = version_info.stable
 
-        # 既存のlatest/stableが利用可能でAPIからは取得できなかった場合、既存の値を維持
+        # Maintain existing latest/stable if available and not obtained from API
         if latest is None and "latest" in self.data["languages"][language]:
             latest = self.data["languages"][language]["latest"]
             logger.debug(
-                f"{language}: APIから最新バージョンを取得できなかったため既存の値を維持: {latest}"
+                f"{language}: Maintained existing latest version as it was not obtained from API: {latest}"
             )
 
         if stable is None and "stable" in self.data["languages"][language]:
             stable = self.data["languages"][language]["stable"]
             logger.debug(
-                f"{language}: APIから安定版バージョンを取得できなかったため既存の値を維持: {stable}"
+                f"{language}: Maintained existing stable version as it was not obtained from API: {stable}"
             )
 
-        # キャッシュを更新
+        # Update cache
         self.data["languages"][language].update(
             {
                 "latest": latest,
@@ -256,20 +256,20 @@ class VersionCache:
             }
         )
 
-        # メタデータの更新
+        # Update metadata
         if "metadata" not in self.data:
             self.data["metadata"] = {}
 
         self.data["metadata"]["last_updated"] = datetime.utcnow().isoformat()
 
-        # Count情報の更新
+        # Update count information
         if count > 0:
             current_count = self.data["metadata"].get("version_count", 0)
             if count > current_count:
                 self.data["metadata"]["version_count"] = count
-                logger.debug(f"更新したバージョン取得数: {current_count} → {count}")
+                logger.debug(f"Updated version count: {current_count} → {count}")
 
-        # 新しく追加されたバージョンの数を保存
+        # Save the number of newly added versions
         self.new_versions_found[language] = len(new_versions)
 
         return bool(new_versions), new_versions
@@ -320,7 +320,7 @@ def update_versions(
         max_age_days: Maximum age of cache in days
         count: Number of versions to fetch per language
         cache_file: Optional custom cache file path
-        incremental: 既存キャッシュとマージするかどうか
+        incremental: Whether to merge with existing cache
 
     Returns:
         Dictionary with version information and update summary
@@ -348,7 +348,7 @@ def update_versions(
                 unchanged_languages.add(language)
                 continue
 
-            # APIレート制限到達後のスキップ
+            # Skip after reaching rate limit
             if rate_limit_reached:
                 logger.warning(f"Skipping {language} due to previous rate limit errors")
                 skipped_languages.add(language)
@@ -363,27 +363,27 @@ def update_versions(
                 language, version_info, count, incremental
             )
 
-            # バージョン変更の追跡
+            # Track version changes
             if has_changes:
                 updated_languages.add(language)
                 new_versions[language] = new_version_set
             else:
                 unchanged_languages.add(language)
 
-            # 変更内容を報告
+            # Report changes
             logger.info(
                 f"Updated {language}: latest={version_info.latest}, stable={version_info.stable}"
             )
             if new_version_set:
                 logger.info(
-                    f"  新しく見つかったバージョン: {', '.join(sorted(new_version_set, reverse=True))}"
+                    f"  Newly found versions: {', '.join(sorted(new_version_set, reverse=True))}"
                 )
 
         except Exception as e:
             logger.error(f"Error updating {language}: {e}")
             failed_languages.add(language)
 
-            # レート制限エラーのチェック
+            # Check for rate limit errors
             if "rate limit exceeded" in str(e).lower():
                 rate_limit_reached = True
                 logger.warning(
@@ -438,7 +438,7 @@ def generate_version_template(
     existing_file: Optional[Path] = None,
     languages: Optional[List[str]] = None,
     keep_existing: bool = True,
-    sort_order: str = "desc",  # 'desc'または'asc'
+    sort_order: str = "desc",  # 'desc' or 'asc'
 ) -> None:
     """
     Generate a version template JSON file from the cache
@@ -475,7 +475,7 @@ def generate_version_template(
         except (json.JSONDecodeError, IOError) as e:
             logger.warning(f"Could not load existing file: {e}")
 
-    # バージョンのソート方法を決定
+    # Determine version sort order
     reverse_sort = sort_order.lower() == "desc"
 
     # Add versions for each language from cache
@@ -501,10 +501,10 @@ def generate_version_template(
                 if info.get("latest") != info.get("stable"):
                     versions.insert(0, info["latest"])
 
-            # セマンティックバージョニングに対応したソート
+            # Sort supporting semantic versioning
             template["versions"][language] = sorted(
                 list(set(versions)),
-                reverse=reverse_sort,  # Trueなら降順、Falseなら昇順
+                reverse=reverse_sort,  # True for descending, False for ascending
                 key=lambda v: [
                     int(p) if p.isdigit() else p for p in v.replace("-", ".").split(".")
                 ],
@@ -519,13 +519,13 @@ def generate_version_template(
             and "versions" in existing_data
             and language in existing_data["versions"]
         ):
-            # 既存のテンプレートから値を維持
+            # Maintain values from existing template
             template["versions"][language] = existing_data["versions"][language]
             logger.info(
                 f"Maintained existing {language} versions ({len(existing_data['versions'][language])} versions)"
             )
         else:
-            # 情報がない場合は空リストを設定
+            # Set empty list if no information
             template["versions"][language] = []
             logger.warning(f"No versions found for {language}")
 
@@ -612,28 +612,28 @@ Examples:
     parser.add_argument(
         "--cache-only",
         action="store_true",
-        help="キャッシュの更新のみ行い、テンプレートを生成しない",
+        help="Only update the cache, do not generate the template",
     )
     parser.add_argument(
         "--template-only",
         action="store_true",
-        help="既存のキャッシュからテンプレートのみ生成する（APIリクエストなし）",
+        help="Only generate the template from existing cache (no API requests)",
     )
     parser.add_argument(
         "--incremental",
         action="store_true",
-        help="既存のキャッシュを置き換えずに、新しいバージョンのみを追加する",
+        help="Add only new versions without replacing existing cache",
     )
     parser.add_argument(
         "--keep-existing",
         action="store_true",
-        help="テンプレート生成時に既存のバージョン情報を維持する",
+        help="Maintain existing version information when generating template",
     )
     parser.add_argument(
         "--sort",
         choices=["asc", "desc"],
         default="desc",
-        help="バージョンのソート順 - desc: 新しい順 (デフォルト), asc: 古い順",
+        help="Version sort order - desc: newest first (default), asc: oldest first",
     )
     parser.add_argument(
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
@@ -645,12 +645,12 @@ Examples:
     if args.verbose:
         logger.setLevel(logging.DEBUG)
 
-    # キャッシュファイルの存在確認
+    # Check for cache file existence
     if not args.template_only and not args.cache_file.exists():
         logger.warning(
-            f"キャッシュファイル {args.cache_file} が存在しません。新規に作成します。"
+            f"Cache file {args.cache_file} does not exist. Creating a new one."
         )
-        # キャッシュがない場合は強制的に更新
+        # Force update if no cache exists
         force = True
     else:
         force = args.force
@@ -661,13 +661,13 @@ Examples:
     else:
         languages = args.languages
 
-    # テンプレートのみ更新モードの場合はキャッシュ更新をスキップ
+    # Skip cache update in template-only mode
     cache_data: Optional[Dict[str, Any]] = None
     if not args.template_only:
         # Update versions
         result = update_versions(
             languages,
-            force=force,  # args.force の代わりに変数を使用
+            force=force,  # Use variable instead of args.force
             max_age_days=args.max_age,
             count=args.count,
             cache_file=args.cache_file,
@@ -675,12 +675,12 @@ Examples:
         )
         cache_data = result["cache_data"]
     else:
-        logger.info("テンプレートのみ更新モード: キャッシュ更新をスキップします")
+        logger.info("Template-only mode: Skipping cache update")
         # Load existing cache for template generation
         cache = VersionCache(args.cache_file)
         cache_data = cache.data
 
-    # キャッシュのみ更新モードの場合はテンプレート生成をスキップ
+    # Skip template generation in cache-only mode
     if not args.cache_only and cache_data:
         # Generate template file
         generate_version_template(
@@ -691,12 +691,12 @@ Examples:
             if not args.template_only or "all" not in args.languages
             else None,
             args.keep_existing,
-            args.sort,  # ソート順を渡す
+            args.sort,  # Pass sort order
         )
     elif args.cache_only:
-        logger.info("キャッシュのみ更新モード: テンプレート生成をスキップします")
+        logger.info("Cache-only mode: Skipping template generation")
 
-    logger.info("処理が完了しました")
+    logger.info("Processing completed")
 
 
 if __name__ == "__main__":

@@ -114,36 +114,35 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             Tuple of (latest_release, stable_release)
         """
         if not releases:
-            # 例外を発生させて、リリースが存在しない場合に明示的に処理
+            # Raise an exception to explicitly handle the case where no releases are available
             raise ValueError("No releases available")
 
-        # 最新バージョンは常に最初のリリース
+        # The latest version is always the first release
         latest = releases[0]
 
-        # 少ないタグセットで動作するようLTS情報を直接検査
+        # Directly check LTS information for a smaller set of tags
         lts_versions = self._fetch_latest_lts_versions()
         self.logger.info(
             f"Found current LTS versions: {', '.join(lts_versions[:3])} (total: {len(lts_versions)})"
         )
 
-        # 現在のタグセットに対してLTSをチェック
+        # Check for LTS in the current set of tags
         for lts_version in lts_versions:
-            # LTSバージョンと一致するリリースを探す
+            # Look for a release that matches the LTS version
             for release in releases:
                 version = release.version
                 tag_name = release.additional_info.get("tag_name", "")
-                # バージョン番号で比較
+                # Compare by version number
                 if version == lts_version or tag_name == f"v{lts_version}":
                     self.logger.info(f"Found LTS version in current tags: {version}")
                     return latest, release
 
-        # リリースリストに十分なタグがない可能性があるため、
-        # 追加のリリースを取得してLTSを探す
+        # If not found, fetch additional releases to look for LTS
         try:
-            # v22.x系の最新リリースを探す
+            # Look for the latest release in the v22.x series
             for lts_version in lts_versions:
                 if lts_version.startswith("22."):
-                    # 直接APIを呼び出してタグを取得
+                    # Directly call the API to fetch the tag
                     tag = self._get_specific_tag(f"v{lts_version}")
                     if tag:
                         release_info = self._parse_version_from_tag(tag)
@@ -153,14 +152,14 @@ class NodejsVersionFetcher(BaseVersionFetcher):
         except Exception as e:
             self.logger.warning(f"Failed to fetch specific LTS tag: {e}")
 
-        # それでも見つからない場合は、現在のリリースセットで偶数メジャーバージョンを探す
+        # If still not found, look for even major versions in the current set of releases
         even_major_releases = []
         for release in releases:
             try:
                 version_parts = release.version.split(".")
                 if len(version_parts) >= 1:
                     major = int(version_parts[0])
-                    if major % 2 == 0:  # 偶数メジャーバージョン
+                    if major % 2 == 0:  # Even major version
                         even_major_releases.append(release)
             except ValueError:
                 continue
@@ -170,7 +169,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             self.logger.info(f"Using even major version {stable.version} as stable")
             return latest, stable
 
-        # どれも見つからない場合は最新版を使用するが、警告を出す
+        # If none found, use the latest version but issue a warning
         self.logger.warning(
             f"No LTS or even major version found. Using latest {latest.version} as stable. Consider increasing --count."
         )
@@ -178,7 +177,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
 
     def _fetch_latest_lts_versions(self) -> List[str]:
         """
-        Node.js APIからLTSバージョンを取得し、ソートして返す
+        Fetch LTS versions from Node.js API and return them sorted
 
         Returns:
             List of LTS version strings without "v" prefix
@@ -189,7 +188,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             response.raise_for_status()
             releases = response.json()
 
-            # LTSバージョンを抽出
+            # Extract LTS versions
             lts_versions = []
             for release in releases:
                 version = release.get("version", "").lstrip("v")
@@ -198,7 +197,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
                     lts_versions.append(version)
 
             if lts_versions:
-                # バージョンを降順ソート（最新が先頭）
+                # Sort versions in descending order (latest first)
                 sorted_versions = sorted(
                     lts_versions,
                     key=lambda v: [int(x) for x in v.split(".")],
@@ -210,7 +209,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
                 return sorted_versions
             else:
                 self.logger.warning("No LTS versions found in API response")
-                # 空のリストを返す（次のステップで偶数メジャーバージョンを探す）
+                # Return an empty list (next step will look for even major versions)
                 return []
         except Exception as e:
             self.logger.warning(f"Failed to fetch LTS versions: {e}")
@@ -218,13 +217,13 @@ class NodejsVersionFetcher(BaseVersionFetcher):
 
     def _get_specific_tag(self, tag_name: str) -> Optional[Dict[str, Any]]:
         """
-        特定のタグを直接取得
+        Fetch a specific tag directly
 
         Args:
-            tag_name: タグ名（例: "v22.14.0"）
+            tag_name: Tag name (e.g., "v22.14.0")
 
         Returns:
-            タグ情報またはNone
+            Tag information or None
         """
         try:
             url = f"{self.github_api_base}/repos/{self.github_owner}/{self.github_repo}/git/refs/tags/{tag_name}"
@@ -232,27 +231,27 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             response.raise_for_status()
             tag_ref = response.json()
 
-            # タグオブジェクトのURLを取得
+            # Get the URL of the tag object
             tag_url = tag_ref.get("object", {}).get("url")
             if not tag_url:
                 return None
 
-            # タグオブジェクトを取得
+            # Fetch the tag object
             tag_response = self.session.get(tag_url, timeout=10)
             tag_response.raise_for_status()
             tag_obj = tag_response.json()
 
-            # コミットURLを取得
+            # Get the commit URL
             commit_url = tag_obj.get("object", {}).get("url")
             if not commit_url:
                 return None
 
-            # コミット情報を取得
+            # Fetch the commit information
             commit_response = self.session.get(commit_url, timeout=10)
             commit_response.raise_for_status()
             commit = commit_response.json()
 
-            # タグ情報を構築
+            # Construct the tag information
             return {"name": tag_name, "commit": {"sha": commit.get("sha", "")}}
         except Exception as e:
             self.logger.warning(f"Failed to fetch tag {tag_name}: {e}")

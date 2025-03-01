@@ -92,36 +92,36 @@ class RubyVersionFetcher(BaseVersionFetcher):
         self, releases: List[ReleaseInfo]
     ) -> Tuple[ReleaseInfo, ReleaseInfo]:
         """
-        Ruby の安定版と最新版の判定
+        Determine the stable and latest versions of Ruby
 
-        Ruby では:
-        - latest: 最新のリリースバージョン
-        - stable: 通常は最新の前のマイナーバージョン、または
-          リリースから十分に時間が経過した安定したバージョン
+        In Ruby:
+        - latest: The most recent release version
+        - stable: Usually the previous minor version to the latest, or
+          a version that has been stable for a sufficient period
 
         Args:
-            releases: リリース情報のリスト
+            releases: List of release information
 
         Returns:
-            (latest_release, stable_release) のタプル
+            Tuple of (latest_release, stable_release)
         """
         if not releases:
-            # 例外を発生させて、リリースが存在しない場合に明示的に処理
+            # Raise an exception to explicitly handle the case where no releases are available
             raise ValueError("No releases available")
 
-        # 最新バージョンは常に最初のリリース
+        # The latest version is always the first release
         latest = releases[0]
 
-        # バージョン番号を取得して解析
+        # Get and parse the version number
         latest_version = latest.version
         match = re.match(r"(\d+)\.(\d+)\.(\d+)", latest_version)
 
         if match:
             major, minor, patch = map(int, match.groups())
-            # 現在のマイナーバージョンから1つ前を探す
+            # Look for the previous minor version
             prev_minor = minor - 1
 
-            # 1つ前のマイナーバージョンを持つリリースを検索
+            # Search for a release with the previous minor version
             for release in releases:
                 r_match = re.match(r"(\d+)\.(\d+)\.(\d+)", release.version)
                 if r_match:
@@ -132,7 +132,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
                         )
                         return latest, release
 
-        # 適切な安定版が見つからない場合は最新を使用
+        # Use the latest version if no suitable stable version is found
         self.logger.info(
             f"No suitable stable version found, using latest {latest_version} as stable"
         )

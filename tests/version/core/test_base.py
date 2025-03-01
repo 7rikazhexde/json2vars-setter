@@ -9,9 +9,9 @@ from json2vars_setter.version.core.exceptions import GitHubAPIError, ParseError
 from json2vars_setter.version.core.utils import ReleaseInfo
 
 
-# ReleaseInfoのモック化
+# Mocking ReleaseInfo
 class MockReleaseInfo:
-    """ReleaseInfoのモック - clean_versionを回避する"""
+    """Mock for ReleaseInfo - to avoid clean_version"""
 
     def __init__(self, version: str, prerelease: bool = False):
         self.version = version
@@ -82,14 +82,14 @@ def test_parse_version_from_tag() -> None:
     """Test the _parse_version_from_tag implementation"""
     fetcher = ConcreteVersionFetcher()
 
-    # Test stable version - 期待値をclean_versionの結果に合わせる
+    # Test stable version - Adjust expected value to match clean_version result
     release_info = fetcher._parse_version_from_tag({"name": "v1.0.0"})
-    assert release_info.version == "1.0.0"  # "v"がclean_versionで削除される
+    assert release_info.version == "1.0.0"  # "v" is removed by clean_version
     assert release_info.prerelease is False
 
     # Test pre-release version
     release_info = fetcher._parse_version_from_tag({"name": "v1.0.0-beta"})
-    assert release_info.version == "1.0.0-beta"  # "v"が削除される
+    assert release_info.version == "1.0.0-beta"  # "v" is removed
     assert release_info.prerelease is True
 
     # Test error case
@@ -127,7 +127,7 @@ def test_get_github_tags_success(mocker: MockerFixture) -> None:
     # Verify session.get was called correctly
     mock_get.assert_called_once()
     call_args = mock_get.call_args
-    url = call_args.args[0]  # 位置引数の最初の要素（URL）
+    url = call_args.args[0]  # First positional argument (URL)
     assert url == "https://api.github.com/repos/test-owner/test-repo/tags"
     assert call_args.kwargs["params"] == {"page": 1, "per_page": 100}
     assert call_args.kwargs["timeout"] == 10
@@ -172,12 +172,12 @@ def test_get_github_tags_pagination(mocker: MockerFixture) -> None:
 
         return mock_resp
 
-    # 実装を直接オーバーライドする
+    # Override the implementation directly
     class TestVersionFetcher(ConcreteVersionFetcher):
         def _get_github_tags(self, count: Optional[int] = None) -> List[Dict[str, Any]]:
-            """テスト用の上書き実装"""
-            all_tags = page1.copy()  # 1ページ目
-            all_tags.extend(page2)  # 2ページ目
+            """Override implementation for testing"""
+            all_tags = page1.copy()  # Page 1
+            all_tags.extend(page2)  # Page 2
             target_count = count or 5
             return all_tags[:target_count]
 
@@ -206,22 +206,22 @@ def test_get_github_tags_api_error(mocker: MockerFixture) -> None:
 
 def test_get_github_tags_rate_limit_error(mocker: MockerFixture) -> None:
     """Test GitHub tag fetching with rate limit error"""
-    # モックレスポンスを設定
+    # Set up mock response
     mock_response = mocker.Mock()
     mock_response.status_code = 403
     mock_response.text = "API rate limit exceeded"
 
-    # RequestException をモック
+    # Mock RequestException
     mock_exception = requests.exceptions.RequestException("API rate limit exceeded")
     mock_exception.response = mock_response
 
-    # Fetcher をセットアップ
+    # Set up the fetcher
     fetcher = ConcreteVersionFetcher()
 
-    # session.get をモックして例外を投げる
+    # Mock session.get to raise the exception
     mocker.patch.object(fetcher.session, "get", side_effect=mock_exception)
 
-    # レートリミットエラーの処理をテスト
+    # Test rate limit error handling
     with pytest.raises(GitHubAPIError, match="GitHub API rate limit exceeded"):
         fetcher._get_github_tags()
 
@@ -235,8 +235,8 @@ def test_fetch_versions_basic_flow(mocker: MockerFixture) -> None:
         {"name": "v0.8.0", "commit": {"sha": "ghi789"}},
     ]
 
-    # テスト期待値をReleaseInfoの処理後の値に合わせる
-    expected_version = "1.0.0"  # "v"が削除される
+    # Adjust expected value to match ReleaseInfo processing
+    expected_version = "1.0.0"  # "v" is removed
 
     # Set up the fetcher
     fetcher = ConcreteVersionFetcher()
@@ -280,8 +280,8 @@ def test_fetch_versions_parse_error(mocker: MockerFixture) -> None:
         {"name": "", "commit": {"sha": "def456"}},  # This will cause a ParseError
     ]
 
-    # テスト期待値をReleaseInfoの処理後の値に合わせる
-    expected_version = "1.0.0"  # "v"が削除される
+    # Adjust expected value to match ReleaseInfo processing
+    expected_version = "1.0.0"  # "v" is removed
 
     # Set up the fetcher
     fetcher = ConcreteVersionFetcher()
@@ -292,7 +292,7 @@ def test_fetch_versions_parse_error(mocker: MockerFixture) -> None:
     # Test fetch_versions - it should handle the error and still return the valid tag
     version_info = fetcher.fetch_versions()
 
-    # Verify the results - 期待値を調整
+    # Verify the results - Adjust expected value
     assert version_info.latest == expected_version
     assert version_info.stable == expected_version
 
@@ -355,7 +355,7 @@ def test_get_stability_criteria(mocker: MockerFixture) -> None:
     """Test the default _get_stability_criteria implementation"""
     fetcher = ConcreteVersionFetcher()
 
-    # `MockReleaseInfo` の代わりに実際の `ReleaseInfo` を使用
+    # Use actual `ReleaseInfo` instead of `MockReleaseInfo`
     releases: List[ReleaseInfo] = [
         ReleaseInfo(version="1.0.0", prerelease=False),
         ReleaseInfo(version="0.9.0", prerelease=False),

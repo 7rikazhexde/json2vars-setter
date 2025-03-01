@@ -50,7 +50,7 @@ class MockVersionFetcher(BaseVersionFetcher):
     def __init__(
         self, stable: Optional[str] = "2.0.0", latest: Optional[str] = "2.1.0"
     ):
-        # 親クラスのコンストラクタをダミー値で呼び出す
+        # Call the parent class constructor with dummy values
         super().__init__(github_owner="mock-owner", github_repo="mock-repo")
         self.mock_stable = stable
         self.mock_latest = latest
@@ -72,7 +72,7 @@ class MockVersionFetcher(BaseVersionFetcher):
 
     def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
         """Mock implementation of abstract method"""
-        # タグから安定版のReleaseInfoを返す
+        # Return stable ReleaseInfo from tag
         return ReleaseInfo(version=tag.get("name", "1.0.0"), prerelease=False)
 
 
@@ -412,7 +412,7 @@ def test_update_matrix_json_new_language(
 
 def test_update_matrix_json_empty_versions(mocker: MockerFixture) -> None:
     """Test handling of empty version lists"""
-    # サンプルデータを準備
+    # Prepare sample data
     sample_data = {"versions": {"python": ["3.10"]}}
 
     mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
@@ -420,31 +420,31 @@ def test_update_matrix_json_empty_versions(mocker: MockerFixture) -> None:
 
     mock_save = mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
 
-    # バージョンが空のモックを作成
+    # Create a mock with empty versions
     mock_get_fetcher = mocker.patch(
         "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
     )
     mock_fetcher = MockVersionFetcher(stable=None, latest=None)
     mock_get_fetcher.return_value = mock_fetcher
 
-    # 実行
+    # Execute
     update_matrix_json("test.json", {"python": "both"}, dry_run=False)
 
-    # python バージョンは変更されていないはず（空リストに更新されない）
+    # Python version should not be changed (not updated to an empty list)
     updated_matrix = mock_save.call_args[0][1]
     assert "python" in updated_matrix["versions"]
 
 
 def test_backup_creation_success(mocker: MockerFixture) -> None:
     """Test successful backup creation"""
-    # テスト用のデータ
+    # Test data
     sample_data = {"versions": {"python": ["3.10"]}}
 
-    # モックを設定
+    # Set up mocks
     mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
     mock_load.return_value = sample_data
 
-    # save_json_fileをモック化
+    # Mock save_json_file
     mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
 
     mock_get_fetcher = mocker.patch(
@@ -452,56 +452,56 @@ def test_backup_creation_success(mocker: MockerFixture) -> None:
     )
     mock_get_fetcher.return_value = MockVersionFetcher(stable="3.11", latest="3.12")
 
-    # open関数をパッチしてファイル操作をモック
+    # Patch open function to mock file operations
     mock_file = mocker.mock_open(read_data='{"versions": {"python": ["3.10"]}}')
     mocker.patch("builtins.open", mock_file)
 
-    # 実行
+    # Execute
     update_matrix_json("test.json", {"python": "stable"}, dry_run=False)
 
-    # バックアップファイル処理が呼ばれたことを確認
-    # write操作が行われたことを確認
+    # Verify that backup file handling was called
+    # Verify that write operation was performed
     assert (
         mock_file().write.call_count >= 1
-    )  # バックアップファイルへの書き込みが行われた
+    )  # Write operation to backup file was performed
 
 
 def test_real_backup_creation(temp_json_file: str) -> None:
-    """実際にファイルシステムを使用したバックアップ作成テスト"""
-    # テスト用のデータ
+    """Test real backup creation using the file system"""
+    # Test data
     test_data = {"versions": {"python": ["3.10"]}}
 
-    # 一時ファイルを作成
+    # Create a temporary file
     fd, json_file = tempfile.mkstemp(suffix=".json")
-    os.close(fd)  # 明示的にファイル記述子をクローズ
+    os.close(fd)  # Explicitly close the file descriptor
 
-    # JSONデータを書き込む
+    # Write JSON data
     with open(json_file, "w") as f:
         json.dump(test_data, f)
 
     backup_file = f"{json_file}.bak"
 
     try:
-        # テスト実行
+        # Execute test
         with pytest.MonkeyPatch.context() as mp:
-            # get_version_fetcherのパッチ
+            # Patch get_version_fetcher
             mp.setattr(
                 "json2vars_setter.update_matrix_dynamic.get_version_fetcher",
                 lambda lang: MockVersionFetcher(stable="3.11", latest="3.12"),
             )
 
-            # update_matrix_jsonを実行
+            # Execute update_matrix_json
             update_matrix_json(json_file, {"python": "stable"}, dry_run=False)
 
-            # バックアップファイルが作成されたことを確認
+            # Verify that backup file was created
             assert os.path.exists(backup_file)
 
-            # バックアップの内容が元のファイルと一致することを確認
+            # Verify that backup content matches the original file
             with open(backup_file, "r") as f:
                 backup_data = json.load(f)
             assert backup_data == test_data
     finally:
-        # テスト後にファイルを削除
+        # Delete files after test
         if os.path.exists(json_file):
             os.unlink(json_file)
         if os.path.exists(backup_file):

@@ -234,14 +234,28 @@ def update_matrix_json(
 
 
 def main() -> None:
-    """
-    Main function to parse arguments and update JSON file
-
-    Returns:
-        None
-    """
+    """Main function to parse arguments and update JSON file"""
     parser = argparse.ArgumentParser(
-        description="Dynamically update matrix.json with latest or stable versions"
+        description="""
+Dynamically update matrix.json with latest or stable versions.
+
+This script updates the matrix.json file with the requested version strategy
+without changing its structure.
+
+Examples:
+  # Update all languages to latest versions with default JSON file
+  python json2vars_setter/update_matrix_dynamic.py --all latest
+
+  # Update specific languages with custom JSON file
+  python json2vars_setter/update_matrix_dynamic.py --json-file custom_matrix.json --python stable --nodejs latest
+
+  # Dry run with all languages and custom JSON file
+  python json2vars_setter/update_matrix_dynamic.py --json-file ./matrix.json --all both --dry-run
+
+  # Verbose output with specific languages and default JSON file
+  python json2vars_setter/update_matrix_dynamic.py --ruby stable --go latest -v
+        """,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "--json-file",

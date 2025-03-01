@@ -5,48 +5,47 @@ branding:
   icon: 'file'
   color: 'green'
 inputs:
-  # 基本設定
+  # Basic Settings
   json-file:
     description: 'Path to the JSON file'
     required: true
-    default: '.github/workflows/matrix.json'
 
-  # 動的更新オプション
+  # Dynamic Update Option
   update-matrix:
     description: 'Whether to dynamically update the matrix before parsing'
     required: false
-    default: 'false'  # デフォルトでは動的更新を無効化
+    default: 'false'  # Default is to disable dynamic update
 
-  # 更新戦略オプション
+  # Update Strategy Option
   update-strategy:
     description: 'Default update strategy for all languages (stable, latest, or both)'
-    required: false  # オプショナル
+    required: false  # Optional
 
-  # 言語別の更新戦略
+  # Language-specific Update Strategies
   python-strategy:
     description: 'Update strategy for Python versions (stable, latest, or both)'
-    required: false  # オプショナル
+    required: false  # Optional
   nodejs-strategy:
     description: 'Update strategy for Node.js versions (stable, latest, or both)'
-    required: false  # オプショナル
+    required: false  # Optional
   ruby-strategy:
     description: 'Update strategy for Ruby versions (stable, latest, or both)'
-    required: false  # オプショナル
+    required: false  # Optional
   go-strategy:
     description: 'Update strategy for Go versions (stable, latest, or both)'
-    required: false  # オプショナル
+    required: false  # Optional
   rust-strategy:
     description: 'Update strategy for Rust versions (stable, latest, or both)'
-    required: false  # オプショナル
+    required: false  # Optional
 
-  # 安全モード
+  # Safe Mode
   dry-run:
     description: 'Run in dry-run mode without updating the JSON file'
     required: false
-    default: 'false'  # デフォルトでは実際に更新する
+    default: 'false'  # Default is to actually update
 
 outputs:
-  # 出力変数
+  # Output Variables
   os:
     description: 'List of operating systems'
     value: ${{ steps.set_outputs.outputs.os }}
@@ -72,26 +71,26 @@ outputs:
 runs:
   using: "composite"
   steps:
-    # Python環境セットアップ
+    # Set up Python environment
     - name: Set up Python
       uses: actions/setup-python@v5.4.0
       with:
         python-version: '3.13'
 
-    # 動的マトリックス更新（オプショナル）
+    # Dynamic matrix update (optional)
     - name: Update matrix if requested
-      if: ${{ inputs.update-matrix == 'true' }}  # update-matrixがtrueの場合のみ実行
+      if: ${{ inputs.update-matrix == 'true' }}  # Execute only if update-matrix is true
       shell: bash
       run: |
         echo "Dynamically updating matrix..."
         ARGS=()
         ARGS+=("--json-file" "${{ inputs.json-file }}")
 
-        # 共通戦略が指定されていれば、すべての言語に適用
+        # Apply common strategy to all languages if specified
         if [[ -n "${{ inputs.update-strategy }}" ]]; then
           ARGS+=("--all" "${{ inputs.update-strategy }}")
         else
-          # 各言語ごとに個別戦略を適用（指定されている場合）
+          # Apply individual strategies for each language if specified
           if [[ -n "${{ inputs.python-strategy }}" ]]; then
             ARGS+=("--python" "${{ inputs.python-strategy }}")
           fi
@@ -109,18 +108,18 @@ runs:
           fi
         fi
 
-        # dry-runフラグの設定
+        # Set dry-run flag
         if [[ "${{ inputs.dry-run }}" == "true" ]]; then
           ARGS+=("--dry-run")
         fi
 
-        # 詳細ログ出力の有効化
+        # Enable verbose logging
         ARGS+=("--verbose")
 
-        # 更新スクリプトの実行
+        # Execute update script
         python ${{ github.action_path }}/json2vars_setter/update_matrix_dynamic.py "${ARGS[@]}"
 
-    # JSONパース処理（常に実行）
+    # JSON parsing (always executed)
     - name: Parse JSON and set outputs
       id: set_outputs
       shell: bash
@@ -129,7 +128,7 @@ runs:
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
 
-    # デバッグ情報の出力
+    # Output debug information
     - name: Debug Output Values
       shell: bash
       run: |

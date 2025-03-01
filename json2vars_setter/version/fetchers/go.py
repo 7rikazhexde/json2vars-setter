@@ -86,36 +86,36 @@ class GoVersionFetcher(BaseVersionFetcher):
         self, releases: List[ReleaseInfo]
     ) -> Tuple[ReleaseInfo, ReleaseInfo]:
         """
-        Go の安定版と最新版の判定
+        Determine the stable and latest versions of Go
 
-        Go では:
-        - latest: 最新のリリースバージョン
-        - stable: 通常は最新の前のマイナーバージョン、または
-          リリースから十分に時間が経過した安定したバージョン
+        In Go:
+        - latest: The most recent release version
+        - stable: Usually the previous minor version to the latest, or
+          a version that has been stable for a sufficient amount of time
 
         Args:
-            releases: リリース情報のリスト
+            releases: List of release information
 
         Returns:
-            (latest_release, stable_release) のタプル
+            Tuple of (latest_release, stable_release)
         """
         if not releases:
-            # 例外を発生させて、リリースが存在しない場合に明示的に処理
+            # Raise an exception to explicitly handle the case where no releases are available
             raise ValueError("No releases available")
 
-        # 最新バージョンは常に最初のリリース
+        # The latest version is always the first release
         latest = releases[0]
 
-        # バージョン番号を取得して解析
+        # Get and parse the version number
         latest_version = latest.version
         match = re.match(r"(\d+)\.(\d+)\.(\d+)", latest_version)
 
         if match:
             major, minor, patch = map(int, match.groups())
-            # 現在のマイナーバージョンから1つ前を探す
+            # Look for the previous minor version
             prev_minor = minor - 1
 
-            # 1つ前のマイナーバージョンを持つリリースを検索
+            # Search for the release with the previous minor version
             for release in releases:
                 r_match = re.match(r"(\d+)\.(\d+)\.(\d+)", release.version)
                 if r_match:
@@ -126,19 +126,19 @@ class GoVersionFetcher(BaseVersionFetcher):
                         )
                         return latest, release
 
-        # 適切な安定版が見つからない場合は最新を使用
+        # Use the latest version if no suitable stable version is found
         self.logger.info(
             f"No suitable stable version found, using latest {latest_version} as stable"
         )
         return latest, latest
 
 
-# 直接APIをチェックする独自関数
+# Custom function to check the API directly
 def check_api(
     session: requests.Session, count: Optional[int] = None, verbose: int = 0
 ) -> None:
     """
-    GitHubから直接タグを確認する（複数ページのサポート付き）
+    Check tags directly from GitHub (supports multiple pages)
 
     Args:
         session: Requests session to use
@@ -148,10 +148,10 @@ def check_api(
     if not verbose:
         return
 
-    count = count or 5  # デフォルト値の設定
+    count = count or 5  # Set default value
     stable_tags: List[Dict[str, Any]] = []
     page = 1
-    max_pages = 3  # 最大3ページまで確認
+    max_pages = 3  # Check up to 3 pages
 
     url = "https://api.github.com/repos/golang/go/tags"
     print("\n=== Checking GitHub API ===")
@@ -164,7 +164,7 @@ def check_api(
             response.raise_for_status()
             tags = response.json()
 
-            if page == 1:  # 最初のページの情報のみ表示
+            if page == 1:  # Display information only for the first page
                 print("Status Code: {}".format(response.status_code))
                 print(f"Checking page {page}...")
 
@@ -176,7 +176,7 @@ def check_api(
             if not tags:
                 break
 
-            # 安定版のみをフィルタリング
+            # Filter only stable tags
             new_stable_tags = []
             for tag in tags:
                 name = tag.get("name", "")
@@ -202,7 +202,7 @@ def check_api(
             print(f"Found {len(new_stable_tags)} stable tags on page {page}")
             stable_tags.extend(new_stable_tags)
 
-            if len(tags) < 100:  # 最後のページ
+            if len(tags) < 100:  # Last page
                 break
 
             page += 1

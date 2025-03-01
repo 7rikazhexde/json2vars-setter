@@ -110,27 +110,27 @@ class RustVersionFetcher(BaseVersionFetcher):
         self, releases: List[ReleaseInfo]
     ) -> Tuple[ReleaseInfo, ReleaseInfo]:
         """
-        Rust の安定版と最新版の判定
+        Determine the stable and latest versions of Rust
 
-        Rust では:
-        - latest: 最新のリリースバージョン
-        - stable: stableチャンネルのリリース（通常は最新と同じ）
+        In Rust:
+        - latest: the latest release version
+        - stable: the release of the stable channel (usually the same as the latest)
 
         Args:
-            releases: リリース情報のリスト
+            releases: List of release information
 
         Returns:
-            (latest_release, stable_release) のタプル
+            Tuple of (latest_release, stable_release)
         """
         if not releases:
-            # 元のコードでは None, None を返していたが、型チェックを通すために例外を発生させる
+            # In the original code, None, None was returned, but an exception is raised to pass type checking
             raise ValueError("No releases available")
 
-        # 最新バージョンは常に最初のリリース
+        # The latest version is always the first release
         latest = releases[0]
 
-        # Rustでは通常、stableチャンネルの最新リリースが安定版
-        # これは通常、最新リリースと同じ
+        # In Rust, the latest release of the stable channel is usually the stable version
+        # This is usually the same as the latest release
         stable = latest
 
         self.logger.info(

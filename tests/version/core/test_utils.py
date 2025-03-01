@@ -37,9 +37,9 @@ def test_release_info_str_representation() -> None:
     """Test ReleaseInfo string representation"""
     release = ReleaseInfo(version="1.0.0", prerelease=False)
 
-    # デフォルトの文字列表現を確認
+    # Check the default string representation
     assert release.version in str(release)
-    # または、より柔軟なアサーションを使用
+    # Or use a more flexible assertion
     str_repr = str(release)
     assert "1.0.0" in str_repr
     assert "ReleaseInfo" in str_repr
@@ -133,7 +133,7 @@ def test_release_info_comparison() -> None:
     with pytest.raises(TypeError):
         release1 >= release2
 
-    # 等価性の比較は許可されているべき
+    # Equality comparison should be allowed
     assert release1 == ReleaseInfo(version="1.0.0", prerelease=False)
     assert release1 != release2
 
@@ -178,16 +178,16 @@ def test_parse_semver() -> None:
 
     # Test error cases
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("1.2")  # 不完全なバージョン文字列（x.y形式）
+        parse_semver("1.2")  # Incomplete version string (x.y format)
 
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("v1.2")  # プレフィックス付きの不完全なバージョン文字列
+        parse_semver("v1.2")  # Prefixed incomplete version string
 
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("1.2.3.4")  # 余分な数字
+        parse_semver("1.2.3.4")  # Extra numbers
 
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("abc")  # 全く不正な形式
+        parse_semver("abc")  # Completely invalid format
 
 
 def test_standardize_date() -> None:
@@ -207,7 +207,7 @@ def test_standardize_date() -> None:
     assert standardize_date("invalid-date") is None
     assert (
         standardize_date("01-15-2023") is None
-    )  # この形式は実際にはサポートされていない
+    )  # This format is actually not supported
 
 
 def test_is_prerelease() -> None:
@@ -238,7 +238,7 @@ def test_release_info_repr_and_str() -> None:
     assert "ReleaseInfo" in repr_str
     assert "version='1.0.0'" in repr_str
 
-    # __str__メソッドが存在しない場合、デフォルトの文字列表現をテスト
+    # Test default string representation if __str__ method does not exist
     assert "1.0.0" in str(release)
 
 
