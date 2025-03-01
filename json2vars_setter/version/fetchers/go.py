@@ -135,7 +135,7 @@ class GoVersionFetcher(BaseVersionFetcher):
 
 # 直接APIをチェックする独自関数
 def check_api(
-    session: requests.Session, count: Optional[int] = None, verbose: bool = False
+    session: requests.Session, count: Optional[int] = None, verbose: int = 0
 ) -> None:
     """
     GitHubから直接タグを確認する（複数ページのサポート付き）
@@ -143,7 +143,7 @@ def check_api(
     Args:
         session: Requests session to use
         count: Optional number of tags to display
-        verbose: Whether to print the check output
+        verbose: Verbosity level (0: off, 1: basic, 2: detailed)
     """
     if not verbose:
         return

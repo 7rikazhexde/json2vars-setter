@@ -34,7 +34,20 @@ class PythonVersionFetcher(BaseVersionFetcher):
 
         # Python uses format "vX.Y.Z" for stable releases (3.x and 4.x series)
         return name.startswith(("v3", "v4")) and not any(
-            x in name.lower() for x in ["a", "rc", "b", "beta", "alpha"]
+            x in name.lower()
+            for x in [
+                "a",
+                "rc",
+                "b",
+                "beta",
+                "alpha",
+                "pre",
+                "preview",
+                "dev",
+                "test",
+                "nightly",
+                "snapshot",
+            ]
         )
 
     def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
@@ -126,8 +139,17 @@ class PythonVersionFetcher(BaseVersionFetcher):
 def python_filter_func(tag: Dict[str, Any]) -> bool:
     """Filter function for Python tags in API checker"""
     name = tag.get("name", "")
-    return name.startswith(("v3", "v4")) and not any(
-        x in name.lower() for x in ["a", "rc", "b", "beta", "alpha"]
+
+    # 不安定版を示すキーワードを完全に検出するための正規表現パターン
+    unstable_pattern = r"(a|rc|b|beta|alpha|pre|preview|dev|test|nightly|snapshot)"
+
+    # タグが v3 または v4 で始まり、不安定版キーワードを含まないこと
+    return (
+        name.startswith(("v3", "v4"))
+        and
+        # 正規表現を使用して、キーワードが完全に一致するかをチェック
+        not re.search(rf"\d+\.{unstable_pattern}", name.lower())
+        and not re.search(rf"{unstable_pattern}", name.lower())
     )
 
 

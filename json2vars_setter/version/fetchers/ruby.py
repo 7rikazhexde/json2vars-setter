@@ -40,6 +40,8 @@ class RubyVersionFetcher(BaseVersionFetcher):
                 x in name.lower()
                 for x in [
                     "rc",
+                    "b",
+                    "a",
                     "alpha",
                     "beta",
                     "preview",
@@ -147,6 +149,8 @@ def ruby_filter_func(tag: Dict[str, Any]) -> bool:
             x in name.lower()
             for x in [
                 "rc",
+                "b",
+                "a",
                 "alpha",
                 "beta",
                 "preview",
