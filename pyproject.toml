@@ -80,12 +80,11 @@ log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)s] %(message)s"
 
 [tool.taskipy.tasks]
-test_coverage_verbose = "pytest -s -vv --cov=. --cov-branch --cov-report term-missing --cov-report html"
-test_html_report = "pytest --html=htmlcov/report_page.html"
-test_ci_xml = "python scripts/run_tests.py --report xml"
-test_ci_term = "python scripts/run_tests.py --report term"
-test_testmon = "pytest --testmon"
-test_coverage = "pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=html"
+testcoverageverbose = "pytest -s -vv --cov=. --cov-branch --cov-report term-missing --cov-report html"
+testhtmlreport = "pytest --html=htmlcov/report_page.html"
+testcixml = "python scripts/run_tests.py --report xml"
+testciterm = "python scripts/run_tests.py --report term"
+testcoverage = "pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
 source = ["json2vars_setter"]
@@ -103,7 +102,9 @@ exclude_lines = [
     "raise NotImplementedError",
     "pass",
     "except ImportError:",
-    "def main"
+    "def main",
+    "@abstractmethod",
+    "abc.abstractmethod"
 ]
 
 [tool.coverage.html]

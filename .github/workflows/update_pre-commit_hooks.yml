@@ -47,7 +47,7 @@ jobs:
         if: steps.update_hooks.outputs.has_updates == 'true'
         shell: bash
         run: |
-          poetry run task test_ci_xml
+          poetry run task testcixml
           coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "Current coverage: ${coverage_percentage}%"
           echo "COVERAGE=${coverage_percentage}" >> "$GITHUB_ENV"

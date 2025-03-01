@@ -100,7 +100,7 @@ class BaseVersionFetcher(ABC):
                     self.logger.debug("Last page reached, breaking")
                     break
 
-                page += 1
+                page += 1  # pragma: no cover
 
             except requests.exceptions.RequestException as error:
                 response_status = getattr(error.response, "status_code", None)

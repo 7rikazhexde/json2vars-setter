@@ -24,6 +24,40 @@ class ReleaseInfo:
         if not self.prerelease:
             self.prerelease = is_prerelease(self.version)
 
+    def __eq__(self, other: Any) -> bool:
+        """Equality comparison based on version and prerelease status."""
+        if not isinstance(other, ReleaseInfo):
+            return NotImplemented
+        return self.version == other.version and self.prerelease == other.prerelease
+
+    def __ne__(self, other: Any) -> bool:
+        """Inequality comparison."""
+        result = self.__eq__(other)
+        if result is NotImplemented:
+            return NotImplemented
+        return not result
+
+    # 比較演算子を明示的に禁止する
+    def __lt__(self, other: Any) -> bool:
+        raise TypeError(
+            f"'<' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
+        )
+
+    def __gt__(self, other: Any) -> bool:
+        raise TypeError(
+            f"'>' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
+        )
+
+    def __le__(self, other: Any) -> bool:
+        raise TypeError(
+            f"'<=' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
+        )
+
+    def __ge__(self, other: Any) -> bool:
+        raise TypeError(
+            f"'>=' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
+        )
+
 
 @dataclass
 class VersionInfo:
@@ -32,12 +66,16 @@ class VersionInfo:
     latest: Optional[str] = None
     stable: Optional[str] = None
     recent_releases: List[ReleaseInfo] = field(default_factory=list)
-    details: Dict[str, Any] = field(default_factory=dict)
+    details: Dict[str, Any] = field(default_factory=dict)  # Optional を追加
 
     def __post_init__(self) -> None:
         """Post-initialization method to ensure details is a dictionary."""
         if self.details is None:
             self.details = {}
+
+    def has_error(self) -> bool:
+        """Check if the version info contains an error."""
+        return "error" in self.details
 
 
 def clean_version(version: str) -> str:
@@ -50,12 +88,16 @@ def clean_version(version: str) -> str:
     Returns:
         Cleaned version string
     """
+    # Trim blanks
+    version = version.strip()
+
     # Handle common prefixes
-    prefixes = ["v", "version", "python", "go", "node", "ruby", "rust", "go"]
+    prefixes = ["version", "python", "ruby", "node", "rust", "go", "v"]
     cleaned = version.lower()
     for prefix in prefixes:
         if cleaned.startswith(prefix):
             cleaned = cleaned[len(prefix) :]
+            break
 
     # Handle underscore-separated versions (like Ruby's v3_0_0)
     cleaned = cleaned.replace("_", ".")
@@ -80,7 +122,7 @@ def parse_semver(version: str) -> Tuple[int, ...]:
     version = clean_version(version)
 
     # Extract version numbers using regex
-    match = re.match(r"^(\d+)\.(\d+)\.(\d+)", version)
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)", version)
     if not match:
         raise ValueError(f"Invalid version format: {version}")
 

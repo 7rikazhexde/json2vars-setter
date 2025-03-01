@@ -132,7 +132,7 @@ jobs:
         # Windowss
         # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
         run: |
-          poetry run task test_ci_xml
+          poetry run task testcixml
           coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "Current coverage: $coverage_percentage%"
           echo "COVERAGE=$coverage_percentage" >> "$GITHUB_ENV"
