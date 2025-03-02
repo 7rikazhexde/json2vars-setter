@@ -59,7 +59,7 @@ class BaseVersionFetcher(ABC):
         page = 1
         per_page = 100  # Get more tags at once
         max_pages = 5  # Safety limit for pagination
-        target_count = count or 5
+        target_count = count if count is not None else 5
 
         self.logger.debug("Fetching stable tags (target count: %d)", target_count)
 
