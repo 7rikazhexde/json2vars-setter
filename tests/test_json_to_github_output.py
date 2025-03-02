@@ -194,9 +194,11 @@ def test_windows_path_handling(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
     assert f"NESTED_SUB_PATH={expected_sub_path}\n" in content
 
 
-@pytest.mark.skipif(platform.system() != "Windows", reason="Windows-specific test")
+# Windows特有のテストをプラットフォームに関係なく実行するために修正
+# @pytest.mark.skipif(platform.system() != "Windows", reason="Windows-specific test")
 def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
     """Test Windows-specific environment variable handling"""
+    # モックするためにWindows固有の部分を一般化
     output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
 
     # Create the directory if it doesn't exist
@@ -209,9 +211,18 @@ def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None
     monkeypatch.setenv("GITHUB_OUTPUT", output_file)
     monkeypatch.setenv("TEMP", str(tmpdir))
 
+    # プラットフォームに依存しない方法でテストデータを作成
+    temp_path = "%TEMP%/test"
+    mixed_path = "C:/Program Files/Python"
+
+    if platform.system() != "Windows":
+        # Windowsでない場合でも正規化を行う
+        temp_path = temp_path.replace("\\", "/")
+        mixed_path = mixed_path.replace("\\", "/")
+
     test_data = {
-        "WINDOWS_VAR": os.path.normpath("%TEMP%/test"),
-        "MIXED_PATH": os.path.normpath("C:/Program Files/Python"),
+        "WINDOWS_VAR": os.path.normpath(temp_path),
+        "MIXED_PATH": os.path.normpath(mixed_path),
     }
 
     outputs = parse_json(test_data)
@@ -220,8 +231,8 @@ def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None
     with open(output_file, "r") as f:
         content = f.read()
 
-    expected_temp_path = os.path.normpath("%TEMP%/test")
-    expected_mixed_path = os.path.normpath("C:/Program Files/Python")
+    expected_temp_path = os.path.normpath(temp_path)
+    expected_mixed_path = os.path.normpath(mixed_path)
 
     assert f"WINDOWS_VAR={expected_temp_path}\n" in content
     assert f"MIXED_PATH={expected_mixed_path}\n" in content

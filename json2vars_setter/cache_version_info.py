@@ -500,10 +500,10 @@ def generate_version_template(
             # Add stable and latest versions at the beginning
             if info.get("stable") and info["stable"] not in versions:
                 versions.insert(0, info["stable"])
-            if info.get("latest") and info["latest"] not in versions:
-                # Avoid duplicates if latest is the same as stable
+            if info.get("latest"):
                 if info.get("latest") != info.get("stable"):
-                    versions.insert(0, info["latest"])
+                    if info["latest"] not in versions:
+                        versions.insert(0, info["latest"])
 
             # Sort supporting semantic versioning
             template["versions"][language] = sorted(
