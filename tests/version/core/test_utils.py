@@ -1,11 +1,17 @@
+import logging
+from typing import Any, Dict
+
 import pytest
+from pytest_mock import MockFixture
 
 from json2vars_setter.version.core.utils import (
     ReleaseInfo,
     VersionInfo,
+    check_github_api,
     clean_version,
     is_prerelease,
     parse_semver,
+    setup_logging,
     standardize_date,
 )
 
@@ -13,7 +19,6 @@ from json2vars_setter.version.core.utils import (
 def test_release_info_initialization() -> None:
     """Test ReleaseInfo initialization with basic properties"""
     release = ReleaseInfo(version="1.0.0", prerelease=False)
-
     assert release.version == "1.0.0"
     assert release.prerelease is False
 
@@ -26,7 +31,6 @@ def test_release_info_with_additional_data() -> None:
         release_date="2023-01-01",
         additional_info={"commit_hash": "abc123"},
     )
-
     assert release.version == "1.0.0-beta"
     assert release.prerelease is True
     assert release.release_date == "2023-01-01"
@@ -36,10 +40,7 @@ def test_release_info_with_additional_data() -> None:
 def test_release_info_str_representation() -> None:
     """Test ReleaseInfo string representation"""
     release = ReleaseInfo(version="1.0.0", prerelease=False)
-
-    # Check the default string representation
     assert release.version in str(release)
-    # Or use a more flexible assertion
     str_repr = str(release)
     assert "1.0.0" in str_repr
     assert "ReleaseInfo" in str_repr
@@ -47,15 +48,12 @@ def test_release_info_str_representation() -> None:
 
 def test_version_info_initialization() -> None:
     """Test VersionInfo initialization with basic properties"""
-    # Basic initialization
     version_info = VersionInfo()
     assert version_info.latest is None
     assert version_info.stable is None
     assert version_info.recent_releases == []
     assert isinstance(version_info.details, dict)
     assert len(version_info.details) == 0
-
-    # Initialization with values
     version_info = VersionInfo(latest="1.1.0", stable="1.0.0")
     assert version_info.latest == "1.1.0"
     assert version_info.stable == "1.0.0"
@@ -64,15 +62,11 @@ def test_version_info_initialization() -> None:
 
 def test_version_info_with_recent_releases() -> None:
     """Test VersionInfo with recent releases"""
-    # Create some releases
     release1 = ReleaseInfo(version="1.0.0", prerelease=False)
     release2 = ReleaseInfo(version="1.1.0", prerelease=False)
-
-    # Add them to VersionInfo
     version_info = VersionInfo(
         latest="1.1.0", stable="1.0.0", recent_releases=[release1, release2]
     )
-
     assert len(version_info.recent_releases) == 2
     assert version_info.recent_releases[0].version == "1.0.0"
     assert version_info.recent_releases[1].version == "1.1.0"
@@ -85,9 +79,7 @@ def test_version_info_with_details() -> None:
         "fetch_time": "2023-01-01T12:00:00",
         "additional_info": "test data",
     }
-
     version_info = VersionInfo(latest="1.1.0", stable="1.0.0", details=details)
-
     assert version_info.details == details
     assert version_info.details["source"] == "github:test/repo"
     assert version_info.details["fetch_time"] == "2023-01-01T12:00:00"
@@ -97,8 +89,6 @@ def test_version_info_with_details() -> None:
 def test_version_info_str_representation() -> None:
     """Test VersionInfo string representation"""
     version_info = VersionInfo(latest="1.1.0", stable="1.0.0")
-
-    # Ensure string representation contains version information
     str_repr = str(version_info)
     assert "1.1.0" in str_repr
     assert "1.0.0" in str_repr
@@ -107,8 +97,6 @@ def test_version_info_str_representation() -> None:
 def test_version_info_repr() -> None:
     """Test VersionInfo repr representation"""
     version_info = VersionInfo(latest="1.1.0", stable="1.0.0")
-
-    # Ensure repr contains class name and version information
     repr_str = repr(version_info)
     assert "VersionInfo" in repr_str
     assert "1.1.0" in repr_str
@@ -119,21 +107,14 @@ def test_release_info_comparison() -> None:
     """Test ReleaseInfo comparison operations"""
     release1 = ReleaseInfo(version="1.0.0", prerelease=False)
     release2 = ReleaseInfo(version="1.1.0", prerelease=False)
-
-    # Ensure comparison raises a TypeError
     with pytest.raises(TypeError):
         release1 < release2
-
     with pytest.raises(TypeError):
         release1 > release2
-
     with pytest.raises(TypeError):
         release1 <= release2
-
     with pytest.raises(TypeError):
         release1 >= release2
-
-    # Equality comparison should be allowed
     assert release1 == ReleaseInfo(version="1.0.0", prerelease=False)
     assert release1 != release2
 
@@ -143,76 +124,59 @@ def test_version_info_error_handling() -> None:
     version_info = VersionInfo(
         details={"error": "Test error", "error_type": "TestError"}
     )
-
     assert "error" in version_info.details
     assert version_info.details["error"] == "Test error"
     assert version_info.details["error_type"] == "TestError"
     assert version_info.has_error() is True
 
 
+def test_version_info_details_none() -> None:
+    version_info = VersionInfo(
+        stable="1.0.0",
+        latest="1.0.0",
+        details={},
+    )
+    assert version_info.details == {}
+
+
 def test_clean_version() -> None:
     """Test clean_version function with various inputs"""
-    # Test removing common prefixes
     assert clean_version("v1.2.3") == "1.2.3"
-
-    # Versions with prefixes
     assert clean_version("version1.2.3") == "1.2.3"
-
-    # Test handling of different language prefixes
     assert clean_version("go1.2.3") == "1.2.3"
     assert clean_version("node1.2.3") == "1.2.3"
     assert clean_version("ruby1.2.3") == "1.2.3"
-
-    # Test handling of underscore-separated versions
     assert clean_version("v3_0_0") == "3.0.0"
-
-    # Test handling of whitespace with prefix
     assert clean_version("  v1.2.3  ") == "1.2.3"
 
 
 def test_parse_semver() -> None:
     """Test parse_semver function"""
-    # Test successful parsing
     assert parse_semver("1.2.3") == (1, 2, 3)
     assert parse_semver("v1.2.3") == (1, 2, 3)
-
-    # Test error cases
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("1.2")  # Incomplete version string (x.y format)
-
+        parse_semver("1.2")
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("v1.2")  # Prefixed incomplete version string
-
+        parse_semver("v1.2")
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("1.2.3.4")  # Extra numbers
-
+        parse_semver("1.2.3.4")
     with pytest.raises(ValueError, match="Invalid version format"):
-        parse_semver("abc")  # Completely invalid format
+        parse_semver("abc")
 
 
 def test_standardize_date() -> None:
     """Test standardize_date function with various inputs"""
-    # Test ISO format dates
     assert standardize_date("2023-01-15") == "2023-01-15"
     assert standardize_date("2023-01-15Z") == "2023-01-15"
-
-    # Test alternative date formats
     assert standardize_date("15/01/2023") == "2023-01-15"
-
-    # Test edge cases
     assert standardize_date(None) is None
     assert standardize_date("") is None
-
-    # Test invalid date formats
     assert standardize_date("invalid-date") is None
-    assert (
-        standardize_date("01-15-2023") is None
-    )  # This format is actually not supported
+    assert standardize_date("01-15-2023") is None
 
 
 def test_is_prerelease() -> None:
     """Test is_prerelease function"""
-    # Test prerelease indicators
     assert is_prerelease("1.0.0-alpha") is True
     assert is_prerelease("1.0.0-beta") is True
     assert is_prerelease("1.0.0-rc1") is True
@@ -223,8 +187,6 @@ def test_is_prerelease() -> None:
     assert is_prerelease("1.0.0-snapshot") is True
     assert is_prerelease("1.0.0-test") is True
     assert is_prerelease("1.0.0-experimental") is True
-
-    # Test non-prerelease versions
     assert is_prerelease("1.0.0") is False
     assert is_prerelease("1.2.3") is False
 
@@ -232,23 +194,16 @@ def test_is_prerelease() -> None:
 def test_release_info_repr_and_str() -> None:
     """Test ReleaseInfo repr and str methods"""
     release = ReleaseInfo(version="1.0.0", prerelease=False)
-
-    # Check repr contains class name and version details
     repr_str = repr(release)
     assert "ReleaseInfo" in repr_str
     assert "version='1.0.0'" in repr_str
-
-    # Test default string representation if __str__ method does not exist
     assert "1.0.0" in str(release)
 
 
 def test_version_info_additional_scenarios() -> None:
     """Test additional VersionInfo scenarios"""
-    # Test with empty details
     version_info = VersionInfo(details={})
     assert version_info.details == {}
-
-    # Test with partial information
     version_info = VersionInfo(latest="1.2.0")
     assert version_info.latest == "1.2.0"
     assert version_info.stable is None
@@ -256,7 +211,6 @@ def test_version_info_additional_scenarios() -> None:
 
 def test_release_info_additional_data_handling() -> None:
     """Test ReleaseInfo handling of additional data"""
-    # Test with complex additional info
     release = ReleaseInfo(
         version="1.0.0",
         additional_info={
@@ -265,6 +219,124 @@ def test_release_info_additional_data_handling() -> None:
             "platforms": ["linux", "windows"],
         },
     )
-
     assert release.additional_info["commit"] == "abc123"
     assert release.additional_info["platforms"] == ["linux", "windows"]
+
+
+def test_release_info_post_init_cleaning() -> None:
+    """Test ReleaseInfo.__post_init__ cleaning behavior (line 30)"""
+    release = ReleaseInfo(version=" v1.0.0 ", prerelease=False)
+    assert release.version == "1.0.0"
+    release = ReleaseInfo(version="1.0.0-beta", prerelease=False)
+    assert release.prerelease is True
+
+
+def test_release_info_not_equal() -> None:
+    """Test ReleaseInfo.__ne__ method (line 37)"""
+    release1 = ReleaseInfo(version="1.0.0", prerelease=False)
+    release2 = ReleaseInfo(version="1.0.0", prerelease=False)
+    release3 = ReleaseInfo(version="1.1.0", prerelease=False)
+    assert not (release1 != release2)
+    assert release1 != release3
+    assert release1 != "string"
+
+
+def test_clean_version_underscore_prefix() -> None:
+    """Test clean_version with underscore prefix (line 74)"""
+    assert clean_version("v_1_2_3") == "1.2.3"  # Match new implementation
+    assert clean_version("_1_2_3") == "1.2.3"  # Case with only underscores
+    assert clean_version("v1_2_3") == "1.2.3"  # Underscore after prefix
+
+
+def test_standardize_date_alternative_formats() -> None:
+    """Test standardize_date with additional formats (lines 158-159)"""
+    assert standardize_date("2023/01/15") == "2023-01-15"  # %Y/%m/%d
+    assert standardize_date("15-01-2023") == "2023-01-15"  # %d-%m-%Y is supported
+    assert standardize_date("2023-01-15T12:00:00Z") == "2023-01-15"  # ISO format
+    assert standardize_date("15/01/2023") == "2023-01-15"  # %d/%m/%Y
+
+
+def test_clean_version_underscore_variations() -> None:
+    """Test all patterns of clean_version with underscores (line 74)"""
+    assert clean_version("v_1_2_3") == "1.2.3"  # Prefix + underscore
+    assert clean_version("_1_2_3") == "1.2.3"  # No prefix, only underscores
+    assert clean_version("v1_2_3") == "1.2.3"  # Underscore after prefix
+    assert clean_version("1_2_3") == "1.2.3"  # Normal case without prefix
+    assert clean_version("v__1__2__3") == "1.2.3"  # Consecutive underscores
+
+
+def test_standardize_date_all_formats() -> None:
+    """Test all formats of standardize_date (lines 158-159)"""
+    # Existing formats
+    assert standardize_date("2023/01/15") == "2023-01-15"  # %Y/%m/%d
+    assert standardize_date("15-01-2023") == "2023-01-15"  # %d-%m-%Y
+    assert standardize_date("2023-01-15T12:00:00Z") == "2023-01-15"  # ISO
+    assert standardize_date("15/01/2023") == "2023-01-15"  # %d/%m/%Y
+
+    # Untested supported formats
+    assert standardize_date("2023-01-15") == "2023-01-15"  # %Y-%m-%d (direct pass)
+
+
+def test_check_github_api_success(mocker: MockFixture) -> None:
+    """Test check_github_api function success case (lines 207-232)"""
+    mock_session = mocker.Mock()
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = [{"name": "v1.0.0"}, {"name": "v1.1.0"}]
+    mock_session.get.return_value = mock_response
+    check_github_api(mock_session, "test-owner", "test-repo", count=2)
+    mock_session.get.assert_called_once_with(
+        "https://api.github.com/repos/test-owner/test-repo/tags",
+        params={"per_page": 100},
+        timeout=10,
+    )
+
+
+def test_check_github_api_error(
+    mocker: MockFixture, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Test check_github_api function error case (lines 207-232)"""
+    mock_session = mocker.Mock()
+    mock_session.get.side_effect = Exception("API error")
+    check_github_api(mock_session, "test-owner", "test-repo")
+    captured = capsys.readouterr()
+    assert "Error: API error" in captured.out  # Exception is only printed
+
+
+def test_check_github_api_with_filter(mocker: MockFixture) -> None:
+    """Test check_github_api with filtering case (lines 223-224)"""
+    mock_session = mocker.Mock()
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = [{"name": "v1.0.0"}, {"name": "v2.0.0-beta"}]
+    mock_session.get.return_value = mock_response
+
+    def filter_func(tag: Dict[str, Any]) -> bool:
+        return "beta" not in tag["name"]
+
+    check_github_api(
+        mock_session, "test-owner", "test-repo", count=2, filter_func=filter_func
+    )
+
+
+def test_setup_logging_all_levels(caplog: pytest.LogCaptureFixture) -> None:
+    """Test setup_logging function with all levels (lines 246-259)"""
+    with caplog.at_level(logging.WARNING):
+        logger = setup_logging(verbosity=0)
+        assert logger.level == logging.WARNING
+    with caplog.at_level(logging.INFO):
+        logger = setup_logging(verbosity=1)
+        assert logger.level == logging.INFO
+    with caplog.at_level(logging.DEBUG):
+        logger = setup_logging(verbosity=2)
+        assert logger.level == logging.DEBUG
+    with caplog.at_level(logging.DEBUG):
+        logger = setup_logging(verbosity=3)
+        assert logger.level == logging.DEBUG
+    assert len(logger.handlers) > 0
+    assert isinstance(logger.handlers[0], logging.StreamHandler)
+
+
+def fixed_clean_version(version: str) -> str:
+    cleaned = clean_version(version)
+    return cleaned.lstrip(".")

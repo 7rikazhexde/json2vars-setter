@@ -485,10 +485,14 @@ def generate_version_template(
             continue
 
         if "recent_releases" in info and info["recent_releases"]:
-            # Extract versions from recent releases
+            # Extract versions from recent releases, excluding prereleases
             versions: List[str] = []
             for release in info.get("recent_releases", []):
-                if isinstance(release, dict) and "version" in release:
+                if (
+                    isinstance(release, dict)
+                    and "version" in release
+                    and not release.get("prerelease", False)
+                ):
                     # Ensure version isn't already in the list
                     if release["version"] not in versions:
                         versions.append(release["version"])

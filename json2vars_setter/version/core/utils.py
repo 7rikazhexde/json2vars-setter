@@ -68,11 +68,6 @@ class VersionInfo:
     recent_releases: List[ReleaseInfo] = field(default_factory=list)
     details: Dict[str, Any] = field(default_factory=dict)  # Optional を追加
 
-    def __post_init__(self) -> None:
-        """Post-initialization method to ensure details is a dictionary."""
-        if self.details is None:
-            self.details = {}
-
     def has_error(self) -> bool:
         """Check if the version info contains an error."""
         return "error" in self.details
@@ -100,9 +95,13 @@ def clean_version(version: str) -> str:
             break
 
     # Handle underscore-separated versions (like Ruby's v3_0_0)
+    # 連続するアンダースコアを単一に正規化
+    while "__" in cleaned:
+        cleaned = cleaned.replace("__", "_")
     cleaned = cleaned.replace("_", ".")
 
-    return cleaned.strip()
+    # 先頭ドットを削除
+    return cleaned.lstrip(".").strip()
 
 
 def parse_semver(version: str) -> Tuple[int, ...]:
@@ -147,16 +146,13 @@ def standardize_date(date_str: Optional[str]) -> Optional[str]:
         date = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
         return date.strftime("%Y-%m-%d")
     except ValueError:
-        try:
-            # Try parsing common date formats
-            for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d", "%d-%m-%Y"]:
-                try:
-                    date = datetime.strptime(date_str, fmt)
-                    return date.strftime("%Y-%m-%d")
-                except ValueError:
-                    continue
-        except Exception:
-            return None
+        # Try parsing common date formats
+        for fmt in ["%Y-%m-%d", "%d/%m/%Y", "%Y/%m/%d", "%d-%m-%Y"]:
+            try:
+                date = datetime.strptime(date_str, fmt)
+                return date.strftime("%Y-%m-%d")
+            except ValueError:
+                continue
 
     return None
 
