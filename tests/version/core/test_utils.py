@@ -2,6 +2,7 @@ import logging
 from typing import Any, Dict
 
 import pytest
+import requests
 from pytest_mock import MockFixture
 
 from json2vars_setter.version.core.utils import (
@@ -290,6 +291,82 @@ def test_check_github_api_success(mocker: MockFixture) -> None:
         params={"per_page": 100},
         timeout=10,
     )
+
+
+def test_check_github_api_no_tags(
+    mocker: MockFixture, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """
+    Test check_github_api when no tags are returned
+    """
+    mock_session = mocker.Mock()
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = []  # Empty list of tags
+    mock_session.get.return_value = mock_response
+
+    check_github_api(mock_session, "test-owner", "test-repo")
+    captured = capsys.readouterr()
+    assert "Status Code: 200" in captured.out
+    assert "Number of tags: 0" in captured.out
+    assert "Error:" not in captured.out
+
+
+def test_check_github_api_with_complex_filter(
+    mocker: MockFixture, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """
+    Test check_github_api with a more complex filter function
+    """
+    mock_session = mocker.Mock()
+    mock_response = mocker.Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = [
+        {"name": "v1.0.0"},
+        {"name": "v2.0.0-beta"},
+        {"name": "v3.0.0-alpha"},
+        {"name": "v4.0.0"},
+    ]
+    mock_session.get.return_value = mock_response
+
+    def complex_filter(tag: Dict[str, Any]) -> bool:
+        """
+        Filter to keep only stable (non-beta/alpha) tags
+        """
+        return not any(pre in tag["name"] for pre in ["-beta", "-alpha"])
+
+    check_github_api(
+        mock_session, "test-owner", "test-repo", count=2, filter_func=complex_filter
+    )
+    captured = capsys.readouterr()
+    assert "Number of filtered tags: 2" in captured.out
+    assert "v1.0.0" in captured.out
+    assert "v4.0.0" in captured.out
+
+
+def test_check_github_api_error_handling(
+    mocker: MockFixture, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """
+    Test check_github_api with various error scenarios
+    """
+    # Simulate HTTP error
+    mock_session = mocker.Mock()
+    mock_session.get.side_effect = requests.exceptions.HTTPError("HTTP Error")
+
+    check_github_api(mock_session, "test-owner", "test-repo")
+    captured = capsys.readouterr()
+    assert "Error:" in captured.out
+    assert "HTTP Error" in captured.out
+
+    # Reset mock
+    mock_session = mocker.Mock()
+    mock_session.get.side_effect = ValueError("Unexpected error")
+
+    check_github_api(mock_session, "test-owner", "test-repo")
+    captured = capsys.readouterr()
+    assert "Error:" in captured.out
+    assert "Unexpected error" in captured.out
 
 
 def test_check_github_api_error(
