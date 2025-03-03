@@ -165,3 +165,77 @@ def test_fetch_versions_integration(
     assert versions.details["source"] == "github:ruby/ruby"
     assert "latest_info" in versions.details
     assert "stable_info" in versions.details
+
+
+# 既存の test_get_stability_criteria に追加する形で拡張
+
+
+def test_get_stability_criteria_invalid_version_format(
+    ruby_fetcher: RubyVersionFetcher, mocker: "pytest_mock.MockerFixture"
+) -> None:
+    """Test _get_stability_criteria with invalid version format"""
+    # Mock logger
+    mocker.patch.object(ruby_fetcher, "logger", mocker.Mock())
+
+    # Prepare releases with invalid version format, simulating _parse_version_from_tag
+    releases = [
+        ruby_fetcher._parse_version_from_tag(
+            {"name": "v_invalid_version"}
+        ),  # Will become "invalid.version"
+        ruby_fetcher._parse_version_from_tag(
+            {"name": "v3_11_5"}
+        ),  # Will become "3.11.5"
+    ]
+
+    # Execute method
+    latest, stable = ruby_fetcher._get_stability_criteria(releases)
+
+    # Verify results
+    assert (
+        latest.version == "invalid.version"
+    )  # Match the result of _parse_version_from_tag
+    assert stable.version == "invalid.version"  # If match fails, latest becomes stable
+
+
+def test_get_stability_criteria_no_previous_minor(
+    ruby_fetcher: RubyVersionFetcher, mocker: "pytest_mock.MockerFixture"
+) -> None:
+    """Test _get_stability_criteria when no previous minor version exists"""
+    # Mock logger
+    mocker.patch.object(ruby_fetcher, "logger", mocker.Mock())
+
+    # Prepare releases with no previous minor version match
+    releases = [
+        ReleaseInfo(version="3.12.0"),
+        ReleaseInfo(version="3.12.1"),  # Same minor version
+        ReleaseInfo(version="2.11.5"),  # Different major version
+    ]
+
+    # Execute method
+    latest, stable = ruby_fetcher._get_stability_criteria(releases)
+
+    # Verify results
+    assert latest.version == "3.12.0"
+    assert stable.version == "3.12.0"  # Use latest as no previous minor version exists
+
+
+def test_get_stability_criteria_invalid_release_version(
+    ruby_fetcher: RubyVersionFetcher, mocker: "pytest_mock.MockerFixture"
+) -> None:
+    """Test _get_stability_criteria with invalid version in releases list"""
+    # Mock logger
+    mocker.patch.object(ruby_fetcher, "logger", mocker.Mock())
+
+    # Prepare releases where a release has an invalid version format
+    releases = [
+        ReleaseInfo(version="3.12.0"),
+        ReleaseInfo(version="3.11.invalid"),  # Does not match regex
+        ReleaseInfo(version="3.11.5"),
+    ]
+
+    # Execute method
+    latest, stable = ruby_fetcher._get_stability_criteria(releases)
+
+    # Verify results
+    assert latest.version == "3.12.0"
+    assert stable.version == "3.11.5"  # Skip invalid and select correct stable version

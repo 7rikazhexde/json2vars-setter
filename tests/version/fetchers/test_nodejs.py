@@ -391,6 +391,48 @@ def test_fetch_nodejs_lts_info_failure(
     )
 
 
+def test_get_stability_criteria_lts_not_22(
+    nodejs_fetcher: NodejsVersionFetcher, mocker: "pytest_mock.MockerFixture"
+) -> None:
+    """Test _get_stability_criteria with LTS versions not starting with '22.'."""
+    mocker.patch.object(
+        nodejs_fetcher,
+        "_fetch_latest_lts_versions",
+        return_value=["20.11.1", "18.20.0"],
+    )
+    releases: List[ReleaseInfo] = [
+        ReleaseInfo(version="23.0.0", additional_info={"tag_name": "v23.0.0"}),
+        ReleaseInfo(version="21.0.0", additional_info={"tag_name": "v21.0.0"}),
+    ]
+    # Mock _get_specific_tag to return None to simulate fetch failure
+    mocker.patch.object(nodejs_fetcher, "_get_specific_tag", return_value=None)
+
+    latest, stable = nodejs_fetcher._get_stability_criteria(releases)
+    assert latest.version == "23.0.0"
+    assert (
+        stable.version == "23.0.0"
+    )  # Falls back to latest due to no LTS match or even major
+
+
+def test_get_stability_criteria_lts_fetch_none(
+    nodejs_fetcher: NodejsVersionFetcher, mocker: "pytest_mock.MockerFixture"
+) -> None:
+    """Test _get_stability_criteria where LTS fetch returns None."""
+    mocker.patch.object(
+        nodejs_fetcher, "_fetch_latest_lts_versions", return_value=["22.9.0", "20.11.1"]
+    )
+    releases: List[ReleaseInfo] = [
+        ReleaseInfo(version="23.0.0", additional_info={"tag_name": "v23.0.0"}),
+        ReleaseInfo(version="21.0.0", additional_info={"tag_name": "v21.0.0"}),
+    ]
+    # Mock _get_specific_tag to return None for "v22.9.0"
+    mocker.patch.object(nodejs_fetcher, "_get_specific_tag", return_value=None)
+
+    latest, stable = nodejs_fetcher._get_stability_criteria(releases)
+    assert latest.version == "23.0.0"
+    assert stable.version == "23.0.0"  # Falls back to latest
+
+
 def test_nodejs_filter_func() -> None:
     """Test nodejs_filter_func with various tag scenarios."""
     stable_tags: List[Dict[str, Any]] = [

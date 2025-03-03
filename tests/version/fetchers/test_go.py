@@ -71,7 +71,7 @@ def test_parse_version_from_tag(go_fetcher: GoVersionFetcher) -> None:
 
 
 def test_get_stability_criteria_with_previous_minor(
-    go_fetcher: GoVersionFetcher, mocker: "pytest_mock.MockerFixture"
+    go_fetcher: GoVersionFetcher,
 ) -> None:
     """Test _get_stability_criteria with a previous minor version present."""
     releases: List[ReleaseInfo] = [
@@ -259,3 +259,83 @@ def test_check_api_empty_response(
     check_api(session=mock_session, count=2, verbose=True)
     captured = capsys.readouterr()
     assert "Total stable tags found: 0" in captured.out
+
+
+def test_get_stability_criteria_with_invalid_version_pattern(
+    go_fetcher: GoVersionFetcher,
+) -> None:
+    """Test _get_stability_criteria with a completely invalid version pattern to cover line 113 branch."""
+    # Release information with an invalid version pattern
+    # Create a version string that is completely non-SemVer
+    releases: List[ReleaseInfo] = [
+        ReleaseInfo(
+            version="not-a-valid-semver", additional_info={"tag_name": "go-invalid"}
+        ),
+        ReleaseInfo(version="1.21.0", additional_info={"tag_name": "go1.21.0"}),
+    ]
+
+    # Execute the function
+    latest, stable = go_fetcher._get_stability_criteria(releases)
+
+    # Verify that the versions match
+    assert latest.version == "not-a-valid-semver"
+    assert (
+        stable.version == "not-a-valid-semver"
+    )  # Use latest as no valid version is found
+
+
+def test_check_api_multi_page_full_coverage(
+    capsys: CaptureFixture[str], mocker: "pytest_mock.MockerFixture"
+) -> None:
+    """Test check_api to cover while loop multiple iterations and exit condition."""
+    mock_session = mocker.Mock()
+
+    # Page 1: 100 tags (1 stable tag, 99 unstable tags)
+    page1_tags = [{"name": "go1.22.1"}] + [
+        {"name": f"go1.21.{i}-rc1"} for i in range(99)
+    ]
+    mock_response_page1 = mocker.Mock()
+    mock_response_page1.status_code = 200
+    mock_response_page1.json.return_value = page1_tags
+
+    # Page 2: 100 tags (1 stable tag, 99 unstable tags)
+    page2_tags = [{"name": "go1.21.0"}] + [
+        {"name": f"go1.20.{i}-rc1"} for i in range(99)
+    ]
+    mock_response_page2 = mocker.Mock()
+    mock_response_page2.status_code = 200
+    mock_response_page2.json.return_value = page2_tags
+
+    # Page 3: 100 tags (1 stable tag, 99 unstable tags)
+    page3_tags = [{"name": "go1.20.3"}] + [
+        {"name": f"go1.19.{i}-rc1"} for i in range(99)
+    ]
+    mock_response_page3 = mocker.Mock()
+    mock_response_page3.status_code = 200
+    mock_response_page3.json.return_value = page3_tags
+
+    # Page 4 (expected to exceed): empty
+    mock_response_page4 = mocker.Mock()
+    mock_response_page4.status_code = 200
+    mock_response_page4.json.return_value = []
+
+    mock_session.get.side_effect = [
+        mock_response_page1,
+        mock_response_page2,
+        mock_response_page3,
+        mock_response_page4,
+    ]
+
+    # Call with count=2 (terminate at 2)
+    check_api(session=mock_session, count=2, verbose=True)
+    captured = capsys.readouterr()
+
+    # Verify output for debugging
+    print("Captured output:\n", captured.out)
+
+    # Verification
+    assert "Found 1 stable tags on page 1" in captured.out
+    assert "Found 1 stable tags on page 2" in captured.out
+    assert "Total stable tags found: 2" in captured.out
+    assert "- go1.22.1" in captured.out
+    assert "- go1.21.0" in captured.out

@@ -157,10 +157,9 @@ class NodejsVersionFetcher(BaseVersionFetcher):
         for release in releases:
             try:
                 version_parts = release.version.split(".")
-                if len(version_parts) >= 1:
-                    major = int(version_parts[0])
-                    if major % 2 == 0:  # Even major version
-                        even_major_releases.append(release)
+                major = int(version_parts[0])
+                if major % 2 == 0:
+                    even_major_releases.append(release)
             except ValueError:
                 continue
 
