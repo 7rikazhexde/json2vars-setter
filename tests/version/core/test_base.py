@@ -63,6 +63,21 @@ def test_initialization_with_github_token(monkeypatch: pytest.MonkeyPatch) -> No
     assert fetcher.session.headers["Authorization"] == "token test-token"
 
 
+def test_initialization_without_github_token(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test initialization without GitHub token"""
+    # Unset the GITHUB_TOKEN environment variable
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+
+    # Create an instance of the fetcher
+    fetcher = ConcreteVersionFetcher()
+
+    # Verify that github_token is None
+    assert fetcher.github_token is None
+
+    # Verify that no Authorization header is added to the session
+    assert "Authorization" not in fetcher.session.headers
+
+
 def test_is_stable_tag() -> None:
     """Test the _is_stable_tag implementation"""
     fetcher = ConcreteVersionFetcher()
