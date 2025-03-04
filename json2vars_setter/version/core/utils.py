@@ -2,7 +2,7 @@ import logging
 import re
 import sys
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 
@@ -226,6 +226,26 @@ def check_github_api(
                 print(f"- {tag.get('name')}")
     except Exception as e:
         print(f"Error: {str(e)}")
+
+
+def get_utc_now() -> datetime:
+    """
+    Helper function to get the current UTC time in a compatible way
+
+    Returns:
+        datetime: Current UTC time (without timezone information)
+
+    Notes:
+        From Python 3.11, datetime.utcnow() is deprecated,
+        and datetime.now(datetime.UTC) is recommended.
+        This function provides a compatible method using
+        timezone.utc that works across all Python versions.
+    """
+    # Use timezone.utc available in all Python versions
+    now = datetime.now(timezone.utc)
+
+    # Return a datetime without timezone info, similar to datetime.utcnow()
+    return now.replace(tzinfo=None)
 
 
 def setup_logging(verbosity: int = 0) -> logging.Logger:

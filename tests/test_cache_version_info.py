@@ -12,7 +12,6 @@ from pytest_mock import MockFixture
 from json2vars_setter.cache_version_info import (
     VersionCache,
     generate_version_template,
-    get_utc_now,
     get_version_fetcher,
     main,
     update_versions,
@@ -22,6 +21,7 @@ from json2vars_setter.version.core.base import (
     ReleaseInfo,
     VersionInfo,
 )
+from json2vars_setter.version.core.utils import get_utc_now
 
 # ---- Fixtures and Mocks ----
 

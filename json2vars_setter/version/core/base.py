@@ -1,13 +1,12 @@
 import logging
 import os
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 
 import requests
 
 from json2vars_setter.version.core.exceptions import GitHubAPIError, ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo, VersionInfo
+from json2vars_setter.version.core.utils import ReleaseInfo, VersionInfo, get_utc_now
 
 
 class BaseVersionFetcher(ABC):
@@ -218,7 +217,7 @@ class BaseVersionFetcher(ABC):
                 stable=stable.version if stable else None,
                 recent_releases=recent_releases,
                 details={
-                    "fetch_time": datetime.utcnow().isoformat(),
+                    "fetch_time": get_utc_now().isoformat(),
                     "source": "github:{}/{}".format(
                         self.github_owner, self.github_repo
                     ),

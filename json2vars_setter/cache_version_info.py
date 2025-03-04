@@ -9,11 +9,12 @@ import json
 import logging
 import sys
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
 from json2vars_setter.version.core.base import BaseVersionFetcher, VersionInfo
+from json2vars_setter.version.core.utils import get_utc_now
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
@@ -539,26 +540,6 @@ def generate_version_template(
         json.dump(template, f, indent=4)
 
     logger.info(f"Version template written to {output_file}")
-
-
-def get_utc_now() -> datetime:
-    """
-    Helper function to get the current UTC time in a compatible way
-
-    Returns:
-        datetime: Current UTC time (without timezone information)
-
-    Notes:
-        From Python 3.11, datetime.utcnow() is deprecated,
-        and datetime.now(datetime.UTC) is recommended.
-        This function provides a compatible method using
-        timezone.utc that works across all Python versions.
-    """
-    # Use timezone.utc available in all Python versions
-    now = datetime.now(timezone.utc)
-
-    # Return a datetime without timezone info, similar to datetime.utcnow()
-    return now.replace(tzinfo=None)
 
 
 def main() -> None:
