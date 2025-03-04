@@ -9,7 +9,7 @@ import json
 import logging
 import sys
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
@@ -73,7 +73,7 @@ class VersionCache:
         # Return empty cache structure if file doesn't exist or is invalid
         return {
             "metadata": {
-                "last_updated": datetime.utcnow().isoformat(),
+                "last_updated": get_utc_now().isoformat(),
                 "version": "1.1",
             },
             "languages": {},
@@ -152,7 +152,7 @@ class VersionCache:
         try:
             last_updated_dt = datetime.fromisoformat(last_updated)
             max_age = timedelta(days=max_age_days)
-            is_stale = (datetime.utcnow() - last_updated_dt) > max_age
+            is_stale = (get_utc_now() - last_updated_dt) > max_age
             if is_stale:
                 logger.debug(
                     f"{language}: More than {max_age_days} days have passed since the last update"
@@ -252,7 +252,7 @@ class VersionCache:
                 "latest": latest,
                 "stable": stable,
                 "recent_releases": merged_releases,
-                "last_updated": datetime.utcnow().isoformat(),
+                "last_updated": get_utc_now().isoformat(),
             }
         )
 
@@ -260,7 +260,7 @@ class VersionCache:
         if "metadata" not in self.data:
             self.data["metadata"] = {}
 
-        self.data["metadata"]["last_updated"] = datetime.utcnow().isoformat()
+        self.data["metadata"]["last_updated"] = get_utc_now().isoformat()
 
         # Update count information
         if count > 0:
@@ -539,6 +539,26 @@ def generate_version_template(
         json.dump(template, f, indent=4)
 
     logger.info(f"Version template written to {output_file}")
+
+
+def get_utc_now() -> datetime:
+    """
+    Helper function to get the current UTC time in a compatible way
+
+    Returns:
+        datetime: Current UTC time (without timezone information)
+
+    Notes:
+        From Python 3.11, datetime.utcnow() is deprecated,
+        and datetime.now(datetime.UTC) is recommended.
+        This function provides a compatible method using
+        timezone.utc that works across all Python versions.
+    """
+    # Use timezone.utc available in all Python versions
+    now = datetime.now(timezone.utc)
+
+    # Return a datetime without timezone info, similar to datetime.utcnow()
+    return now.replace(tzinfo=None)
 
 
 def main() -> None:

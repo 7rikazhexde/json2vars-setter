@@ -2,7 +2,7 @@ import json
 import os
 import tempfile
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
@@ -12,6 +12,7 @@ from pytest_mock import MockFixture
 from json2vars_setter.cache_version_info import (
     VersionCache,
     generate_version_template,
+    get_utc_now,
     get_version_fetcher,
     main,
     update_versions,
@@ -248,21 +249,19 @@ def test_version_cache_is_update_needed() -> None:
             "recent_releases": [
                 {"version": "3.11.0", "date": "2022-10-24", "prerelease": False}
             ],
-            "last_updated": datetime.utcnow().isoformat(),
+            "last_updated": get_utc_now().isoformat(),
         }
 
         # Test with fresh cache
         assert cache.is_update_needed("python", max_age_days=1) is False
 
         # Test with stale cache
-        stale_date = (datetime.utcnow() - timedelta(days=2)).isoformat()
+        stale_date = (get_utc_now() - timedelta(days=2)).isoformat()
         cache.data["languages"]["python"]["last_updated"] = stale_date
         assert cache.is_update_needed("python", max_age_days=1) is True
 
         # Test with requested count larger than cached count
-        cache.data["languages"]["python"]["last_updated"] = (
-            datetime.utcnow().isoformat()
-        )
+        cache.data["languages"]["python"]["last_updated"] = get_utc_now().isoformat()
         assert cache.is_update_needed("python", requested_count=2) is True
 
         # Test with empty recent_releases
@@ -1065,7 +1064,7 @@ def test_save_method_path_creation() -> None:
         # Set data
         cache.data = {
             "metadata": {
-                "last_updated": datetime.utcnow().isoformat(),
+                "last_updated": get_utc_now().isoformat(),
                 "version": "1.1",
             },
             "languages": {"python": {"latest": "3.11.0", "stable": "3.10.0"}},
@@ -1556,7 +1555,7 @@ def test_is_update_needed_requested_count_branches() -> None:
             {"version": "3.10.0", "prerelease": False},
             {"version": "3.9.0", "prerelease": False},
         ],
-        "last_updated": datetime.utcnow().isoformat(),  # Set a fresh timestamp
+        "last_updated": get_utc_now().isoformat(),  # Set a fresh timestamp
     }
 
     # Case 1: When requested_count is 0, this branch shouldn't be taken
@@ -1577,7 +1576,7 @@ def test_is_update_needed_requested_count_branches() -> None:
         "latest": "3.0.0",
         "stable": "2.7.0",
         "recent_releases": [],  # Empty list
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": get_utc_now().isoformat(),
     }
 
     # With empty recent_releases, any positive requested_count should trigger an update
@@ -1604,7 +1603,7 @@ def test_merge_versions_invalid_release_format() -> None:
             },  # Dict without 'version' key - should NOT contribute to existing_versions (196->195 branch)
             {"version": "3.7.0", "prerelease": False},  # Valid entry
         ],
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": get_utc_now().isoformat(),
     }
 
     # Create new version info with a version that matches the string value in cache
@@ -1661,7 +1660,7 @@ def test_merge_versions_count_metadata_update() -> None:
 
     # Setup existing data with a specific version_count in metadata
     cache.data["metadata"] = {
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": get_utc_now().isoformat(),
         "version": "1.1",
         "version_count": 5,  # Set a specific current count
     }
@@ -1674,7 +1673,7 @@ def test_merge_versions_count_metadata_update() -> None:
             {"version": "3.10.0", "prerelease": False},
             {"version": "3.9.0", "prerelease": False},
         ],
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": get_utc_now().isoformat(),
     }
 
     # Create version info
@@ -1720,7 +1719,7 @@ def test_merge_versions_count_metadata_update() -> None:
             {"version": "3.10.0", "prerelease": False},
             {"version": "3.9.0", "prerelease": False},
         ],
-        "last_updated": datetime.utcnow().isoformat(),
+        "last_updated": get_utc_now().isoformat(),
     }
 
     # Call merge_versions with count > 0
