@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.10"
 poetry = "^2.1.1"
 requests = "^2.32.3"
+typer = "^0.15.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -79,12 +80,17 @@ log_cli = true
 log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)s] %(message)s"
 
+filterwarnings = [
+    "ignore::DeprecationWarning:typer.*:",
+]
+
 [tool.taskipy.tasks]
 testcoverageverbose = "pytest -s -vv --cov=. --cov-branch --cov-report term-missing --cov-report html"
 testhtmlreport = "pytest --html=htmlcov/report_page.html"
 testcixml = "python scripts/run_tests.py --report xml"
 testciterm = "python scripts/run_tests.py --report term"
 testcoverage = "pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=html"
+usage = "python json2vars_setter/cache_version_info.py --help\n\npython json2vars_setter/update_matrix_dynamic.py --help\n\n"
 
 [tool.coverage.run]
 source = ["json2vars_setter"]
@@ -109,3 +115,6 @@ exclude_lines = [
 
 [tool.coverage.html]
 directory = "htmlcov"
+
+[tool.poetry.scripts]
+json2vars = "json2vars_setter.cli:app"
