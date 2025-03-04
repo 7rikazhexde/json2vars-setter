@@ -1,6 +1,7 @@
 import json
 import os
 import tempfile
+from pathlib import Path
 from typing import Any, Dict, Generator, Optional
 
 import pytest
@@ -180,29 +181,47 @@ def test_load_json_file(
     os.unlink(path)
 
 
-def test_save_json_file(temp_json_file: str) -> None:
-    """Test save_json_file saves JSON correctly"""
-    data = {"test": "value"}
-    save_json_file(temp_json_file, data)
+def test_save_json_file_io_error(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test save_json_file handles IOError correctly"""
+    # Set up mocks
+    mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
+    mock_exit = mocker.patch("sys.exit")
+    test_data = {"test": "value"}
 
-    with open(temp_json_file, "r") as f:
-        loaded_data = json.load(f)
+    # Temporary file path for testing
+    test_file = tmp_path / "test_file.json"
 
-    assert loaded_data == data
+    # Simulate IOError when opening the file
+    mocker.patch("builtins.open", side_effect=IOError("Simulated IO error"))
 
-    # Test save to directory without permission
-    if os.name != "nt":  # Skip on Windows
-        with tempfile.TemporaryDirectory() as temp_dir:
-            try:
-                # Make directory read-only
-                os.chmod(temp_dir, 0o555)
-                path = f"{temp_dir}/test.json"
+    # Execute the function
+    save_json_file(str(test_file), test_data)
 
-                with pytest.raises(SystemExit):
-                    save_json_file(path, data)
-            finally:
-                # Restore permissions to ensure cleanup works
-                os.chmod(temp_dir, 0o755)
+    # Assertions
+    mock_logger.error.assert_called_with("Error saving JSON file: Simulated IO error")
+    mock_exit.assert_called_with(1)
+
+
+def test_save_json_file_type_error(mocker: MockerFixture, tmp_path: Path) -> None:
+    """Test save_json_file handles TypeError correctly"""
+    # Set up mocks
+    mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
+    mock_exit = mocker.patch("sys.exit")
+    test_data = {"test": "value"}
+
+    # Temporary file path for testing
+    test_file = tmp_path / "test_file.json"
+
+    # Simulate TypeError when dumping JSON
+    mocker.patch("builtins.open", mocker.mock_open())
+    mocker.patch("json.dump", side_effect=TypeError("Simulated Type error"))
+
+    # Execute the function
+    save_json_file(str(test_file), test_data)
+
+    # Assertions
+    mock_logger.error.assert_called_with("Error saving JSON file: Simulated Type error")
+    mock_exit.assert_called_with(1)
 
 
 def test_update_matrix_json(
