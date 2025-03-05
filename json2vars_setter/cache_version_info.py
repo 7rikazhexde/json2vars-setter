@@ -551,27 +551,55 @@ Cache version information for programming languages.
 This tool fetches version information from GitHub for various programming languages
 and caches it locally for use in CI/CD workflows or other automation tasks.
 
-Examples:
+About GitHub API usage:
+  • Set the GITHUB_TOKEN environment variable to avoid API rate limits
+  • Use --template-only option to generate templates from existing cache without API calls
+
+About files:
+  • Cache file: Internal data store containing detailed version information (input)
+  • Template file: Simple JSON format used by json2vars-setter (output)
+
+Common usage patterns:
+
+1. Basic updates:
   # Update all languages with default settings
-  python cache_version_info.py
+  python json2vars_setter/cache_version_info.py
 
-  # Force update Python and Node.js with 20 versions each
-  python cache_version_info.py --languages python nodejs --force --count 20
-
+2. Efficient API usage:
   # Update only when cache is older than 7 days
-  python cache_version_info.py --max-age 7
+  python json2vars_setter/cache_version_info.py --max-age 7
 
-  # Incrementally add new versions without replacing existing ones
-  python cache_version_info.py --incremental
+  # Generate template only from existing cache (no API calls)
+  python json2vars_setter/cache_version_info.py --template-only
 
-  # Only update the template from existing cache (no API calls)
-  python cache_version_info.py --template-only
+3. Language-specific updates:
+  # Update only Python and Node.js
+  python json2vars_setter/cache_version_info.py --languages python nodejs
 
-  # Only update the cache (no template generation)
-  python cache_version_info.py --cache-only
+  # Update only Python information in existing template (preserve other data)
+  python json2vars_setter/cache_version_info.py --template-only --languages python --keep-existing
+
+4. Advanced version management:
+  # Add new versions while preserving existing cache
+  python json2vars_setter/cache_version_info.py --incremental
+
+  # Accumulate up to 30 versions per language incrementally
+  python json2vars_setter/cache_version_info.py --incremental --count 30
+
+5. CI/CD workflow usage:
+  # Separate cache updates and template generation
+  python json2vars_setter/cache_version_info.py --cache-only  # Periodic background job
+  python json2vars_setter/cache_version_info.py --template-only  # Pre-build step
+
+Detailed examples:
+  # Force update Python and Node.js with 20 versions each
+  python json2vars_setter/cache_version_info.py --languages python nodejs --force --count 20
 
   # Generate template with versions in ascending order (oldest first)
-  python cache_version_info.py --sort asc
+  python json2vars_setter/cache_version_info.py --sort asc
+
+  # Update only Python version info in an existing project template
+  python json2vars_setter/cache_version_info.py --template-only --languages python --existing-template .github/workflows/python_project_matrix.json --template-file .github/workflows/python_project_matrix.json --keep-existing
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
