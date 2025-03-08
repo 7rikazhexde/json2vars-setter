@@ -558,8 +558,17 @@ def generate_version_template(
 
     # Write template to file
     output_file.parent.mkdir(parents=True, exist_ok=True)
+
+    # Convert to JSON with indentation
+    json_content = json.dumps(template, indent=4)
+
+    # Ensure the content ends with exactly one newline
+    if not json_content.endswith("\n"):
+        json_content += "\n"
+
+    # Write to file
     with open(output_file, "w") as f:
-        json.dump(template, f, indent=4)
+        f.write(json_content)
 
     logger.info(f"Version template written to {output_file}")
 

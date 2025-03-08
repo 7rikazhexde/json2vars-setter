@@ -122,7 +122,7 @@ def load_json_file(file_path: str) -> Dict[str, Any]:
 
 def save_json_file(file_path: str, data: Dict[str, Any]) -> None:
     """
-    Save a dictionary to a JSON file
+    Save a dictionary to a JSON file, ensuring it ends with a newline
 
     Args:
         file_path: Path where to save the JSON file
@@ -132,8 +132,17 @@ def save_json_file(file_path: str, data: Dict[str, Any]) -> None:
         SystemExit: If file cannot be saved
     """
     try:
+        # Convert to JSON with indentation
+        json_content = json.dumps(data, indent=4)
+
+        # Ensure the content ends with exactly one newline
+        if not json_content.endswith("\n"):
+            json_content += "\n"
+
+        # Write to file
         with open(file_path, "w") as f:
-            json.dump(data, f, indent=4)
+            f.write(json_content)
+
         logger.info(f"Successfully saved to {file_path}")
     except (IOError, TypeError) as e:
         logger.error(f"Error saving JSON file: {e}")
