@@ -461,6 +461,9 @@ def generate_version_template(
 
     # Load existing template if available
     existing_data: Dict[str, Any] = {}
+    # Save the order of languages
+    existing_language_order = []
+
     if existing_file and existing_file.exists():
         try:
             with open(existing_file, "r") as f:
@@ -472,6 +475,10 @@ def generate_version_template(
             if "ghpages_branch" in existing_data:
                 template["ghpages_branch"] = existing_data["ghpages_branch"]
 
+            # Save the order of languages in the existing template
+            if "versions" in existing_data:
+                existing_language_order = list(existing_data["versions"].keys())
+
             logger.info(f"Maintained structure from existing file: {existing_file}")
         except (json.JSONDecodeError, IOError) as e:
             logger.warning(f"Could not load existing file: {e}")
@@ -479,7 +486,20 @@ def generate_version_template(
     # Determine version sort order
     reverse_sort = sort_order.lower() == "desc"
 
-    # Add versions for each language from cache
+    # Create a temporary dictionary to store language information
+    temp_versions = {}
+
+    # First, copy existing versions if keep_existing is True
+    if keep_existing and "versions" in existing_data:
+        for lang, version_list in existing_data.get("versions", {}).items():
+            # Only copy if not in specified languages (those will be updated from cache)
+            if languages is None or lang not in languages:
+                temp_versions[lang] = version_list
+                logger.info(
+                    f"Maintained existing {lang} versions ({len(version_list)} versions)"
+                )
+
+    # Now process languages from cache
     for language, info in cache_data.get("languages", {}).items():
         # Skip if languages is specified and this language is not in the list
         if languages and language not in languages:
@@ -487,7 +507,7 @@ def generate_version_template(
 
         if "recent_releases" in info and info["recent_releases"]:
             # Extract versions from recent releases, excluding prereleases
-            versions: List[str] = []
+            version_items: List[str] = []
             for release in info.get("recent_releases", []):
                 if (
                     isinstance(release, dict)
@@ -495,44 +515,46 @@ def generate_version_template(
                     and not release.get("prerelease", False)
                 ):
                     # Ensure version isn't already in the list
-                    if release["version"] not in versions:
-                        versions.append(release["version"])
+                    if release["version"] not in version_items:
+                        version_items.append(release["version"])
 
             # Add stable and latest versions at the beginning
-            if info.get("stable") and info["stable"] not in versions:
-                versions.insert(0, info["stable"])
+            if info.get("stable") and info["stable"] not in version_items:
+                version_items.insert(0, info["stable"])
             if info.get("latest"):
                 if info.get("latest") != info.get("stable"):
-                    if info["latest"] not in versions:
-                        versions.insert(0, info["latest"])
+                    if info["latest"] not in version_items:
+                        version_items.insert(0, info["latest"])
 
             # Sort supporting semantic versioning
-            template["versions"][language] = sorted(
-                list(set(versions)),
-                reverse=reverse_sort,  # True for descending, False for ascending
+            temp_versions[language] = sorted(
+                list(set(version_items)),
+                # True for descending, False for ascending
+                reverse=reverse_sort,
                 key=lambda v: [
                     int(p) if p.isdigit() else p for p in v.replace("-", ".").split(".")
                 ],
             )
 
             logger.info(
-                f"Added {language} versions to template ({len(versions)} versions, {sort_order} order)"
+                f"Added {language} versions to template ({len(version_items)} versions, {sort_order} order)"
             )
-        elif (
-            keep_existing
-            and existing_data
-            and "versions" in existing_data
-            and language in existing_data["versions"]
-        ):
-            # Maintain values from existing template
-            template["versions"][language] = existing_data["versions"][language]
-            logger.info(
-                f"Maintained existing {language} versions ({len(existing_data['versions'][language])} versions)"
-            )
-        else:
-            # Set empty list if no information
-            template["versions"][language] = []
+        elif language not in temp_versions:
+            # Only set empty list if not already in temp_versions
+            temp_versions[language] = []
             logger.warning(f"No versions found for {language}")
+
+    # Add to the final template according to the order of languages
+    # First, maintain the existing order
+    for lang in existing_language_order:
+        if lang in temp_versions:
+            template["versions"][lang] = temp_versions[lang]
+            # Remove as it has been processed
+            del temp_versions[lang]
+
+    # Add remaining new languages
+    for lang, version_list in temp_versions.items():
+        template["versions"][lang] = version_list
 
     # Write template to file
     output_file.parent.mkdir(parents=True, exist_ok=True)

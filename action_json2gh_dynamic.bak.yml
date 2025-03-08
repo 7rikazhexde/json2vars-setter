@@ -44,62 +44,6 @@ inputs:
     required: false
     default: 'false'  # Default is to actually update
 
-  # Cache Version Info Options
-  use-cache:
-    description: 'Whether to use cached version information'
-    required: false
-    default: 'false'  # Default is to not use caching
-
-  cache-languages:
-    description: 'Languages to include in cache operations (comma-separated)'
-    required: false
-    default: 'all'  # Default is all languages
-
-  force-cache-update:
-    description: 'Force cache update even if it is fresh'
-    required: false
-    default: 'false'
-
-  cache-max-age:
-    description: 'Maximum age of cache in days before update'
-    required: false
-    default: '1'
-
-  cache-count:
-    description: 'Number of versions to fetch per language'
-    required: false
-    default: '10'
-
-  cache-incremental:
-    description: 'Add only new versions without replacing existing cache'
-    required: false
-    default: 'false'
-
-  cache-file:
-    description: 'Custom cache file path'
-    required: false
-    default: '.github/workflows/cache/version_cache.json'
-
-  template-only:
-    description: 'Only generate template from existing cache (no API calls)'
-    required: false
-    default: 'false'
-
-  cache-only:
-    description: 'Only update the cache, do not generate the template'
-    required: false
-    default: 'false'
-
-  keep-existing:
-    description: 'Maintain existing version information when generating template'
-    required: false
-    default: 'true'
-
-  sort-order:
-    description: 'Version sort order (desc: newest first, asc: oldest first)'
-    required: false
-    default: 'desc'
-
 outputs:
   # Output Variables
   os:
@@ -133,7 +77,7 @@ runs:
       with:
         python-version: '3.13'
 
-    # Dynamic matrix update (highest priority)
+    # Dynamic matrix update (optional)
     - name: Update matrix if requested
       if: ${{ inputs.update-matrix == 'true' }}  # Execute only if update-matrix is true
       shell: bash
@@ -174,57 +118,6 @@ runs:
 
         # Execute update script
         python ${{ github.action_path }}/json2vars_setter/update_matrix_dynamic.py "${ARGS[@]}"
-
-    # Cache version info update (medium priority)
-    - name: Update using cache version info if requested
-      if: ${{ inputs.update-matrix != 'true' && inputs.use-cache == 'true' }}  # Only if dynamic update not requested
-      shell: bash
-      run: |
-        echo "Using cached version information..."
-        ARGS=()
-
-        # Parse languages list
-        IFS=',' read -ra LANGS <<< "${{ inputs.cache-languages }}"
-        if [[ "${LANGS[*]}" != "all" ]]; then
-          ARGS+=("--languages" "${LANGS[@]}")
-        fi
-
-        # Add cache configuration options
-        if [[ "${{ inputs.force-cache-update }}" == "true" ]]; then
-          ARGS+=("--force")
-        fi
-
-        ARGS+=("--max-age" "${{ inputs.cache-max-age }}")
-        ARGS+=("--count" "${{ inputs.cache-count }}")
-        ARGS+=("--cache-file" "${{ inputs.cache-file }}")
-        ARGS+=("--template-file" "${{ inputs.json-file }}")
-
-        if [[ "${{ inputs.template-only }}" == "true" ]]; then
-          ARGS+=("--template-only")
-        fi
-
-        if [[ "${{ inputs.cache-only }}" == "true" ]]; then
-          ARGS+=("--cache-only")
-        fi
-
-        if [[ "${{ inputs.cache-incremental }}" == "true" ]]; then
-          ARGS+=("--incremental")
-        fi
-
-        if [[ "${{ inputs.keep-existing }}" == "true" ]]; then
-          ARGS+=("--keep-existing")
-        fi
-
-        ARGS+=("--sort" "${{ inputs.sort-order }}")
-
-        # Enable verbose logging
-        ARGS+=("--verbose")
-
-        # Output the full command for debugging
-        echo "Running command: python ${{ github.action_path }}/json2vars_setter/cache_version_info.py ${ARGS[*]}"
-
-        # Execute cache version info script
-        python ${{ github.action_path }}/json2vars_setter/cache_version_info.py "${ARGS[@]}"
 
     # JSON parsing (always executed)
     - name: Parse JSON and set outputs
