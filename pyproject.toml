@@ -23,6 +23,8 @@ pytest-testmon = "^2.1.3"
 ruff = "^0.9.9"
 mypy = "^1.15.0"
 taskipy = "^1.14.1"
+mkdocs-material = "^9.6.7"
+mkdocs-glightbox = "^0.4.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -85,11 +87,11 @@ filterwarnings = [
 ]
 
 [tool.taskipy.tasks]
-testcoverageverbose = "pytest -s -vv --cov=. --cov-branch --cov-report term-missing --cov-report html"
+testcoverage = "pytest --cov=json2vars_setter --cov-branch --cov-report term-missing --cov-report html"
+testcoverageverbose = "pytest -s -vv --cov=json2vars_setter --cov-branch --cov-report term-missing --cov-report html"
 testhtmlreport = "pytest --html=htmlcov/report_page.html"
 testcixml = "python scripts/run_tests.py --report xml"
 testciterm = "python scripts/run_tests.py --report term"
-testcoverage = "pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=html"
 usage = "python json2vars_setter/cache_version_info.py --help\n\npython json2vars_setter/update_matrix_dynamic.py --help\n\n"
 
 [tool.coverage.run]

@@ -1,0 +1,38 @@
+{
+  // Reference : https://github.com/markdownlint/markdownlint/blob/main/docs/creating_rules.md
+  // Unordered list indentation / 番号なしリストのインデント
+  //"MD007": false,
+  // Trailing spaces / 末尾のスペース
+  //"MD009": false,
+  // Hard tabs / インデントのタブ
+  //"MD010": false,
+  // Line length / 行の長さ
+  "MD013": false,
+  // Dollar signs used before commands without showing output / コマンドの前にドル記号を使用して出力を表示しない
+  // コードブロックでコマンドライン(bash/zsh)を書く場合、コピー＆ペーストを考慮すると、
+  // "$"や"%"は表示しない方が良いので警告を有効にする。(見た目重視であれば無効にする。)
+  //"MD014": false,
+  // Multiple headings with the same content / 同じ内容の複数の見出し
+  "MD024": false,
+  // Multiple top-level headings in the same document / 同じドキュメント内の複数のトップレベルの見出し
+  "MD025": false,
+  // Trailing punctuation in heading / 見出しの末尾の句読点
+  "MD026": false,
+  "MD028": false,
+  "MD029": false,
+  "MD032": false,
+  // Inline HTML / raw HTMLの記入
+  // MD009を無効にする変わりに改行に<br/>を使用するため無効にする。
+  "MD033": false,
+  // リンクしたいURLは<>で囲まなければならない
+  // link-cardでパスを文字列で指定する必要があるため無効にする。
+  "MD034": false,
+  // Fenced code blocks should have a language specified / フェンスされたコードブロックには言語を指定する必要があります
+  // 言語に問わずハイライトした方が良いので有効にする。
+  //"MD040": false
+  "MD041": false,
+  // Forced code block style / indented:,consistent,fencedのルールを強制する
+  // pymdownx.tabbed(コードブロックのタブ)を有効にするため無効にする
+  "MD046": false,
+  "MD051": false
+}

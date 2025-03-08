@@ -1,0 +1,85 @@
+site_name: json2vars-setter
+site_description: GitHub Action to parse JSON files and set GitHub Actions outputs with version management capabilities
+repo_name: 7rikazhexde/json2vars-setter
+repo_url: https://github.com/7rikazhexde/json2vars-setter
+edit_uri: edit/main/docs/
+site_url: https://7rikazhexde.github.io/json2vars-setter/
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for automatic mode (system preference)
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: green
+      accent: light green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - content.code.annotate
+    - content.tabs.link
+    - search.highlight
+    - toc.follow
+
+extra_css:
+  - stylesheets/extra.css
+
+#extra_javascript:
+#  - https://unpkg.com/mermaid/dist/mermaid.min.js
+#  - javascripts/custom.js
+
+plugins:
+  - search
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.inlinehilite
+  - admonition
+  - footnotes
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.keys
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Features:
+      - Overview: features/index.md
+      - JSON to Variables: features/json-to-variables.md
+      - Dynamic Update: features/dynamic-update.md
+      - Version Caching: features/version-caching.md
+  - Usage Examples:
+      - Basic Examples: examples/basic.md
+      - CI/CD Integration: examples/ci-cd.md
+      - Troubleshooting: examples/troubleshooting.md
+  - Reference:
+      - Command Options: reference/options.md
+  - Contributing: contributing.md
