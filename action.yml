@@ -138,9 +138,9 @@ runs:
       shell: bash
       run: |
         # Create isolated virtual environment for the action
-        python -m venv json2vars_venv
+        python -m venv ${{ github.action_path }}/json2vars_venv
         # Activate virtual environment
-        . json2vars_venv/bin/activate
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
         # Install dependencies
         pip install requests typer
         # Create a script to easily activate the venv in subsequent steps
