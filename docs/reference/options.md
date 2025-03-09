@@ -31,7 +31,8 @@ This page provides a comprehensive reference for all configuration options avail
 | `cache-languages` | Languages to include in cache operations | ✗ | `all` | Comma-separated list (e.g., `python,nodejs`) |
 | `force-cache-update` | Force cache update even if it is fresh | ✗ | `false` | Bypasses freshness checks |
 | `cache-max-age` | Maximum age of cache in days before update | ✗ | `1` | How old the cache can be before refresh |
-| `cache-count` | Number of versions to fetch per language | ✗ | `10` | Controls how many versions to retrieve |
+| `cache-count` | Number of versions to fetch per language | ✗ | `10` | Controls how many versions to retrieve and store in cache |
+| `output-count` | Number of versions to include in output template | ✗ | `0` | When 0 or not specified, uses the value of `cache-count`. Allows caching many versions but limiting how many appear in matrix.json |
 | `cache-incremental` | Add only new versions without replacing existing cache | ✗ | `false` | Build a version history over time |
 | `cache-file` | Custom cache file path | ✗ | `.github/json2vars-setter/cache/version_cache.json` | Where to store cache data |
 | `template-only` | Only generate template from existing cache (no API calls) | ✗ | `false` | Skip updating cache, just use existing data |

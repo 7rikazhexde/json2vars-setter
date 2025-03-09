@@ -11,10 +11,10 @@ graph TD
         A -->|Sets| C[GitHub Actions Outputs]
 
         D[update_matrix_dynamic.py] -->|Updates| B
-        D -->|Fetches from| E[Language APIs]
+        D -->|Fetches from| E[GitHub API]
 
         F[cache_version_info.py] -->|Caches| G[Version Information]
-        F -->|Reduces| H[API Calls]
+        F -->|Fetches from| E
         F -->|Generates| B
     end
 
@@ -24,11 +24,13 @@ graph TD
     classDef file fill:#ffb300,stroke:#fb8c00,stroke-width:1px
     classDef output fill:#42a5f5,stroke:#1976d2,stroke-width:1px
     classDef external fill:#78909c,stroke:#546e7a,stroke-width:1px
+    classDef api fill:#e91e63,stroke:#c2185b,stroke-width:1px,color:#fff
 
     class A,D,F core
     class B,G file
     class C output
-    class E,H,I external
+    class I external
+    class E api
 ```
 
 ### 1. JSON to Variables Parser (`json_to_github_output.py`)

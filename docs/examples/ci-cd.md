@@ -90,34 +90,6 @@ jobs:
 
       - name: Run tests
         run: pytest
-
-  # Step 4: Build and deploy (on main branch only, after successful tests)
-  deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [set_variables, test]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          # Use the first Python version for deployment
-          python-version: ${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}
-
-      - name: Build package
-        run: |
-          python -m pip install --upgrade pip
-          pip install build
-          python -m build
-
-      - name: Deploy documentation
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs/build
-          publish_branch: ${{ needs.set_variables.outputs.ghpages_branch }}
 ```
 
 ## Environment-Specific Configurations

@@ -34,7 +34,8 @@ graph TD
     CommonOptions --> Languages[--languages #91;*1#93;]
     CommonOptions --> KeepExisting[--keep-existing]
     CommonOptions --> FilePaths[--cache-file #91;*2#93;,<br/> --template-file #91;*2#93;,<br/> --existing-template #91;*2#93;]
-    CommonOptions --> VersionCount[--count N]
+    CommonOptions --> CacheCount[--count N]
+    CommonOptions --> VersionCount[--output-count N]
     CommonOptions --> SortOrder[--sort asc/desc]
     CommonOptions --> CacheOnly[--cache-only]
     CommonOptions --> VerboseLog[--verbose]
@@ -50,7 +51,7 @@ graph TD
     class MainPurpose,TemplateCreation,CacheCreation main
     class TemplateSource,UpdateFrequency,CommonOptions condition
     class UseCache,UseAPI,ForceUpdate,ConditionalUpdate,History option
-    class Languages,FilePaths,VersionCount,SortOrder,KeepExisting,CacheOnly,VerboseLog common
+    class Languages,FilePaths,CacheCount,VersionCount,SortOrder,KeepExisting,CacheOnly,VerboseLog common
 ```
 
 !!! tip "[*1]: Specify language"
@@ -62,6 +63,14 @@ graph TD
 
     - If the file does not exist in the path, an error will occur, so please create it beforehand.
 
+!!! tip "count vs output-count"
+
+    - `--count` controls how many versions to retrieve and store in the cache
+    - `--output-count` controls how many of these versions appear in the output template (matrix.json)
+    - When `--output-count` is 0 or not specified, it automatically uses the value of `--count`
+    - This allows you to cache many versions (e.g., `--count 10`) but limit how many appear in your matrix file (e.g., `--output-count 3`)
+    - Example use case: Cache 10 recent versions for history but only use the 3 most recent in your CI/CD matrix
+
 ## Command Line Options
 
 | Option | Description | Default |
@@ -71,7 +80,8 @@ graph TD
 | `--max-age N` | Update cache only after N days<br>Compares with `last_updated` value in existing cache | 1 day |
 | `--incremental` | Add new versions to existing cache (build history) | None |
 | `--languages` | Specify target languages<br>Separate multiple languages with spaces<br>Supported: python, nodejs, ruby, go, rust | all |
-| `--count N` | Number of versions to keep per language | 10 |
+| `--count N` | Number of versions to fetch and cache per language | 10 |
+| `--output-count N` | Number of versions to include in output template<br>When 0 or not specified, uses the value of `--count` | 0 |
 | `--keep-existing` | Maintain information for non-specified languages | None |
 | `--cache-file` | Path to cache file | Default path |
 | `--template-file` | Path to output template file | Default path |
@@ -100,6 +110,12 @@ python json2vars_setter/cache_version_info.py --template-only --languages python
 
 ```bash
 python json2vars_setter/cache_version_info.py
+```
+
+#### Cache many versions but limit output to most recent ones
+
+```bash
+python json2vars_setter/cache_version_info.py --count 10 --output-count 3
 ```
 
 ### Cache Creation and Management
@@ -138,6 +154,14 @@ python json2vars_setter/cache_version_info.py --template-file ./my_matrix.json
 python json2vars_setter/cache_version_info.py --existing-template ./project_matrix.json --template-file ./updated_matrix.json
 ```
 
+### Version Control Flexibility
+
+#### Cache complete history but test only latest versions
+
+```bash
+python json2vars_setter/cache_version_info.py --count 15 --output-count 3
+```
+
 ### CI/CD Integration
 
 #### Scheduled job (cache update only)
@@ -165,8 +189,12 @@ In GitHub Actions, these options are mapped to action inputs:
     use-cache: 'true'
     cache-languages: 'python,nodejs'
     cache-max-age: '7'
+    cache-count: '10'
+    output-count: '3'  # Cache 10 versions but only use 3 in matrix
     keep-existing: 'true'
     sort-order: 'desc'
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Note that the version caching strategy (`use-cache: 'true'`) and dynamic update strategy (`update-matrix: 'true'`) cannot be used together as they represent different approaches to managing version information.
@@ -178,7 +206,9 @@ When you set `use-cache: 'true'`, the action performs these steps internally:
 1. **Check Cache Freshness**: The manager checks if the cache is fresh based on `cache-max-age`
 2. **Fetch Version Info**: If needed, it fetches new version information from APIs for the specified languages
 3. **Update Cache**: It updates the cache file with the new information
-4. **Generate Template**: It creates or updates the matrix JSON file based on the cached data
+4. **Generate Template**: It creates or updates the matrix JSON file based on the cached data, respecting version limits
+   - If `output-count` is specified, only that many versions are included in the template
+   - Otherwise, `cache-count` versions are included
 5. **Parse JSON**: The matrix JSON file is processed by json_to_github_output.py
 6. **Set Outputs**: The values from the JSON file are set as GitHub Actions outputs
 
@@ -217,6 +247,7 @@ sequenceDiagram
 - **Use template-only mode** (`template-only: 'true'`) for quick template generation from existing cache
 - **Use incremental mode** (`cache-incremental: 'true'`) with `cache-count` to build comprehensive version history
 - **Use `keep-existing: 'true'`** when updating only specific languages to maintain existing configuration
+- **Use `output-count`** to limit the number of versions in your matrix while maintaining a larger history in cache
 - **Set up a scheduled job** for cache maintenance and a separate job for template generation
 - **Never use `use-cache: 'true'` and `update-matrix: 'true'` together** as they are mutually exclusive approaches
 
@@ -250,6 +281,7 @@ When fetching version information from GitHub APIs, you might encounter rate lim
 |-------|----------|
 | API rate limits | Use GitHub authentication by setting up the `GITHUB_TOKEN` environment variable |
 | Missing versions | Increase the `cache-count` value to fetch more versions |
+| Too many versions in matrix | Use `output-count` to limit matrix versions while keeping more in cache |
 | Incorrect sort order | Explicitly set `sort-order: 'asc'` or `sort-order: 'desc'` as needed |
 | Cache not updating | Use `force-cache-update: 'true'` to force an update |
 | Empty template | Check that the cache file exists or use `force-cache-update: 'true'` to create it |
