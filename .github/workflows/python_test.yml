@@ -11,7 +11,7 @@ on:
       - 'poetry.lock'
       - 'requirements-dev.txt'
       - 'requirements.txt'
-      - '.github/workflows/python_test.yml'
+      - '.github/json2vars-setter/python_test.yml'
 
 jobs:
   set_variables:
@@ -30,8 +30,8 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          #json-file: .github/workflows/matrix.json
-          json-file: .github/workflows/python_project_matrix.json
+          #json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/python_project_matrix.json
 
       - name: Debug output values
         run: |

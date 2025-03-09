@@ -29,7 +29,7 @@ jobs:
       - name: Update matrix configuration
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           update-matrix: 'true'
           python-strategy: 'stable'
           nodejs-strategy: 'stable'
@@ -38,7 +38,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .github/workflows/matrix.json
+          git add .github/json2vars-setter/matrix.json
           git commit -m "Update testing matrix with latest stable versions" || echo "No changes to commit"
           git push
 
@@ -61,7 +61,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
 
   # Step 3: Run tests across matrix
   test:
@@ -157,14 +157,14 @@ jobs:
         if: steps.environment.outputs.env == 'production'
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/production_matrix.json
+          json-file: .github/json2vars-setter/production_matrix.json
 
       - name: Set variables for development
         id: json2vars_dev
         if: steps.environment.outputs.env == 'development'
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/development_matrix.json
+          json-file: .github/json2vars-setter/development_matrix.json
           update-matrix: 'true'
           all: 'latest'
 
@@ -257,7 +257,7 @@ jobs:
       - name: Update version cache
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           use-cache: 'true'
           force-cache-update: 'true'
           cache-incremental: 'true'
@@ -268,7 +268,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .github/workflows/cache
+          git add .github/json2vars-setter/cache
           git commit -m "Update version cache" || echo "No changes to commit"
           git push
 
@@ -290,7 +290,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           use-cache: 'true'
           template-only: 'true'  # Use existing cache
           sort-order: 'desc'
@@ -358,7 +358,7 @@ jobs:
       - name: Update version cache
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           use-cache: 'true'
           cache-max-age: '1'  # Force update
           cache-incremental: 'true'
@@ -368,7 +368,7 @@ jobs:
       - name: Update dynamic versions
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/latest_matrix.json
+          json-file: .github/json2vars-setter/latest_matrix.json
           update-matrix: 'true'
           all: 'latest'
 
@@ -376,9 +376,9 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .github/workflows/matrix.json
-          git add .github/workflows/latest_matrix.json
-          git add .github/workflows/cache
+          git add .github/json2vars-setter/matrix.json
+          git add .github/json2vars-setter/latest_matrix.json
+          git add .github/json2vars-setter/cache
           git commit -m "Weekly matrix configuration update" || echo "No changes to commit"
           git push
 ```
@@ -398,7 +398,7 @@ on:
     paths:
       - 'project-a/**'
       - 'project-b/**'
-      - '.github/workflows/**'
+      - '.github/json2vars-setter/**'
 
 jobs:
   detect_changes:

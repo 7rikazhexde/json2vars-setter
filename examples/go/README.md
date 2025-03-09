@@ -89,7 +89,7 @@ The `jsonparser` package provides functionality to parse JSON configuration file
 
 ## JSON Configuration Format
 
-Please check [All Releases](https://go.dev/dl/) and create `.github/workflows/go_project_matrix.json`
+Please check [All Releases](https://go.dev/dl/) and create `.github/json2vars-setter/go_project_matrix.json`
 
 ```json
 {

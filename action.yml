@@ -78,7 +78,7 @@ inputs:
   cache-file:
     description: 'Custom cache file path'
     required: false
-    default: '.github/workflows/cache/version_cache.json'
+    default: '.github/json2vars-setter/cache/version_cache.json'
 
   template-only:
     description: 'Only generate template from existing cache (no API calls)'

@@ -37,11 +37,11 @@
 
 ## Usage
 
-This action reads a JSON file (default path: `.github/workflows/matrix.json`) and sets GitHub Actions outputs based on the parsed data.
+This action reads a JSON file (default path: `.github/json2vars-setter/matrix.json`) and sets GitHub Actions outputs based on the parsed data.
 
 > [!NOTE]
 > - Please create the JSON file by referring to the [Examples](#examples).
-> - By default, the JSON file path is `.github/workflows/matrix.json`. If you create a custom file, specify it in the `7rikazhexde/json2vars-setter` action.
+> - By default, the JSON file path is `.github/json2vars-setter/matrix.json`. If you create a custom file, specify it in the `7rikazhexde/json2vars-setter` action.
 > - In the workflow, only the variables specified in the Outputs section are available.
 > - Language versions are optional. If a language is not defined in the JSON, its corresponding output will be empty.
 
@@ -65,14 +65,14 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/python_project_matrix.json
+          json-file: .github/json2vars-setter/python_project_matrix.json
 ```
 
 ### Inputs
 
 | Input             | Description                                                        | Required |
 |-------------------|--------------------------------------------------------------------|----------|
-| `json-file`       | Path to the JSON file.<br>Default: `.github/workflows/matrix.json` | No       |
+| `json-file`       | Path to the JSON file.<br>Default: `.github/json2vars-setter/matrix.json` | No       |
 
 ### Outputs
 
@@ -91,7 +91,7 @@ jobs:
 
 ## Examples
 
-This action uses a JSON configuration file (e.g. [matrix.json](.github/workflows/matrix.json)) to define your matrix testing environments.
+This action uses a JSON configuration file (e.g. [matrix.json](.github/json2vars-setter/matrix.json)) to define your matrix testing environments.
 
 ### Releases Info Link
 
@@ -166,7 +166,7 @@ This action uses a JSON configuration file (e.g. [matrix.json](.github/workflows
 
 </details>
 
-You can also create a simplified configuration by including only the languages you need. For example, if your project only uses `Python`(e.g. [python_project_matrix.json](.github/workflows/python_project_matrix.json)).
+You can also create a simplified configuration by including only the languages you need. For example, if your project only uses `Python`(e.g. [python_project_matrix.json](.github/json2vars-setter/python_project_matrix.json)).
 
 > [!TIP]
 > - Only specify the languages you actually use.
@@ -176,7 +176,7 @@ You can also create a simplified configuration by including only the languages y
 <details>
 <summary>Simplified Configuration Example</summary>
 
-Please check [Python Documentation by Version](https://www.python.org/doc/versions/) and create `.github/workflows/python_project_matrix.json`
+Please check [Python Documentation by Version](https://www.python.org/doc/versions/) and create `.github/json2vars-setter/python_project_matrix.json`
 
 ```jsonc
 {
@@ -235,7 +235,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/python_project_matrix.json
+          json-file: .github/json2vars-setter/python_project_matrix.json
 
       - name: Access Variables
         run: |
@@ -370,11 +370,11 @@ OS: macos-latest, Python Version: 3.13
 
 For language-specific workflow examples, please refer to:
 
-- Python: [python_test.yml](.github/workflows/python_test.yml)
-- Node.js: [nodejs_test.yml](.github/workflows/nodejs_test.yml)
-- Ruby: [ruby_test.yml](.github/workflows/ruby_test.yml)
-- Go: [go_test.yml](.github/workflows/go_test.yml)
-- Rust: [rust_test.yml](.github/workflows/rust_test.yml)
+- Python: [python_test.yml](.github/json2vars-setter/python_test.yml)
+- Node.js: [nodejs_test.yml](.github/json2vars-setter/nodejs_test.yml)
+- Ruby: [ruby_test.yml](.github/json2vars-setter/ruby_test.yml)
+- Go: [go_test.yml](.github/json2vars-setter/go_test.yml)
+- Rust: [rust_test.yml](.github/json2vars-setter/rust_test.yml)
 
 ## License
 

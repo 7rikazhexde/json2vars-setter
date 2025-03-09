@@ -268,8 +268,8 @@ Examples:
     )
     parser.add_argument(
         "--json-file",
-        default=os.path.join(".github", "workflows", "matrix.json"),
-        help="Path to the JSON file to update (default: .github/workflows/matrix.json)",
+        default=os.path.join(".github", "json2vars-setter", "matrix.json"),
+        help="Path to the JSON file to update (default: .github/json2vars-setter/matrix.json)",
     )
     parser.add_argument(
         "--python",

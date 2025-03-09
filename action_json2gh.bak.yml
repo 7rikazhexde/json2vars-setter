@@ -8,7 +8,7 @@ inputs:
   json-file:
     description: 'Path to the JSON file'
     required: true
-    default: '.github/workflows/matrix.json'
+    default: '.github/json2vars-setter/matrix.json'
 outputs:
   os:
     description: 'List of operating systems'

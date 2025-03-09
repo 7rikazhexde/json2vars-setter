@@ -161,7 +161,7 @@ In GitHub Actions, these options are mapped to action inputs:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     use-cache: 'true'
     cache-languages: 'python,nodejs'
     cache-max-age: '7'
@@ -232,7 +232,7 @@ When fetching version information from GitHub APIs, you might encounter rate lim
       id: json2vars
       uses: 7rikazhexde/json2vars-setter@main
       with:
-        json-file: .github/workflows/matrix.json
+        json-file: .github/json2vars-setter/matrix.json
         use-cache: 'true'
         cache-languages: 'python,nodejs'
       env:

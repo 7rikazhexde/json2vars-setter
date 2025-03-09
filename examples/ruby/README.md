@@ -93,7 +93,7 @@ Contains RSpec test cases.
 
 ## JSON Configuration Format
 
-Please check [Ruby Releases](https://www.ruby-lang.org/en/downloads/releases/) and create `.github/workflows/ruby_project_matrix.json`
+Please check [Ruby Releases](https://www.ruby-lang.org/en/downloads/releases/) and create `.github/json2vars-setter/ruby_project_matrix.json`
 
 ```json
 {

@@ -8,7 +8,7 @@ The most basic use case is parsing a JSON file to make its values available as G
 
 ### Configuration File
 
-First, create a matrix.json file in `.github/workflows/`:
+First, create a matrix.json file in `.github/json2vars-setter/`:
 
 ```json
 {
@@ -49,7 +49,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
 
       - name: Check outputs
         run: |
@@ -80,7 +80,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
 
   test:
     needs: set_variables
@@ -129,7 +129,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           update-matrix: 'true'
           python-strategy: 'stable'
           nodejs-strategy: 'latest'
@@ -178,7 +178,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           use-cache: 'true'
           cache-max-age: '7'  # Update cache if older than 7 days
           cache-languages: 'python'
@@ -211,14 +211,14 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/python_project_matrix.json
+          json-file: .github/json2vars-setter/python_project_matrix.json
 
       - name: Show configured versions
         run: |
           echo "Python versions: ${{ steps.json2vars.outputs.versions_python }}"
 ```
 
-With custom matrix file `.github/workflows/python_project_matrix.json`:
+With custom matrix file `.github/json2vars-setter/python_project_matrix.json`:
 
 ```json
 {
@@ -258,7 +258,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
 
   test_python:
     needs: set_variables
@@ -318,7 +318,7 @@ jobs:
       - name: Update matrix.json
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           update-matrix: 'true'
           all: 'stable'  # Use stable versions for all languages
 
@@ -326,7 +326,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .github/workflows/matrix.json
+          git add .github/json2vars-setter/matrix.json
           git commit -m "Update testing matrix with latest stable versions" || echo "No changes to commit"
           git push
 ```

@@ -15,7 +15,7 @@ As this is a GitHub Action, there's no installation required. You simply referen
 
 ### Step 1: Create a JSON Configuration File
 
-First, create a JSON file to define your matrix testing environment. By default, the action looks for this file at `.github/workflows/matrix.json`.
+First, create a JSON file to define your matrix testing environment. By default, the action looks for this file at `.github/json2vars-setter/matrix.json`.
 
 Here's a basic example:
 
@@ -62,7 +62,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
 ```
 
 !!! important

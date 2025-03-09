@@ -33,7 +33,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `cache-max-age` | Maximum age of cache in days before update | ✗ | `1` | How old the cache can be before refresh |
 | `cache-count` | Number of versions to fetch per language | ✗ | `10` | Controls how many versions to retrieve |
 | `cache-incremental` | Add only new versions without replacing existing cache | ✗ | `false` | Build a version history over time |
-| `cache-file` | Custom cache file path | ✗ | `.github/workflows/cache/version_cache.json` | Where to store cache data |
+| `cache-file` | Custom cache file path | ✗ | `.github/json2vars-setter/cache/version_cache.json` | Where to store cache data |
 | `template-only` | Only generate template from existing cache (no API calls) | ✗ | `false` | Skip updating cache, just use existing data |
 | `cache-only` | Only update the cache, do not generate the template | ✗ | `false` | Update cache but don't modify JSON file |
 | `keep-existing` | Maintain existing version information when generating template | ✗ | `true` | Preserves information for unspecified languages |
@@ -87,7 +87,7 @@ Some input parameters have relationships or constraints:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
     python-strategy: 'stable'
     nodejs-strategy: 'latest'
@@ -100,7 +100,7 @@ Some input parameters have relationships or constraints:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     use-cache: 'true'
     cache-max-age: '7'
     cache-languages: 'python,nodejs'
@@ -114,7 +114,7 @@ Some input parameters have relationships or constraints:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
 ```
 
 ## Best Practices

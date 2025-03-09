@@ -61,7 +61,7 @@ One of the key advantages is the ability to specify different update strategies 
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
     python-strategy: 'stable'
     nodejs-strategy: 'latest'
@@ -77,7 +77,7 @@ Test your update strategies without modifying your JSON file using the dry-run o
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
     all: 'latest'
     dry-run: 'true'
@@ -110,7 +110,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           update-matrix: 'true'
           all: 'latest'
 
@@ -130,7 +130,7 @@ You can mix and match update strategies for different languages:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
     python-strategy: 'stable'
     nodejs-strategy: 'latest'
@@ -158,7 +158,7 @@ jobs:
       - name: Update matrix.json
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
           update-matrix: 'true'
           all: 'stable'
 
@@ -166,7 +166,7 @@ jobs:
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .github/workflows/matrix.json
+          git add .github/json2vars-setter/matrix.json
           git commit -m "Update testing matrix with latest stable versions" || echo "No changes to commit"
           git push
 ```

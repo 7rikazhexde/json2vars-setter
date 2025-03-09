@@ -23,7 +23,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: .github/json2vars-setter/matrix.json
 
       - name: Debug output values
         run: |
@@ -199,7 +199,7 @@ jobs:
           message="'dependabot_prch' workflow completed with status: $status
 
           Check URL:
-          https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dependabot_prch.yml"
+          https://github.com/7rikazhexde/json2vars-setter/actions/json2vars-setter/dependabot_prch.yml"
 
           curl -X POST https://notify-api.line.me/api/notify \
             -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \

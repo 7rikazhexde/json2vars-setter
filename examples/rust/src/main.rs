@@ -6,7 +6,7 @@ fn main() {
         .join("..")
         .join("..")
         .join(".github")
-        .join("workflows")
+        .join("json2vars-setter")
         .join("rust_project_matrix.json");
 
     #[allow(clippy::needless_borrows_for_generic_args)]

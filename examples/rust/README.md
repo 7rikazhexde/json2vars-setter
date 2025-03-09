@@ -68,7 +68,7 @@ Command-line interface to parse and display JSON configuration.
 
 ## JSON Configuration Format
 
-Please check [Releases](https://github.com/rust-lang/rust/releases) and create `.github/workflows/rust_project_matrix.json`
+Please check [Releases](https://github.com/rust-lang/rust/releases) and create `.github/json2vars-setter/rust_project_matrix.json`
 
 ```json
 {

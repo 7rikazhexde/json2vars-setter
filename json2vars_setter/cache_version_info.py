@@ -30,7 +30,7 @@ logging.basicConfig(
 logger = logging.getLogger("cache_version_info")
 
 # Default paths
-CACHE_DIR = Path(".github") / "workflows" / "cache"
+CACHE_DIR = Path(".github") / "json2vars-setter" / "cache"
 DEFAULT_CACHE_FILE = CACHE_DIR / "version_cache.json"
 DEFAULT_TEMPLATE_FILE = CACHE_DIR / "version_template.json"
 
@@ -630,7 +630,7 @@ Detailed examples:
   python json2vars_setter/cache_version_info.py --sort asc
 
   # Update only Python version info in an existing project template
-  python json2vars_setter/cache_version_info.py --template-only --languages python --existing-template .github/workflows/python_project_matrix.json --template-file .github/workflows/python_project_matrix.json --keep-existing
+  python json2vars_setter/cache_version_info.py --template-only --languages python --existing-template .github/json2vars-setter/python_project_matrix.json --template-file .github/json2vars-setter/python_project_matrix.json --keep-existing
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )

@@ -15,7 +15,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -104,13 +104,13 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
    - name: Force cache update
      uses: 7rikazhexde/json2vars-setter@main
      with:
-       json-file: .github/workflows/matrix.json
+       json-file: .github/json2vars-setter/matrix.json
        use-cache: 'true'
        force-cache-update: 'true'
    ```
 
 2. **Check cache file location**:
-   The default cache location is `.github/workflows/cache/version_cache.json`. Ensure this directory exists and is writable.
+   The default cache location is `.github/json2vars-setter/cache/version_cache.json`. Ensure this directory exists and is writable.
 
 3. **Commit cache files**:
 
@@ -119,7 +119,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
      run: |
        git config --local user.email "actions@github.com"
        git config --local user.name "GitHub Actions"
-       git add .github/workflows/cache/version_cache.json
+       git add .github/json2vars-setter/cache/version_cache.json
        git commit -m "Update version cache"
        git push
    ```
@@ -135,7 +135,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
 - name: Set variables
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
     use-cache: 'true'  # Will be ignored when update-matrix is true
 
@@ -143,7 +143,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
 - name: Set variables with dynamic update
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
 ```
 
@@ -166,7 +166,7 @@ Or use the built-in debug output:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
     verbose: 'true'  # Enable verbose logging
 ```
@@ -191,10 +191,10 @@ Examine the generated files for debugging:
 - name: Inspect generated files
   run: |
     echo "Matrix JSON content:"
-    cat .github/workflows/matrix.json
+    cat .github/json2vars-setter/matrix.json
 
     echo "Cache content:"
-    cat .github/workflows/cache/version_cache.json
+    cat .github/json2vars-setter/cache/version_cache.json
 ```
 
 ### Check GitHub API Quota
@@ -263,9 +263,9 @@ Choose a JSON file dynamically based on context:
   id: config_file
   run: |
     if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-      echo "file=.github/workflows/production_matrix.json" >> $GITHUB_OUTPUT
+      echo "file=.github/json2vars-setter/production_matrix.json" >> $GITHUB_OUTPUT
     else
-      echo "file=.github/workflows/development_matrix.json" >> $GITHUB_OUTPUT
+      echo "file=.github/json2vars-setter/development_matrix.json" >> $GITHUB_OUTPUT
     fi
 
 - name: Set variables from dynamic path
@@ -295,7 +295,7 @@ Select update strategy based on specific conditions:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: ${{ steps.strategy.outputs.update }}
     all: ${{ steps.strategy.outputs.strategy }}
 ```
@@ -315,7 +315,7 @@ Use GitHub authentication to increase API rate limits:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     update-matrix: 'true'
   env:
     GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
@@ -331,7 +331,7 @@ Optimize your workflow to reduce API calls:
    - name: Set variables with caching
      uses: 7rikazhexde/json2vars-setter@main
      with:
-       json-file: .github/workflows/matrix.json
+       json-file: .github/json2vars-setter/matrix.json
        use-cache: 'true'
        cache-max-age: '7'  # Update weekly
    ```
@@ -342,7 +342,7 @@ Optimize your workflow to reduce API calls:
    - name: Set variables from cache
      uses: 7rikazhexde/json2vars-setter@main
      with:
-       json-file: .github/workflows/matrix.json
+       json-file: .github/json2vars-setter/matrix.json
        use-cache: 'true'
        template-only: 'true'  # No API calls
    ```
@@ -363,7 +363,7 @@ Keep a comprehensive version history while minimizing API usage:
 - name: Update cache incrementally
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/workflows/matrix.json
+    json-file: .github/json2vars-setter/matrix.json
     use-cache: 'true'
     cache-max-age: '7'
     cache-incremental: 'true'

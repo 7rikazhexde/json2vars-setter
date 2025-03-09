@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/go/**'
-      - '.github/workflows/go_test.yml'
+      - '.github/json2vars-setter/go_test.yml'
 
 jobs:
   set_variables:
@@ -25,8 +25,8 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          #json-file: .github/workflows/matrix.json
-          json-file: .github/workflows/go_project_matrix.json
+          #json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/go_project_matrix.json
 
       - name: Debug output values
         run: |

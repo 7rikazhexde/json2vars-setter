@@ -3,7 +3,7 @@ const { parseConfigJson } = require('../../src/utils/jsonParser');
 
 const JSON_FILE_PATH = path.resolve(
   __dirname,
-  '../../../../.github/workflows/nodejs_project_matrix.json'
+  '../../../../.github/json2vars-setter/nodejs_project_matrix.json'
 );
 
 describe('parseConfigJson', () => {

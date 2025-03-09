@@ -1,0 +1,374 @@
+{
+    "metadata": {
+        "last_updated": "2025-03-09T09:46:58.480942",
+        "version": "1.1",
+        "version_count": 10
+    },
+    "languages": {
+        "python": {
+            "latest": "3.13.2",
+            "stable": "3.12.9",
+            "recent_releases": [
+                {
+                    "version": "3.13.2",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3.13.2",
+                        "commit": {
+                            "sha": "4f8bb3947cfbc20f970ff9d9531e1132a9e95396"
+                        },
+                        "tarball_url": "https://api.github.com/repos/python/cpython/tarball/refs/tags/v3.13.2",
+                        "zipball_url": "https://api.github.com/repos/python/cpython/zipball/refs/tags/v3.13.2"
+                    }
+                },
+                {
+                    "version": "3.13.1",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3.13.1",
+                        "commit": {
+                            "sha": "067145177975eadd61a0c907d0d177f7b6a5a3de"
+                        },
+                        "tarball_url": "https://api.github.com/repos/python/cpython/tarball/refs/tags/v3.13.1",
+                        "zipball_url": "https://api.github.com/repos/python/cpython/zipball/refs/tags/v3.13.1"
+                    }
+                },
+                {
+                    "version": "3.13.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3.13.0",
+                        "commit": {
+                            "sha": "60403a5409ff2c3f3b07dd2ca91a7a3e096839c7"
+                        },
+                        "tarball_url": "https://api.github.com/repos/python/cpython/tarball/refs/tags/v3.13.0",
+                        "zipball_url": "https://api.github.com/repos/python/cpython/zipball/refs/tags/v3.13.0"
+                    }
+                },
+                {
+                    "version": "3.12.9",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3.12.9",
+                        "commit": {
+                            "sha": "fdb81425a9ad683f8c24bf5cbedc9b96baf00cd2"
+                        },
+                        "tarball_url": "https://api.github.com/repos/python/cpython/tarball/refs/tags/v3.12.9",
+                        "zipball_url": "https://api.github.com/repos/python/cpython/zipball/refs/tags/v3.12.9"
+                    }
+                },
+                {
+                    "version": "3.12.8",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3.12.8",
+                        "commit": {
+                            "sha": "2dc476bcb9142cd25d7e1d52392b73a3dcdf1756"
+                        },
+                        "tarball_url": "https://api.github.com/repos/python/cpython/tarball/refs/tags/v3.12.8",
+                        "zipball_url": "https://api.github.com/repos/python/cpython/zipball/refs/tags/v3.12.8"
+                    }
+                }
+            ],
+            "last_updated": "2025-03-09T09:46:55.735729"
+        },
+        "nodejs": {
+            "latest": "23.9.0",
+            "stable": "22.14.0",
+            "recent_releases": [
+                {
+                    "version": "23.9.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v23.9.0",
+                        "commit": {
+                            "sha": "9d2368f64329bf194c4e82b349e76fdad879d32a"
+                        },
+                        "is_lts": false,
+                        "tarball_url": "https://api.github.com/repos/nodejs/node/tarball/refs/tags/v23.9.0",
+                        "zipball_url": "https://api.github.com/repos/nodejs/node/zipball/refs/tags/v23.9.0"
+                    }
+                },
+                {
+                    "version": "23.8.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v23.8.0",
+                        "commit": {
+                            "sha": "196efd77f59e377fff1dde38d0f4132e4a998732"
+                        },
+                        "is_lts": false,
+                        "tarball_url": "https://api.github.com/repos/nodejs/node/tarball/refs/tags/v23.8.0",
+                        "zipball_url": "https://api.github.com/repos/nodejs/node/zipball/refs/tags/v23.8.0"
+                    }
+                },
+                {
+                    "version": "23.7.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v23.7.0",
+                        "commit": {
+                            "sha": "73b4c04eb67ee75e9059c536b00939f86f34d582"
+                        },
+                        "is_lts": false,
+                        "tarball_url": "https://api.github.com/repos/nodejs/node/tarball/refs/tags/v23.7.0",
+                        "zipball_url": "https://api.github.com/repos/nodejs/node/zipball/refs/tags/v23.7.0"
+                    }
+                },
+                {
+                    "version": "23.6.1",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v23.6.1",
+                        "commit": {
+                            "sha": "25a01ea40d60a3cec56263fef109d00d638208c0"
+                        },
+                        "is_lts": false,
+                        "tarball_url": "https://api.github.com/repos/nodejs/node/tarball/refs/tags/v23.6.1",
+                        "zipball_url": "https://api.github.com/repos/nodejs/node/zipball/refs/tags/v23.6.1"
+                    }
+                },
+                {
+                    "version": "23.6.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v23.6.0",
+                        "commit": {
+                            "sha": "9fa6aeb4a6e54330f6c055a6dcfac265b150f902"
+                        },
+                        "is_lts": false,
+                        "tarball_url": "https://api.github.com/repos/nodejs/node/tarball/refs/tags/v23.6.0",
+                        "zipball_url": "https://api.github.com/repos/nodejs/node/zipball/refs/tags/v23.6.0"
+                    }
+                }
+            ],
+            "last_updated": "2025-03-09T09:46:56.893845"
+        },
+        "ruby": {
+            "latest": "3.4.2",
+            "stable": "3.3.7",
+            "recent_releases": [
+                {
+                    "version": "3.4.2",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3_4_2",
+                        "commit": {
+                            "sha": "d2930f8e7a5db8a7337fa43370940381b420cc3e"
+                        },
+                        "tarball_url": "https://api.github.com/repos/ruby/ruby/tarball/refs/tags/v3_4_2",
+                        "zipball_url": "https://api.github.com/repos/ruby/ruby/zipball/refs/tags/v3_4_2"
+                    }
+                },
+                {
+                    "version": "3.4.1",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3_4_1",
+                        "commit": {
+                            "sha": "48d4efcb85000e1ebae42004e963b5d0cedddcf2"
+                        },
+                        "tarball_url": "https://api.github.com/repos/ruby/ruby/tarball/refs/tags/v3_4_1",
+                        "zipball_url": "https://api.github.com/repos/ruby/ruby/zipball/refs/tags/v3_4_1"
+                    }
+                },
+                {
+                    "version": "3.4.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3_4_0",
+                        "commit": {
+                            "sha": "f45010833071b953744658842369e3496dfacb48"
+                        },
+                        "tarball_url": "https://api.github.com/repos/ruby/ruby/tarball/refs/tags/v3_4_0",
+                        "zipball_url": "https://api.github.com/repos/ruby/ruby/zipball/refs/tags/v3_4_0"
+                    }
+                },
+                {
+                    "version": "3.3.7",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3_3_7",
+                        "commit": {
+                            "sha": "be31f993d7fa0219d85f7b3c694d454da4ecc10b"
+                        },
+                        "tarball_url": "https://api.github.com/repos/ruby/ruby/tarball/refs/tags/v3_3_7",
+                        "zipball_url": "https://api.github.com/repos/ruby/ruby/zipball/refs/tags/v3_3_7"
+                    }
+                },
+                {
+                    "version": "3.3.6",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "v3_3_6",
+                        "commit": {
+                            "sha": "75015d4c1f6965b5e85e96fb309f1f2129f933c0"
+                        },
+                        "tarball_url": "https://api.github.com/repos/ruby/ruby/tarball/refs/tags/v3_3_6",
+                        "zipball_url": "https://api.github.com/repos/ruby/ruby/zipball/refs/tags/v3_3_6"
+                    }
+                }
+            ],
+            "last_updated": "2025-03-09T09:46:57.188039"
+        },
+        "go": {
+            "latest": "1.24.1",
+            "stable": "1.23.7",
+            "recent_releases": [
+                {
+                    "version": "1.24.1",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "go1.24.1",
+                        "commit": {
+                            "sha": "339c903a75c3fe936fb4ed6c355d15e6081d6af3"
+                        },
+                        "tarball_url": "https://api.github.com/repos/golang/go/tarball/refs/tags/go1.24.1",
+                        "zipball_url": "https://api.github.com/repos/golang/go/zipball/refs/tags/go1.24.1"
+                    }
+                },
+                {
+                    "version": "1.24.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "go1.24.0",
+                        "commit": {
+                            "sha": "3901409b5d0fb7c85a3e6730a59943cc93b2835c"
+                        },
+                        "tarball_url": "https://api.github.com/repos/golang/go/tarball/refs/tags/go1.24.0",
+                        "zipball_url": "https://api.github.com/repos/golang/go/zipball/refs/tags/go1.24.0"
+                    }
+                },
+                {
+                    "version": "1.23.7",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "go1.23.7",
+                        "commit": {
+                            "sha": "c01c4d41d6b49bc6317f8cfb3a33a92f25681b34"
+                        },
+                        "tarball_url": "https://api.github.com/repos/golang/go/tarball/refs/tags/go1.23.7",
+                        "zipball_url": "https://api.github.com/repos/golang/go/zipball/refs/tags/go1.23.7"
+                    }
+                },
+                {
+                    "version": "1.23.6",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "go1.23.6",
+                        "commit": {
+                            "sha": "a991f9c34d454d3d844f21dc08f2d05df35a8c60"
+                        },
+                        "tarball_url": "https://api.github.com/repos/golang/go/tarball/refs/tags/go1.23.6",
+                        "zipball_url": "https://api.github.com/repos/golang/go/zipball/refs/tags/go1.23.6"
+                    }
+                },
+                {
+                    "version": "1.23.5",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "go1.23.5",
+                        "commit": {
+                            "sha": "d04e3cbc9240e25de449dcae2ec33d03062f347b"
+                        },
+                        "tarball_url": "https://api.github.com/repos/golang/go/tarball/refs/tags/go1.23.5",
+                        "zipball_url": "https://api.github.com/repos/golang/go/zipball/refs/tags/go1.23.5"
+                    }
+                }
+            ],
+            "last_updated": "2025-03-09T09:46:57.760031"
+        },
+        "rust": {
+            "latest": "1.85.0",
+            "stable": "1.85.0",
+            "recent_releases": [
+                {
+                    "version": "1.85.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "1.85.0",
+                        "commit": {
+                            "sha": "4d91de4e48198da2e33413efdcd9cd2cc0c46688"
+                        },
+                        "tarball_url": "https://api.github.com/repos/rust-lang/rust/tarball/refs/tags/1.85.0",
+                        "zipball_url": "https://api.github.com/repos/rust-lang/rust/zipball/refs/tags/1.85.0"
+                    }
+                },
+                {
+                    "version": "1.84.1",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "1.84.1",
+                        "commit": {
+                            "sha": "e71f9a9a98b0faf423844bf0ba7438f29dc27d58"
+                        },
+                        "tarball_url": "https://api.github.com/repos/rust-lang/rust/tarball/refs/tags/1.84.1",
+                        "zipball_url": "https://api.github.com/repos/rust-lang/rust/zipball/refs/tags/1.84.1"
+                    }
+                },
+                {
+                    "version": "1.84.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "1.84.0",
+                        "commit": {
+                            "sha": "9fc6b43126469e3858e2fe86cafb4f0fd5068869"
+                        },
+                        "tarball_url": "https://api.github.com/repos/rust-lang/rust/tarball/refs/tags/1.84.0",
+                        "zipball_url": "https://api.github.com/repos/rust-lang/rust/zipball/refs/tags/1.84.0"
+                    }
+                },
+                {
+                    "version": "1.83.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "1.83.0",
+                        "commit": {
+                            "sha": "90b35a6239c3d8bdabc530a6a0816f7ff89a0aaf"
+                        },
+                        "tarball_url": "https://api.github.com/repos/rust-lang/rust/tarball/refs/tags/1.83.0",
+                        "zipball_url": "https://api.github.com/repos/rust-lang/rust/zipball/refs/tags/1.83.0"
+                    }
+                },
+                {
+                    "version": "1.82.0",
+                    "release_date": null,
+                    "prerelease": false,
+                    "additional_info": {
+                        "tag_name": "1.82.0",
+                        "commit": {
+                            "sha": "f6e511eec7342f59a25f7c0534f1dbea00d01b14"
+                        },
+                        "tarball_url": "https://api.github.com/repos/rust-lang/rust/tarball/refs/tags/1.82.0",
+                        "zipball_url": "https://api.github.com/repos/rust-lang/rust/zipball/refs/tags/1.82.0"
+                    }
+                }
+            ],
+            "last_updated": "2025-03-09T09:46:58.480933"
+        }
+    }
+}
