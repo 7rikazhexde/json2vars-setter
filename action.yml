@@ -147,6 +147,8 @@ runs:
         echo '#!/bin/bash' > activate_venv.sh
         echo '. ${{ github.action_path }}/json2vars_venv/bin/activate' >> activate_venv.sh
         chmod +x activate_venv.sh
+        # Deactivate virtual environment
+        deactivate || true
 
     # Set up PYTHONPATH to ensure module imports work correctly
     - name: Set environment variables
@@ -198,6 +200,9 @@ runs:
 
         # Execute update script
         python -m json2vars_setter.update_matrix_dynamic "${ARGS[@]}"
+
+        # Deactivate virtual environment
+        deactivate || true
 
     # Cache version info update (medium priority)
     - name: Update using cache version info if requested
@@ -253,6 +258,9 @@ runs:
         # Execute cache version info script
         python -m json2vars_setter.cache_version_info "${ARGS[@]}"
 
+        # Deactivate virtual environment
+        deactivate || true
+
     # JSON parsing (always executed)
     - name: Parse JSON and set outputs
       id: set_outputs
@@ -262,6 +270,9 @@ runs:
         . ${{ github.action_path }}/json2vars_venv/bin/activate
 
         python -m json2vars_setter.json_to_github_output ${{ inputs.json-file }}
+
+        # Deactivate virtual environment
+        deactivate || true
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
 
