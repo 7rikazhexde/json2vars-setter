@@ -440,6 +440,7 @@ def generate_version_template(
     languages: Optional[List[str]] = None,
     keep_existing: bool = True,
     sort_order: str = "desc",  # 'desc' or 'asc'
+    output_count: int = 0,  # 各言語の出力バージョン数 (0=無制限)
 ) -> None:
     """
     Generate a version template JSON file from the cache
@@ -451,6 +452,7 @@ def generate_version_template(
         languages: Optional list of languages to include (default: all cached languages)
         keep_existing: Maintain existing version information for languages not in cache
         sort_order: Version sort order - 'desc' (newest first) or 'asc' (oldest first)
+        output_count: Max number of versions per language to include in output (0=unlimited)
     """
     # Start with default template
     template: Dict[str, Any] = {
@@ -527,7 +529,7 @@ def generate_version_template(
                         version_items.insert(0, info["latest"])
 
             # Sort supporting semantic versioning
-            temp_versions[language] = sorted(
+            sorted_versions = sorted(
                 list(set(version_items)),
                 # True for descending, False for ascending
                 reverse=reverse_sort,
@@ -536,8 +538,17 @@ def generate_version_template(
                 ],
             )
 
+            # Limit to output_count if specified
+            if output_count > 0 and len(sorted_versions) > output_count:
+                logger.info(
+                    f"Limiting {language} versions from {len(sorted_versions)} to {output_count}"
+                )
+                sorted_versions = sorted_versions[:output_count]
+
+            temp_versions[language] = sorted_versions
+
             logger.info(
-                f"Added {language} versions to template ({len(version_items)} versions, {sort_order} order)"
+                f"Added {language} versions to template ({len(sorted_versions)} versions, {sort_order} order)"
             )
         elif language not in temp_versions:
             # Only set empty list if not already in temp_versions
@@ -657,6 +668,12 @@ Detailed examples:
         help="Number of versions to fetch per language (default: 10)",
     )
     parser.add_argument(
+        "--output-count",
+        type=int,
+        default=0,
+        help="Number of versions to include in output template (default: 0, uses count value if not specified)",
+    )
+    parser.add_argument(
         "--cache-file",
         type=Path,
         default=DEFAULT_CACHE_FILE,
@@ -725,13 +742,16 @@ Detailed examples:
     else:
         languages = args.languages
 
+    # If output_count is not specified, use the same value as count
+    output_count = args.output_count if args.output_count > 0 else args.count
+
     # Skip cache update in template-only mode
     cache_data: Optional[Dict[str, Any]] = None
     if not args.template_only:
         # Update versions
         result = update_versions(
             languages,
-            force=force,  # Use variable instead of args.force
+            force=force,
             max_age_days=args.max_age,
             count=args.count,
             cache_file=args.cache_file,
@@ -755,7 +775,8 @@ Detailed examples:
             if not args.template_only or "all" not in args.languages
             else None,
             args.keep_existing,
-            args.sort,  # Pass sort order
+            args.sort,
+            output_count,
         )
     elif args.cache_only:
         logger.info("Cache-only mode: Skipping template generation")

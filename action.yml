@@ -70,6 +70,11 @@ inputs:
     required: false
     default: '10'
 
+  output-count:
+    description: 'Number of versions to include in output template. This allows you to cache many versions but limit how many appear in the final matrix.json. When not specified, defaults to using the same value as cache-count.'
+    required: false
+    default: '0'
+
   cache-incremental:
     description: 'Add only new versions without replacing existing cache'
     required: false
@@ -228,6 +233,11 @@ runs:
 
         ARGS+=("--max-age" "${{ inputs.cache-max-age }}")
         ARGS+=("--count" "${{ inputs.cache-count }}")
+
+        if [[ "${{ inputs.output-count }}" != "0" ]]; then
+          ARGS+=("--output-count" "${{ inputs.output-count }}")
+        fi
+
         ARGS+=("--cache-file" "${{ inputs.cache-file }}")
         ARGS+=("--template-file" "${{ inputs.json-file }}")
 

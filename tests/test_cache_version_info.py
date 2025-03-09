@@ -531,6 +531,7 @@ def test_main_function(mocker: MockFixture) -> None:
     args.force = True
     args.max_age = 1
     args.count = 10
+    args.output_count = 0
     args.cache_file = Path("test_cache.json")
     args.template_file = Path("test_template.json")
     args.existing_template = None
@@ -625,6 +626,7 @@ def test_main_with_force_flag(mocker: MockFixture) -> None:
     args.force = True
     args.max_age = 1
     args.count = 10
+    args.output_count = 0
     args.cache_file = Path("test_cache.json")
     args.template_file = Path("test_template.json")
     args.existing_template = None
@@ -685,6 +687,7 @@ def test_main_with_verbose(mocker: MockFixture) -> None:
     args.force = False
     args.max_age = 1
     args.count = 10
+    args.output_count = 0
     args.cache_file = Path("test_cache.json")
     args.template_file = Path("test_template.json")
     args.existing_template = None
@@ -721,6 +724,7 @@ def test_main_nonexistent_cache(mocker: MockFixture) -> None:
     args.force = False
     args.max_age = 1
     args.count = 10
+    args.output_count = 0
     args.cache_file = Path("nonexistent_cache.json")
     args.template_file = Path("test_template.json")
     args.existing_template = None
@@ -770,6 +774,7 @@ def test_main_integration(mocker: MockFixture) -> None:
     args.force = True
     args.max_age = 1
     args.count = 10
+    args.output_count = 0
     args.cache_file = Path("temp_cache.json")
     args.template_file = Path("temp_template.json")
     args.existing_template = None
@@ -1220,6 +1225,7 @@ def test_main_function_additional_scenarios(mocker: MockFixture) -> None:
     args.force = False
     args.max_age = 7  # Longer max age
     args.count = 5  # Fewer versions to fetch
+    args.output_count = 0
     args.cache_file = Path("custom_cache.json")
     args.template_file = Path("custom_template.json")
     args.existing_template = None
@@ -1348,6 +1354,97 @@ def test_merge_versions_empty_metadata() -> None:
     assert "metadata" in cache.data
     assert "last_updated" in cache.data["metadata"]
     assert cache.data["metadata"]["last_updated"] is not None
+
+
+def test_generate_version_template_output_count(
+    mocker: MockFixture, tmp_path: Path
+) -> None:
+    """
+    Test the output_count parameter in generate_version_template.
+    This specifically tests the logic that limits the number of versions
+    in the output template (lines 543-546).
+    """
+    # Mock logger
+    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+
+    # Create test data with many versions
+    cache_data: Dict[str, Any] = {
+        "languages": {
+            "python": {
+                "latest": "3.12.0",
+                "stable": "3.11.0",
+                "recent_releases": [
+                    {"version": "3.12.0", "prerelease": False},
+                    {"version": "3.11.0", "prerelease": False},
+                    {"version": "3.10.0", "prerelease": False},
+                    {"version": "3.9.0", "prerelease": False},
+                    {"version": "3.8.0", "prerelease": False},
+                    {"version": "3.7.0", "prerelease": False},
+                ],
+            }
+        }
+    }
+
+    # Case 1: output_count = 0 (no limit)
+    output_file_no_limit = tmp_path / "output_no_limit.json"
+    generate_version_template(
+        cache_data=cache_data,
+        output_file=output_file_no_limit,
+        output_count=0,  # No limit
+    )
+
+    with open(output_file_no_limit, "r") as f:
+        template_no_limit = json.load(f)
+
+    # All versions should be included (plus stable/latest if not in the list)
+    assert len(template_no_limit["versions"]["python"]) == 6
+    # The logger info about limiting versions should not be called
+    for call in mock_logger.info.call_args_list:
+        assert "Limiting python versions from" not in call[0][0]
+
+    mock_logger.reset_mock()
+
+    # Case 2: output_count greater than available versions (no limit applied)
+    output_file_high_limit = tmp_path / "output_high_limit.json"
+    generate_version_template(
+        cache_data=cache_data,
+        output_file=output_file_high_limit,
+        output_count=10,  # Higher than available versions
+    )
+
+    with open(output_file_high_limit, "r") as f:
+        template_high_limit = json.load(f)
+
+    # All versions should be included
+    assert len(template_high_limit["versions"]["python"]) == 6
+    # The logger info about limiting versions should not be called
+    for call in mock_logger.info.call_args_list:
+        assert "Limiting python versions from" not in call[0][0]
+
+    mock_logger.reset_mock()
+
+    # Case 3: output_count less than available versions (limit applied)
+    output_file_limited = tmp_path / "output_limited.json"
+    generate_version_template(
+        cache_data=cache_data,
+        output_file=output_file_limited,
+        output_count=3,  # Limit to 3 versions
+    )
+
+    with open(output_file_limited, "r") as f:
+        template_limited = json.load(f)
+
+    # Only the specified number of versions should be included
+    assert len(template_limited["versions"]["python"]) == 3
+    assert template_limited["versions"]["python"] == ["3.12.0", "3.11.0", "3.10.0"]
+
+    # The logger info about limiting versions should be called
+    limiting_log_found = False
+    for call in mock_logger.info.call_args_list:
+        if "Limiting python versions from 6 to 3" in call[0][0]:
+            limiting_log_found = True
+            break
+    assert limiting_log_found, "Log message about limiting versions not found"
 
 
 def test_generate_version_template_existing_file_error_handling(
