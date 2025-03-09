@@ -207,21 +207,23 @@ def test_save_json_file_type_error(mocker: MockerFixture, tmp_path: Path) -> Non
     # Set up mocks
     mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
     mock_exit = mocker.patch("sys.exit")
-    test_data = {"test": "value"}
+    test_data: Dict[str, Any] = {"test": "value"}
 
     # Temporary file path for testing
     test_file = tmp_path / "test_file.json"
 
-    # Simulate TypeError when dumping JSON
+    # Simulate TypeError when dumping JSON - need to mock dumps, not dump
     mocker.patch("builtins.open", mocker.mock_open())
-    mocker.patch("json.dump", side_effect=TypeError("Simulated Type error"))
+    mocker.patch("json.dumps", side_effect=TypeError("Simulated Type error"))
 
     # Execute the function
     save_json_file(str(test_file), test_data)
 
     # Assertions
-    mock_logger.error.assert_called_with("Error saving JSON file: Simulated Type error")
-    mock_exit.assert_called_with(1)
+    mock_logger.error.assert_called_once_with(
+        "Error saving JSON file: Simulated Type error"
+    )
+    mock_exit.assert_called_once_with(1)
 
 
 def test_save_json_file_content_already_ends_with_newline(

@@ -811,23 +811,29 @@ def test_main_integration(mocker: MockFixture) -> None:
 
 def test_generate_version_template_with_existing_mock(mocker: MockFixture) -> None:
     """Test the behavior of generate_version_template using mocks"""
-
-    # Mock specific functions to improve coverage
-    mock_dump = mocker.patch("json.dump")
-    mock_load = mocker.patch("json.load")
-
-    # Mock the result of loading an existing template
-    mock_load.return_value = {
-        "os": ["ubuntu-latest"],
-        "versions": {
-            "python": ["3.9.0", "3.8.0"],
-            "ruby": ["3.0.0", "2.7.0"],
+    # Mock json.dumps within the module
+    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    # Mock file opening
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    # Mock json.load for existing file
+    mock_load = mocker.patch(
+        "json2vars_setter.cache_version_info.json.load",
+        return_value={
+            "os": ["ubuntu-latest"],
+            "versions": {
+                "python": ["3.9.0", "3.8.0"],
+                "ruby": ["3.0.0", "2.7.0"],
+            },
+            "ghpages_branch": "gh-pages",
         },
-        "ghpages_branch": "gh-pages",
-    }
+    )
+    # Mock Path.exists to simulate an existing file
+    mocker.patch("pathlib.Path.exists", return_value=True)
+    # Mock logger for debugging and verification
+    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
 
-    # Call the function under test
-    data = {
+    # Test data
+    data: Dict[str, Any] = {
         "languages": {
             "golang": {
                 "latest": "1.18.0",
@@ -840,13 +846,23 @@ def test_generate_version_template_with_existing_mock(mocker: MockFixture) -> No
         }
     }
 
-    # Use existing template and keep_existing=True for coverage
+    # Call the function with an existing file
     generate_version_template(
         data, Path("template.json"), Path("existing.json"), keep_existing=True
     )
 
-    # Verify that json.dump was called
-    mock_dump.assert_called()
+    # Verify that json.dumps was called
+    mock_dumps.assert_called_once()
+    # Verify that file write occurred
+    mock_open().write.assert_called_once()
+    # Explicitly use mock_load to satisfy mypy
+    mock_load.assert_called_once()
+    # Verify the expected logger call
+    mock_logger.info.assert_any_call(
+        "Maintained structure from existing file: existing.json"
+    )
+    # Verify the template write log
+    mock_logger.info.assert_any_call("Version template written to template.json")
 
 
 def test_load_cache_file_error_handling(mocker: MockFixture) -> None:
@@ -925,11 +941,15 @@ def test_merge_versions_edge_cases() -> None:
 
 def test_generate_template_empty_releases(mocker: MockFixture) -> None:
     """Test template generation from an empty release list"""
-    # Lines 498, 501-502: Generate template from an empty release list
-    mock_dump = mocker.patch("json.dump")
+    # Mock json.dumps within the module
+    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    # Mock file opening
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    # Mock logger for debugging
+    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
 
-    # Data with only latest/stable and an empty release list
-    empty_release_data = {
+    # Test data with empty releases
+    empty_release_data: Dict[str, Any] = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -939,18 +959,28 @@ def test_generate_template_empty_releases(mocker: MockFixture) -> None:
         }
     }
 
-    # Generate template
+    # Call the function
     generate_version_template(empty_release_data, Path("template.json"))
-    mock_dump.assert_called_once()
+
+    # Verify that json.dumps was called
+    mock_dumps.assert_called_once()
+    # Verify that file write occurred
+    mock_open().write.assert_called_once()
+    # Optional: Check logger calls
+    mock_logger.info.assert_any_call("Version template written to template.json")
 
 
 def test_generate_template_none_values(mocker: MockFixture) -> None:
     """Test template generation from data containing None values"""
-    # Lines 516-530: When latest and stable are None, but there is a release list
-    mock_dump = mocker.patch("json.dump")
+    # Case 1: latest=None, stable=None
+    # Mock json.dumps within the module
+    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    # Mock file opening
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    # Mock logger
+    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
 
-    # Case with latest=None, stable=None
-    none_values_data = {
+    none_values_data: Dict[str, Any] = {
         "languages": {
             "golang": {
                 "latest": None,
@@ -959,16 +989,25 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
             }
         }
     }
-
-    # Generate template
     generate_version_template(none_values_data, Path("template.json"))
-    mock_dump.assert_called_once()
-
-    # Case with latest=None, stable present
+    # Explicitly use mock_dumps to satisfy mypy
+    mock_dumps.assert_called_once()
+    # Explicitly use mock_open to satisfy mypy
+    mock_open.assert_called_once_with(Path("template.json"), "w")
+    # Explicitly use mock_logger to satisfy mypy
+    mock_logger.info.assert_any_call(
+        "Added golang versions to template (1 versions, desc order)"
+    )
+    mock_logger.info.assert_any_call("Version template written to template.json")
     mocker.resetall()
-    mock_dump = mocker.patch("json.dump")
 
-    none_latest_data = {
+    # Case 2: latest=None, stable present
+    # Reset mocks for next case
+    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+
+    none_latest_data: Dict[str, Any] = {
         "languages": {
             "golang": {
                 "latest": None,
@@ -980,15 +1019,25 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
             }
         }
     }
-
     generate_version_template(none_latest_data, Path("template.json"))
-    mock_dump.assert_called_once()
-
-    # Case with stable=None, latest present
+    # Explicitly use mock_dumps to satisfy mypy
+    mock_dumps.assert_called_once()
+    # Explicitly use mock_open to satisfy mypy
+    mock_open.assert_called_once_with(Path("template.json"), "w")
+    # Explicitly use mock_logger to satisfy mypy
+    mock_logger.info.assert_any_call(
+        "Added golang versions to template (1 versions, desc order)"
+    )
+    mock_logger.info.assert_any_call("Version template written to template.json")
     mocker.resetall()
-    mock_dump = mocker.patch("json.dump")
 
-    none_stable_data = {
+    # Case 3: stable=None, latest present
+    # Reset mocks for next case
+    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+
+    none_stable_data: Dict[str, Any] = {
         "languages": {
             "golang": {
                 "latest": "1.18.0-beta",
@@ -997,17 +1046,24 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
             }
         }
     }
-
     generate_version_template(none_stable_data, Path("template.json"))
-    mock_dump.assert_called_once()
+    # Explicitly use mock_dumps to satisfy mypy
+    mock_dumps.assert_called_once()
+    # Explicitly use mock_open to satisfy mypy
+    mock_open.assert_called_once_with(Path("template.json"), "w")
+    # Explicitly use mock_logger to satisfy mypy
+    mock_logger.info.assert_any_call(
+        "Added golang versions to template (1 versions, desc order)"
+    )
+    mock_logger.info.assert_any_call("Version template written to template.json")
 
 
 def test_generate_template_with_versions_and_latest_stable(mocker: MockFixture) -> None:
     """Test cases where stable and latest are prioritized in template generation"""
-    # Ensure specific versions are included
-    mock_dump = mocker.patch("json.dump")
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+    mock_dumps = mocker.patch("json.dumps")
 
-    test_data = {
+    test_data: Dict[str, Any] = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1022,15 +1078,16 @@ def test_generate_template_with_versions_and_latest_stable(mocker: MockFixture) 
 
     generate_version_template(test_data, Path("template.json"))
 
-    # Verify that latest and stable are included even if not in the release list
-    args = mock_dump.call_args[0][0]
+    mock_dumps.assert_called_once()
+    mock_open().write.assert_called_once()
+
+    # Optional: Verify content
+    args = mock_dumps.call_args[0][0]
     assert "versions" in args
     assert "python" in args["versions"]
     python_versions = args["versions"]["python"]
     assert "3.11.0" in python_versions
     assert "3.10.0" in python_versions
-
-    os.unlink(Path("template.json"))
 
 
 def test_load_cache_additional_error_handling() -> None:
