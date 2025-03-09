@@ -224,6 +224,40 @@ def test_save_json_file_type_error(mocker: MockerFixture, tmp_path: Path) -> Non
     mock_exit.assert_called_with(1)
 
 
+def test_save_json_file_content_already_ends_with_newline(
+    mocker: MockerFixture, tmp_path: Path
+) -> None:
+    """
+    Test save_json_file when JSON content already ends with a newline.
+    This specifically covers the branch at line 139->143 where
+    'if not json_content.endswith("\\n")' evaluates to False.
+    """
+    # Mock json.dumps to return content that already ends with a newline
+    mock_dumps = mocker.patch("json.dumps")
+    mock_dumps.return_value = (
+        '{"test": "value"}\n'  # Content already ending with newline
+    )
+
+    # Mock open to track what is written
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+
+    # Mock logger to verify log messages
+    mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
+
+    # Test data
+    test_data = {"test": "value"}
+
+    # Call the function
+    save_json_file(str(tmp_path / "output.json"), test_data)
+
+    # Check that the file was written with the content exactly as returned by json.dumps
+    # without adding an additional newline
+    mock_open().write.assert_called_once_with('{"test": "value"}\n')
+
+    # Verify success message was logged
+    mock_logger.info.assert_called()
+
+
 def test_update_matrix_json(
     mocker: MockerFixture, sample_matrix_json: Dict[str, Any]
 ) -> None:

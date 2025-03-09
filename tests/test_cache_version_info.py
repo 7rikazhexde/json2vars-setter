@@ -1969,3 +1969,40 @@ def test_generate_version_template_uncovered_branches(
         "Added python versions to template (3 versions, desc order)"
     )
     mock_logger.info.assert_any_call(f"Version template written to {output_file}")
+
+
+def test_generate_version_template_content_already_ends_with_newline(
+    mocker: MockFixture, tmp_path: Path
+) -> None:
+    """
+    Test generate_version_template when JSON content already ends with a newline.
+    This specifically covers the branch at line 566->570 where
+    'if not json_content.endswith("\\n")' evaluates to False.
+    """
+    # Mock json.dumps to return content that already ends with a newline
+    mock_dumps = mocker.patch("json.dumps")
+    mock_dumps.return_value = (
+        '{"test": "value"}\n'  # Content already ending with newline
+    )
+
+    # Mock open to track what is written
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+
+    cache_data = {
+        "languages": {
+            "python": {
+                "latest": "3.11.0",
+                "stable": "3.10.0",
+                "recent_releases": [{"version": "3.11.0", "prerelease": False}],
+            }
+        }
+    }
+
+    output_file = tmp_path / "output.json"
+
+    # Call the function
+    generate_version_template(cache_data, output_file)
+
+    # Check that the file was written with the content exactly as returned by json.dumps
+    # without adding an additional newline
+    mock_open().write.assert_called_once_with('{"test": "value"}\n')
