@@ -124,6 +124,6 @@ The action provides the following outputs:
 
 ## Next Steps
 
-- Learn about [Dynamic Version Updates](features/dynamic-update.md) to automatically keep your matrix up-to-date
-- Explore [Version Caching](features/version-caching.md) to optimize your workflow performance
-- Check out [Advanced Examples](examples/advanced.md) for more complex scenarios
+- Learn about [JSON to Variables](features/json-to-variables.md) transformation
+- Explore [Dynamic Version Updates](features/dynamic-update.md) to automatically keep your matrix up-to-date
+- Check out [Version Caching](features/version-caching.md) to optimize your workflow performance

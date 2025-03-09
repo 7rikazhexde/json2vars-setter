@@ -288,6 +288,6 @@ When fetching version information from GitHub APIs, you might encounter rate lim
 
 ## Next Steps
 
+- Learn how to [dynamically update](dynamic-update.md) your matrix configurations
 - See [basic examples](../examples/basic.md) for simple cache usage patterns
-- Explore [advanced examples](../examples/advanced.md) for complex caching scenarios
-- Check the [command options](../reference/options.md) for complete reference
+- Review the [command options](../reference/options.md) reference for all available options

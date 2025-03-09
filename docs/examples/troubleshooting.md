@@ -372,6 +372,6 @@ Keep a comprehensive version history while minimizing API usage:
 
 ## Next Steps
 
-- Check the [basic examples](basic.md) for simple configurations
+- Check the [Basic Usage Examples](basic.md) for simple configurations
 - See the [CI/CD examples](ci-cd.md) for integration patterns
 - Review the [command options](../reference/options.md) reference for all available options

@@ -25,6 +25,7 @@ mypy = "^1.15.0"
 taskipy = "^1.14.1"
 mkdocs-material = "^9.6.7"
 mkdocs-glightbox = "^0.4.0"
+mkdocs-git-revision-date-localized-plugin = "^1.4.2"
 
 [build-system]
 requires = ["poetry-core"]

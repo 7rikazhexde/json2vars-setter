@@ -206,5 +206,6 @@ By understanding the internal workings of this component, you can leverage its f
 ## Next Steps
 
 - Learn how to [dynamically update](dynamic-update.md) your matrix configurations
-- Explore [version caching](version-caching.md) to optimize API usage
-- Check [usage examples](../examples/basic.md) for real-world implementations
+- Learn how to [version caching](version-caching.md) your matrix configurations
+- See [basic examples](../examples/basic.md) of complete workflow configurations
+- Review the [command options](../reference/options.md) reference for all available options

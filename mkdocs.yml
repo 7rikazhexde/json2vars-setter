@@ -36,6 +36,7 @@ theme:
     - content.tabs.link
     - search.highlight
     - toc.follow
+    - navigation.footer
 
 extra_css:
   - stylesheets/extra.css
@@ -46,6 +47,13 @@ extra_css:
 
 plugins:
   - search
+  - git-revision-date-localized:
+      type: date
+      timezone: Asia/Tokyo        # タイムゾーンの設定
+      locale: ja                  # 日本語での日付表示
+      exclude:
+        - index.md                # index.mdを除外
+      enable_creation_date: true  # 作成日も表示したい場合
 
 markdown_extensions:
   - pymdownx.highlight:

@@ -484,5 +484,6 @@ jobs:
 
 ## Next Steps
 
-- For simpler usage patterns, see [Basic Examples](basic.md)
-- For full command line options, see the [Command Options Reference](../reference/options.md)
+- Check the [Basic Usage Examples](basic.md) for simple configurations
+- Visit [Troubleshooting](troubleshooting.md) for help with common issues
+- Review the [command options](../reference/options.md) reference for all available options

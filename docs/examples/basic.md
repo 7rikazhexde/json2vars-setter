@@ -333,5 +333,6 @@ jobs:
 
 ## Next Steps
 
-- Check out [Advanced Examples](advanced.md) for more complex usage patterns
-- Learn about the [command options](../reference/options.md) for a complete reference
+- See the [CI/CD examples](ci-cd.md) for integration patterns
+- Visit [Troubleshooting](troubleshooting.md) for help with common issues
+- Review the [command options](../reference/options.md) reference for all available options

@@ -257,6 +257,6 @@ The Dynamic Matrix Updater currently supports:
 
 ## Next Steps
 
-- Learn about [version caching](version-caching.md) to reduce API calls and improve performance
+- Learn how to [version caching](version-caching.md) your matrix configurations
 - See [basic examples](../examples/basic.md) of complete workflow configurations
-- Explore [advanced examples](../examples/advanced.md) for complex update scenarios
+- Review the [command options](../reference/options.md) reference for all available options
