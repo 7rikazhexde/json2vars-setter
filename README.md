@@ -1,7 +1,7 @@
 # JSON to Variables Setter
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-JSON%20to%20Variables%20Setter-green?colorA=24292e&colorB=3fb950&logo=github)](https://github.com/marketplace/actions/json-to-variables-setter)
-[![DOCS](https://img.shields.io/badge/Docs-Click%20Here-blue?colorA=24292e&colorB=0366d6&logo=github)](https://7rikazhexde.github.io/mkdocs-macros-utils/)
+[![DOCS](https://img.shields.io/badge/Docs-Click%20Here-blue?colorA=24292e&colorB=0366d6&logo=github)](https://7rikazhexde.github.io/json2vars-setter/)
 
 ## Overview
 
@@ -99,7 +99,7 @@ graph TD
 
 ## Documentation
 
-For detailed documentation, please visit our [Documentation Site](https://7rikazhexde.github.io/mkdocs-macros-utils/).
+For detailed documentation, please visit our [Documentation Site](https://7rikazhexde.github.io/json2vars-setter/).
 
 The documentation includes:
 - Getting Started guide
