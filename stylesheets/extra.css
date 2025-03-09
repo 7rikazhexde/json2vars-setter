@@ -1,0 +1,9 @@
+.md-typeset .mermaid {
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 1em;
+    border-radius: 4px;
+  }
+
+  [data-md-color-scheme="slate"] .md-typeset .mermaid {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
