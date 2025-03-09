@@ -4,6 +4,7 @@ repo_name: 7rikazhexde/json2vars-setter
 repo_url: https://github.com/7rikazhexde/json2vars-setter
 edit_uri: edit/main/docs/
 site_url: https://7rikazhexde.github.io/json2vars-setter/
+copyright: "&copy; 2025 7rikazhexde"
 
 theme:
   name: material
