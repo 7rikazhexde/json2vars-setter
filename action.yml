@@ -133,11 +133,35 @@ runs:
       with:
         python-version: '3.13'
 
+    # Install required dependencies in isolated virtual environment
+    - name: Install dependencies
+      shell: bash
+      run: |
+        # Create isolated virtual environment for the action
+        python -m venv json2vars_venv
+        # Activate virtual environment
+        . json2vars_venv/bin/activate
+        # Install dependencies
+        pip install requests typer
+        # Create a script to easily activate the venv in subsequent steps
+        echo '#!/bin/bash' > activate_venv.sh
+        echo '. ${{ github.action_path }}/json2vars_venv/bin/activate' >> activate_venv.sh
+        chmod +x activate_venv.sh
+
+    # Set up PYTHONPATH to ensure module imports work correctly
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
+
     # Dynamic matrix update (highest priority)
     - name: Update matrix if requested
       if: ${{ inputs.update-matrix == 'true' }}  # Execute only if update-matrix is true
       shell: bash
       run: |
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+
         echo "Dynamically updating matrix..."
         ARGS=()
         ARGS+=("--json-file" "${{ inputs.json-file }}")
@@ -173,13 +197,16 @@ runs:
         ARGS+=("--verbose")
 
         # Execute update script
-        python ${{ github.action_path }}/json2vars_setter/update_matrix_dynamic.py "${ARGS[@]}"
+        python -m json2vars_setter.update_matrix_dynamic "${ARGS[@]}"
 
     # Cache version info update (medium priority)
     - name: Update using cache version info if requested
       if: ${{ inputs.update-matrix != 'true' && inputs.use-cache == 'true' }}  # Only if dynamic update not requested
       shell: bash
       run: |
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+
         echo "Using cached version information..."
         ARGS=()
 
@@ -221,17 +248,20 @@ runs:
         ARGS+=("--verbose")
 
         # Output the full command for debugging
-        echo "Running command: python ${{ github.action_path }}/json2vars_setter/cache_version_info.py ${ARGS[*]}"
+        echo "Running command: python -m json2vars_setter.cache_version_info ${ARGS[*]}"
 
         # Execute cache version info script
-        python ${{ github.action_path }}/json2vars_setter/cache_version_info.py "${ARGS[@]}"
+        python -m json2vars_setter.cache_version_info "${ARGS[@]}"
 
     # JSON parsing (always executed)
     - name: Parse JSON and set outputs
       id: set_outputs
       shell: bash
       run: |
-        python ${{ github.action_path }}/json2vars_setter/json_to_github_output.py ${{ inputs.json-file }}
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+
+        python -m json2vars_setter.json_to_github_output ${{ inputs.json-file }}
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
 
