@@ -64,34 +64,7 @@ jobs:
 
 The action consists of three main components that work together to provide a powerful, flexible solution:
 
-```mermaid
-graph TD
-    subgraph "JSON to Variables Setter"
-        A[json_to_github_output.py] -->|Reads| B[Matrix JSON File]
-        A -->|Sets| C[GitHub Actions Outputs]
-
-        D[update_matrix_dynamic.py] -->|Updates| B
-        D -->|Fetches from| E[GitHub API]
-
-        F[cache_version_info.py] -->|Caches| G[Version Information]
-        F -->|Fetches from| E
-        F -->|Generates| B
-    end
-
-    C -->|Used by| I[GitHub Workflows]
-
-    classDef core fill:#43a047,stroke:#2e7d32,stroke-width:2px,color:#fff
-    classDef file fill:#ffb300,stroke:#fb8c00,stroke-width:1px
-    classDef output fill:#42a5f5,stroke:#1976d2,stroke-width:1px
-    classDef external fill:#78909c,stroke:#546e7a,stroke-width:1px
-    classDef api fill:#e91e63,stroke:#c2185b,stroke-width:1px,color:#fff
-
-    class A,D,F core
-    class B,G file
-    class C output
-    class I external
-    class E api
-```
+<img src="./mermaid/diagram.svg" alt="Mermaid Diagram" width="1200">
 
 1. **JSON to Variables Parser**: Core component that parses JSON and converts it to GitHub Actions outputs
 2. **Dynamic Matrix Updater**: Updates your matrix configuration with the latest or stable language versions

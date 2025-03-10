@@ -68,7 +68,7 @@ graph TD
     C -->|Used by| I[GitHub Workflows]
 
     classDef core fill:#43a047,stroke:#2e7d32,stroke-width:2px,color:#fff
-    classDef file fill:#ffb300,stroke:#fb8c00,stroke-width:1px
+    classDef file fill:#ffca28,stroke:#fb8c00,stroke-width:1px,color:#333333
     classDef output fill:#42a5f5,stroke:#1976d2,stroke-width:1px
     classDef external fill:#78909c,stroke:#546e7a,stroke-width:1px
     classDef api fill:#e91e63,stroke:#c2185b,stroke-width:1px,color:#fff

@@ -1,6 +1,6 @@
 # Contributing Guide
 
-Thank you for your interest in contributing to the JSON to Variables Setter action! This document provides guidelines and instructions for contributing to this project.
+Thank you for your interest in contributing to my JSON to Variables Setter action! This document provides guidelines and instructions for contributing to this project.
 
 ## Table of Contents
 
@@ -26,7 +26,7 @@ Thank you for your interest in contributing to the JSON to Variables Setter acti
 
 ## Code of Conduct
 
-Please be respectful to all contributors and users. We aim to foster an inclusive and welcoming community.
+Please be respectful to all contributors and users. I aim to foster an inclusive and welcoming community.
 
 ## Getting Started
 
@@ -61,7 +61,7 @@ poetry install
 Option 2: Using pip with requirements files
 
 ```bash
-# Download requirements-dev.txt from the official Gist
+# Download requirements-dev.txt from my official Gist
 curl -O https://gist.githubusercontent.com/7rikazhexde/ee63b33bcb6bb21ac872c5ed41dbf4a6/raw/requirements-dev.txt
 
 # Install development dependencies
@@ -76,7 +76,7 @@ pre-commit install
 
 ### Project Structure
 
-The project is organized as follows:
+My project is organized as follows:
 
 ```text
 json2vars-setter/
@@ -119,7 +119,7 @@ Branch naming conventions:
 
 2. **Make your changes**:
 
-- Follow the [coding guidelines](#coding-guidelines)
+- Follow my [coding guidelines](#coding-guidelines)
 - Keep changes focused on a single issue/feature
 
 3. **Commit your changes** using [gitmoji](https://gitmoji.dev/):
@@ -169,14 +169,8 @@ ruff format json2vars_setter
 mypy json2vars_setter
 ```
 
-3. **Test locally with GitHub Actions**:
-You can use [act](https://github.com/nektos/act) to test GitHub Actions locally:
+3. **Manual testing**:
 
-```bash
-act -j test
-```
-
-4. **Manual testing**:
 Test the action by using it in a test workflow with various configurations.
 
 ### Pull Requests
@@ -203,12 +197,12 @@ git push origin feature/your-feature-name
 
 - **Python code**:
   - Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide
-  - Use type hints as defined in the mypy configuration
+  - Use type hints as defined in my mypy configuration
   - Document functions and classes with docstrings
   - Keep functions focused on a single responsibility
 
 - **Linting and Formatting** (required):
-  - The project uses pre-commit hooks for consistent code quality
+  - My project uses pre-commit hooks for consistent code quality
   - All code must pass pre-commit checks before submitting PRs
   - Configuration is defined in `.pre-commit-config.yaml` and `pyproject.toml`
   - Key linting tools:
@@ -225,7 +219,7 @@ git push origin feature/your-feature-name
 ## Documentation
 
 - Update documentation when making changes that affect user-facing functionality
-- Follow the existing documentation style
+- Follow my existing documentation style
 - Include examples for new features
 - Update the README.md if necessary
 
@@ -251,7 +245,7 @@ mkdocs build
 
 ## Core Components Development
 
-When working on the core components, consider the following guidelines:
+When working on my core components, consider the following guidelines:
 
 ### JSON to GitHub Output Parser (`json_to_github_output.py`)
 
@@ -298,6 +292,6 @@ When working on the core components, consider the following guidelines:
 If you have any questions or need help, feel free to:
 
 - Open an issue for discussion
-- Contact the maintainers
+- Contact me directly
 
-Thank you for contributing to json2vars-setter!
+Thank you for contributing to my json2vars-setter!

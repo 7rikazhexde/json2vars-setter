@@ -14,7 +14,7 @@ graph LR
     D -->|Available in| E[Workflow Steps]
     D -->|Available in| F[Downstream Jobs]
 
-    classDef input fill:#ffb300,stroke:#fb8c00,stroke-width:1px
+    classDef input fill:#ffca28,stroke:#fb8c00,stroke-width:1px,color:#333333
     classDef process fill:#43a047,stroke:#2e7d32,stroke-width:2px,color:#fff
     classDef output fill:#42a5f5,stroke:#1976d2,stroke-width:1px,color:#fff
 
