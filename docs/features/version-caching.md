@@ -54,6 +54,8 @@ graph TD
     class Languages,FilePaths,CacheCount,VersionCount,SortOrder,KeepExisting,CacheOnly,VerboseLog common
 ```
 
+### Tips
+
 !!! tip "[*1]: Specify language"
 
     - Specify languages separated by **spaces**; if `all` is specified, all target languages are retrieved.

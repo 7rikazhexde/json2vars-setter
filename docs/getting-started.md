@@ -117,10 +117,12 @@ The action provides the following outputs:
 
 ## Tips
 
-- When accessing list variables (like `os` or `versions_python`), always use the `fromJson()` function to parse the JSON string.
-- For shell scripts, use single quotes (`'`) around the JSON string to preserve its structure.
-- If you don't define a language in your JSON file, its corresponding output will be an empty array.
-- You can create language-specific JSON files (e.g., `python_project_matrix.json`) for different projects.
+!!! tip "count vs output-count"
+
+    - When accessing list variables (like `os` or `versions_python`), always use the `fromJson()` function to parse the JSON string.
+    - For shell scripts, use single quotes (`'`) around the JSON string to preserve its structure.
+    - If you don't define a language in your JSON file, its corresponding output will be an empty array.
+    - You can create language-specific JSON files (e.g., `python_project_matrix.json`) for different projects.
 
 ## Next Steps
 

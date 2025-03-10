@@ -4,7 +4,7 @@ This page demonstrates how to integrate the JSON to Variables Setter action into
 
 ## Complete CI/CD Pipeline Example
 
-This example shows a complete CI/CD pipeline that uses json2vars-setter for both testing and deployment environments.
+This example shows a complete CI/CD pipeline that uses json2vars-setter for both testing and deployment environments. It properly sequences the operations to ensure tests pass before committing any changes.
 
 ```yaml
 name: CI/CD Pipeline
@@ -22,11 +22,14 @@ jobs:
   update_matrix:
     if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
+    outputs:
+      matrix_updated: ${{ steps.check_changes.outputs.updated }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Update matrix configuration
+        id: update_matrix
         uses: 7rikazhexde/json2vars-setter@main
         with:
           json-file: .github/json2vars-setter/matrix.json
@@ -34,13 +37,15 @@ jobs:
           python-strategy: 'stable'
           nodejs-strategy: 'stable'
 
-      - name: Commit updated matrix
+      # Set output to indicate if matrix was updated
+      - name: Check for changes
+        id: check_changes
         run: |
-          git config --local user.email "actions@github.com"
-          git config --local user.name "GitHub Actions"
-          git add .github/json2vars-setter/matrix.json
-          git commit -m "Update testing matrix with latest stable versions" || echo "No changes to commit"
-          git push
+          if git diff --quiet .github/json2vars-setter/matrix.json; then
+            echo "updated=false" >> $GITHUB_OUTPUT
+          else
+            echo "updated=true" >> $GITHUB_OUTPUT
+          fi
 
   # Step 2: Define variables from matrix (always runs)
   set_variables:
@@ -65,7 +70,7 @@ jobs:
 
   # Step 3: Run tests across matrix
   test:
-    needs: [set_variables]
+    needs: [set_variables, update_matrix]
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false  # Continue with other jobs even if one fails
@@ -90,11 +95,67 @@ jobs:
 
       - name: Run tests
         run: pytest
+
+  # Step 4: Commit changes only after all tests pass
+  commit_changes:
+    needs: [test, update_matrix]
+    if: needs.update_matrix.outputs.matrix_updated == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Apply matrix updates again since they were not committed yet
+      - name: Update matrix configuration
+        uses: 7rikazhexde/json2vars-setter@main
+        with:
+          json-file: .github/json2vars-setter/matrix.json
+          update-matrix: 'true'
+          python-strategy: 'stable'
+          nodejs-strategy: 'stable'
+
+      - name: Commit updated matrix
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .github/json2vars-setter/matrix.json
+          git commit -m "Update testing matrix with latest stable versions" || echo "No changes to commit"
+          git push
 ```
+
+!!! tip "For repositories with branch protection rules"
+    If your repository has direct commit restrictions on the main branch, replace the `Commit updated matrix` step in the `commit_changes` job with the following to create a pull request instead:
+
+    ```yaml
+    - name: Create pull request with updated matrix
+      run: |
+        # Configure git
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        # Create a new branch and commit changes
+        git checkout -b update-matrix-${{ github.run_id }}
+        git add .github/json2vars-setter/matrix.json
+        git commit -m "Update testing matrix with latest stable versions" || exit 0
+
+        # Push to the new branch
+        git push origin update-matrix-${{ github.run_id }}
+
+        # Create a pull request using GitHub CLI
+        gh pr create \
+          --title "Update testing matrix with latest stable versions" \
+          --body "This PR updates the test matrix after all tests have passed successfully." \
+          --base main \
+          --head update-matrix-${{ github.run_id }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    ```
+
+    Note that you might need a PAT (Personal Access Token) with appropriate permissions if your workflow needs to create pull requests that trigger other workflows. In that case, use `secrets.YOUR_PAT_SECRET` instead of `secrets.GITHUB_TOKEN`.
 
 ## Environment-Specific Configurations
 
-This example demonstrates using different configurations for development and production environments.
+This example demonstrates using different configurations for development and production environments. This is particularly useful for teams that want to test extensively in production while keeping development iterations quick.
 
 ```yaml
 name: Environment-Specific Testing
@@ -171,7 +232,10 @@ jobs:
           pytest
 ```
 
-With production_matrix.json:
+Example JSON configurations for different environments:
+
+<details>
+<summary>production_matrix.json</summary>
 
 ```json
 {
@@ -189,7 +253,10 @@ With production_matrix.json:
 }
 ```
 
-And development_matrix.json:
+</details>
+
+<details>
+<summary>development_matrix.json</summary>
 
 ```json
 {
@@ -205,9 +272,11 @@ And development_matrix.json:
 }
 ```
 
+</details>
+
 ## Optimized Strategy for Large Projects
 
-This example shows an optimized approach for large projects with multiple languages, using caching to reduce API calls.
+This example shows an optimized approach for large projects with multiple languages, using caching to reduce API calls. This is especially valuable for repositories that need to test against many language versions but want to minimize external API requests.
 
 ```yaml
 name: Multi-Language Project CI
@@ -306,9 +375,12 @@ jobs:
   # Similar jobs for Ruby and Go
 ```
 
+!!! tip "Branch protection for cache updates"
+    If your repository uses branch protection rules, you can modify the `Commit updated cache` step to create a pull request similar to the example in the first section.
+
 ## Scheduled Maintenance Workflow
 
-This example demonstrates a dedicated maintenance workflow that runs on a schedule to keep your matrix configuration up-to-date.
+This example demonstrates a dedicated maintenance workflow that runs on a schedule to keep your matrix configuration up-to-date. By separating this into its own workflow, you can avoid unnecessary updates during normal development cycles.
 
 ```yaml
 name: Matrix Maintenance
@@ -357,7 +429,7 @@ jobs:
 
 ## Monorepo Project Configuration
 
-This example demonstrates how to handle multiple projects in a monorepo, each with their own language requirements.
+This example demonstrates how to handle multiple projects in a monorepo, each with their own language requirements. This approach is ideal for organizations that maintain multiple independent projects in a single repository.
 
 ```yaml
 name: Monorepo CI

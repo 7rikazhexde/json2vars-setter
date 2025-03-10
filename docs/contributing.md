@@ -34,45 +34,45 @@ Please be respectful to all contributors and users. I aim to foster an inclusive
 
 1. **Clone the repository**:
 
-```bash
-git clone https://github.com/7rikazhexde/json2vars-setter.git
-cd json2vars-setter
-```
+    ```bash
+    git clone https://github.com/7rikazhexde/json2vars-setter.git
+    cd json2vars-setter
+    ```
 
 2. **Set up a virtual environment**:
 
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
 
 3. **Install dependencies**:
 
-Option 1: Using Poetry (recommended)
+    Option 1: Using Poetry (recommended)
 
-```bash
-# Install Poetry if not already installed
-pip install poetry
+    ```bash
+    # Install Poetry if not already installed
+    pip install poetry
 
-# Install all dependencies
-poetry install
-```
+    # Install all dependencies
+    poetry install
+    ```
 
-Option 2: Using pip with requirements files
+    Option 2: Using pip with requirements files
 
-```bash
-# Download requirements-dev.txt from my official Gist
-curl -O https://gist.githubusercontent.com/7rikazhexde/ee63b33bcb6bb21ac872c5ed41dbf4a6/raw/requirements-dev.txt
+    ```bash
+    # Download requirements-dev.txt from my official Gist
+    curl -O https://gist.githubusercontent.com/7rikazhexde/ee63b33bcb6bb21ac872c5ed41dbf4a6/raw/requirements-dev.txt
 
-# Install development dependencies
-pip install -r requirements-dev.txt
-```
+    # Install development dependencies
+    pip install -r requirements-dev.txt
+    ```
 
 4. **Set up pre-commit hooks**:
 
-```bash
-pre-commit install
-```
+    ```bash
+    pre-commit install
+    ```
 
 ### Project Structure
 
@@ -106,115 +106,122 @@ Before starting any work, please check existing issues or create a new one to di
 
 1. **Create a branch**:
 
-```bash
-git checkout -b feature/your-feature-name
-```
+    ```bash
+    git checkout -b feature/your-feature-name
+    ```
 
-Branch naming conventions:
+    Branch naming conventions:
 
-- `feature/...` for new features
-- `bugfix/...` for bug fixes
-- `docs/...` for documentation changes
-- `refactor/...` for code refactoring
+    - `feature/...` for new features
+    - `bugfix/...` for bug fixes
+    - `docs/...` for documentation changes
+    - `refactor/...` for code refactoring
 
 2. **Make your changes**:
 
-- Follow my [coding guidelines](#coding-guidelines)
-- Keep changes focused on a single issue/feature
+    - Follow my [coding guidelines](#coding-guidelines)
+    - Keep changes focused on a single issue/feature
 
 3. **Commit your changes** using [gitmoji](https://gitmoji.dev/):
 
-```bash
-git commit -m "✨ Add new feature"
-git commit -m "🐛 Fix bug in function X"
-git commit -m "📝 Update documentation"
-```
+    ```bash
+    git commit -m "✨ Add new feature"
+    git commit -m "🐛 Fix bug in function X"
+    git commit -m "📝 Update documentation"
+    ```
 
-Recommended gitmoji conventions:
+    Recommended gitmoji conventions:
 
-- ✨ (`:sparkles:`) - New feature
-- 🐛 (`:bug:`) - Bug fix
-- 📝 (`:memo:`) - Documentation updates
-- ♻️ (`:recycle:`) - Code refactoring
-- 🚀 (`:rocket:`) - Performance improvements
-- 🎨 (`:art:`) - Code style/structure improvements
-- 🧪 (`:test_tube:`) - Add or update tests
+    - ✨ (`:sparkles:`) - New feature
+    - 🐛 (`:bug:`) - Bug fix
+    - 📝 (`:memo:`) - Documentation updates
+    - ♻️ (`:recycle:`) - Code refactoring
+    - 🚀 (`:rocket:`) - Performance improvements
+    - 🎨 (`:art:`) - Code style/structure improvements
+    - 🧪 (`:test_tube:`) - Add or update tests
 
-Write clear commit messages that explain what changes were made and why.
+    Write clear commit messages that explain what changes were made and why.
 
 ### Testing Changes
 
 1. **Run unit tests** (required):
 
-```bash
-# Run basic tests
-pytest
+    ```bash
+    # Run basic tests
+    pytest
 
-# Run with coverage report
-poetry run task testcoverage
+    # Run with coverage report
+    poetry run task testcoverage
 
-# Run verbose coverage tests
-poetry run task testcoverageverbose
-```
+    # Run verbose coverage tests
+    poetry run task testcoverageverbose
+    ```
 
 2. **Run linters** (required):
 
-```bash
-# Run all pre-commit hooks
-pre-commit run --all-files
+    ```bash
+    # Run all pre-commit hooks
+    pre-commit run --all-files
+    # Or use poetry to run pre-commit
+    poetry run pre-commit run --all-files
 
-# Run specific linters
-ruff check json2vars_setter
-ruff format json2vars_setter
-mypy json2vars_setter
-```
+    # Run specific linters
+    ruff check json2vars_setter
+    ruff format json2vars_setter
+    mypy json2vars_setter
+    ```
 
 3. **Manual testing**:
 
-Test the action by using it in a test workflow with various configurations.
+    Test the action by using it in a test workflow with various configurations.
 
 ### Pull Requests
 
 1. **Push your branch**:
 
-```bash
-git push origin feature/your-feature-name
-```
+    ```bash
+    git push origin feature/your-feature-name
+    ```
 
 2. **Create a pull request**:
 
-- Go to the GitHub repository
-- Click "Pull requests" > "New pull request"
-- Select your branch
-- Fill in the PR template
+    - Go to the GitHub repository
+    - Click "Pull requests" > "New pull request"
+    - Select your branch
+    - Fill in the PR template
 
 3. **Code review**:
 
-- Respond to feedback and make necessary changes
-- Keep the PR focused on a single issue/feature
+    - Respond to feedback and make necessary changes
+    - Keep the PR focused on a single issue/feature
 
 ## Coding Guidelines
 
-- **Python code**:
-  - Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide
-  - Use type hints as defined in my mypy configuration
-  - Document functions and classes with docstrings
-  - Keep functions focused on a single responsibility
+**Python code**:
 
-- **Linting and Formatting** (required):
-  - My project uses pre-commit hooks for consistent code quality
-  - All code must pass pre-commit checks before submitting PRs
-  - Configuration is defined in `.pre-commit-config.yaml` and `pyproject.toml`
-  - Key linting tools:
-    - [Ruff](https://github.com/charliermarsh/ruff) for linting and formatting
-    - [mypy](https://mypy.readthedocs.io/) for static type checking
-    - [markdownlint](https://github.com/DavidAnson/markdownlint) for Markdown files
-    - [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows
+- Follow [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide
+- Use type hints as defined in my mypy configuration
+- Document functions and classes with docstrings
+      - Keep functions focused on a single responsibility
 
-- **Testing** (required):
-  - Write unit tests for all new functionality
-  - Test edge cases and error conditions
-  - Maintain or improve test coverage
+**Linting and Formatting** (required)
+
+- My project uses pre-commit hooks for consistent code quality
+- All code must pass pre-commit checks before submitting PRs
+- Configuration is defined in `.pre-commit-config.yaml` and `pyproject.toml`
+- Key linting tools:
+      - [Ruff](https://github.com/charliermarsh/ruff) for linting and formatting
+      - [mypy](https://mypy.readthedocs.io/) for static type checking
+      - [markdownlint](https://github.com/DavidAnson/markdownlint) for Markdown files
+      - [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows
+      - [shellcheck](https://github.com/shellcheck-py/shellcheck-py) for shell script checking
+- You can run all linters at once using: `poetry run pre-commit run --all-files`
+
+**Testing** (required)
+
+- Write unit tests for all new functionality
+- Test edge cases and error conditions
+- Maintain or improve test coverage
 
 ## Documentation
 
@@ -227,21 +234,21 @@ For MkDocs documentation:
 
 1. **Install MkDocs dependencies**:
 
-```bash
-pip install mkdocs-material
-```
+    ```bash
+    pip install mkdocs-material
+    ```
 
 2. **Test documentation locally**:
 
-```bash
-mkdocs serve
-```
+    ```bash
+    mkdocs serve
+    ```
 
 3. **Build documentation**:
 
-```bash
-mkdocs build
-```
+    ```bash
+    mkdocs build
+    ```
 
 ## Core Components Development
 
@@ -267,31 +274,27 @@ When working on my core components, consider the following guidelines:
 
 ## Release Process
 
-1. **Version bumping**:
+Version updates and releases are managed through an automated workflow that is only available to repository administrators (currently only me). The process involves:
 
-- Update version number in relevant files
-- Follow [Semantic Versioning](https://semver.org/)
+1. **Version bumping**
 
-2. **Update CHANGELOG.md**:
+     - Handled by the automated workflow that updates the version in relevant files
 
-- Document all notable changes
-- Include migration notes if applicable
+2. **Creating a release**
 
-3. **Create a release**:
+     - The workflow automatically creates a tag and a GitHub release
+     - Tags follow the format `json2vars-setter-vX.Y.Z` (e.g., `json2vars-setter-v0.2.5`)
 
-- Tag the release: `git tag v1.0.0`
-- Push the tag: `git push origin v1.0.0`
-- Create a GitHub release with release notes
+3. **Documentation deployment**
 
-4. **Update documentation**:
-
-- Deploy updated documentation if needed
+     - Occurs automatically when changes are merged/pushed to the main branch
+     - Handled by a dedicated deployment workflow
 
 ## Feedback
 
 If you have any questions or need help, feel free to:
 
 - Open an issue for discussion
-- Contact me directly
+- Contact me directly via X (formerly Twitter) - DMs preferred
 
 Thank you for contributing to my json2vars-setter!

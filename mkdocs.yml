@@ -8,6 +8,7 @@ copyright: "&copy; 2025 7rikazhexde"
 
 theme:
   name: material
+  custom_dir: overrides
   palette:
     # Palette toggle for automatic mode (system preference)
     - media: "(prefers-color-scheme: light)"
@@ -40,11 +41,11 @@ theme:
     - navigation.footer
 
 extra_css:
-  - stylesheets/extra.css
+  - stylesheets/mermaid-custom.css
 
 extra_javascript:
   - https://unpkg.com/mermaid@10.8.0/dist/mermaid.min.js
-  - javascripts/custom.js
+  - javascripts/mermaid-custom.js
 
 plugins:
   - search
@@ -92,3 +93,34 @@ nav:
   - Reference:
       - Command Options: reference/options.md
   - Contributing: contributing.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/7rikazhexde
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/tw_7rikazhexde
+  consent:
+    title: Cookie consent
+    description: >-
+      This site uses Google Analytics and cookies to collect visitor data.
+      The collected data helps me understand site usage and improve the documentation.
+      By clicking "Accept", you consent to the use of cookies for these purposes.
+  analytics:
+    provider: google
+    property: G-CPBNH4WS82
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thank you for your feedback!
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thank you for your feedback!<br>
+            Please feel free to reach out via Twitter for any suggestions
+            or improvements.
