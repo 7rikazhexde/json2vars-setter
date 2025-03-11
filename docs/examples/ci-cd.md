@@ -151,7 +151,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     ```
 
-    Note that you might need a PAT (Personal Access Token) with appropriate permissions if your workflow needs to create pull requests that trigger other workflows. In that case, use `secrets.YOUR_PAT_SECRET` instead of `secrets.GITHUB_TOKEN`.
+    !!! Note
+
+        That you might need a PAT (Personal Access Token) with appropriate permissions if your workflow needs to create pull requests that trigger other workflows. In that case, use `secrets.YOUR_PAT_SECRET` instead of `secrets.GITHUB_TOKEN`.
 
 ## Environment-Specific Configurations
 

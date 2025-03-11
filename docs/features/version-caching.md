@@ -209,8 +209,8 @@ When you set `use-cache: 'true'`, the action performs these steps internally:
 2. **Fetch Version Info**: If needed, it fetches new version information from APIs for the specified languages
 3. **Update Cache**: It updates the cache file with the new information
 4. **Generate Template**: It creates or updates the matrix JSON file based on the cached data, respecting version limits
-   - If `output-count` is specified, only that many versions are included in the template
-   - Otherwise, `cache-count` versions are included
+    - If `output-count` is specified, only that many versions are included in the template
+    - Otherwise, `cache-count` versions are included
 5. **Parse JSON**: The matrix JSON file is processed by json_to_github_output.py
 6. **Set Outputs**: The values from the JSON file are set as GitHub Actions outputs
 

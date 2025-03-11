@@ -6,9 +6,13 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
 
 ### API Rate Limit Exceeded
 
-**Symptom**: Actions fail with `API rate limit exceeded` error in logs.
+!!! Note "Symptom"
 
-**Solution**: Add GitHub authentication token to increase rate limits.
+    Actions fail with `API rate limit exceeded` error in logs.
+
+!!! Note "Solution"
+
+    Add GitHub authentication token to increase rate limits.
 
 ```yaml
 - name: Set variables with authentication
@@ -23,129 +27,141 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
 
 ### Missing or Empty Outputs
 
-**Symptom**: Expected outputs are not available or are empty.
+!!! Note "Symptom"
 
-**Possible Causes and Solutions**:
+    Expected outputs are not available or are empty.
 
-1. **Missing `id` attribute**:
+!!! Note "Possible Causes and Solutions"
 
-   ```yaml
-   # Incorrect - missing id
-   - name: Set variables from JSON
-     uses: 7rikazhexde/json2vars-setter@main
+    1. **Missing `id` attribute**:
 
-   # Correct
-   - name: Set variables from JSON
-     id: json2vars  # This is required to reference outputs
-     uses: 7rikazhexde/json2vars-setter@main
-   ```
+          ```yaml
+          # Incorrect - missing id
+          - name: Set variables from JSON
+            uses: 7rikazhexde/json2vars-setter@main
 
-2. **JSON structure issue**:
+          # Correct
+          - name: Set variables from JSON
+            id: json2vars  # This is required to reference outputs
+            uses: 7rikazhexde/json2vars-setter@main
+          ```
 
-   - Ensure your JSON file has the expected structure:
+    2. **JSON structure issue**:
 
-   ```json
-   {
-     "os": ["ubuntu-latest"],
-     "versions": {
-       "python": ["3.10", "3.11"]
-     }
-   }
-   ```
+          - Ensure your JSON file has the expected structure:
 
-   - Language versions must be under `versions.<language>` key
+          ```json
+          {
+            "os": ["ubuntu-latest"],
+            "versions": {
+              "python": ["3.10", "3.11"]
+            }
+          }
+          ```
 
-3. **Output references**:
+          - Language versions must be under `versions.<language>` key
 
-   ```yaml
-   # Incorrect output reference
-   echo "Python versions: ${{ steps.json2vars.versions_python }}"
+    3. **Output references**:
 
-   # Correct output reference
-   echo "Python versions: ${{ steps.json2vars.outputs.versions_python }}"
-   ```
+          ```yaml
+          # Incorrect output reference
+          echo "Python versions: ${{ steps.json2vars.versions_python }}"
+
+          # Correct output reference
+          echo "Python versions: ${{ steps.json2vars.outputs.versions_python }}"
+          ```
 
 ### Matrix Strategy Failures
 
-**Symptom**: Matrix strategy fails with error like `The value of 'matrix.python-version' is invalid`.
+!!! Note "Symptom"
 
-**Solutions**:
+    Matrix strategy fails with error like `The value of 'matrix.python-version' is invalid`.
 
-1. **Check JSON parsing**:
+!!! Note "Solutions"
 
-   ```yaml
-   # Incorrect - missing fromJson
-   matrix:
-     python-version: ${{ needs.set_variables.outputs.versions_python }}
+    1. **Check JSON parsing**:
 
-   # Correct
-   matrix:
-     python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
-   ```
+        ```yaml
+        # Incorrect - missing fromJson
+        matrix:
+          python-version: ${{ needs.set_variables.outputs.versions_python }}
 
-2. **Verify output content**:
+        # Correct
+        matrix:
+          python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+        ```
 
-   ```yaml
-   - name: Debug outputs
-     run: |
-       echo "Raw output: ${{ steps.json2vars.outputs.versions_python }}"
-       echo "Type: ${{ typeof(steps.json2vars.outputs.versions_python) }}"
-   ```
+    2. **Verify output content**:
+
+        ```yaml
+        - name: Debug outputs
+          run: |
+            echo "Raw output: ${{ steps.json2vars.outputs.versions_python }}"
+            echo "Type: ${{ typeof(steps.json2vars.outputs.versions_python) }}"
+        ```
 
 ### Cache-Related Issues
 
-**Symptom**: Cache is not updating or is generating incorrect templates.
+!!! Note "Symptom"
 
-**Solutions**:
+    Cache is not updating or is generating incorrect templates.
 
-1. **Force cache update**:
+!!! Note "Solutions"
 
-   ```yaml
-   - name: Force cache update
-     uses: 7rikazhexde/json2vars-setter@main
-     with:
-       json-file: .github/json2vars-setter/matrix.json
-       use-cache: 'true'
-       force-cache-update: 'true'
-   ```
+    1. **Force cache update**:
 
-2. **Check cache file location**:
-   The default cache location is `.github/json2vars-setter/cache/version_cache.json`. Ensure this directory exists and is writable.
+        ```yaml
+        - name: Force cache update
+          uses: 7rikazhexde/json2vars-setter@main
+          with:
+            json-file: .github/json2vars-setter/matrix.json
+            use-cache: 'true'
+            force-cache-update: 'true'
+        ```
 
-3. **Commit cache files**:
+    2. **Check cache file location**:
 
-   ```yaml
-   - name: Commit updated cache
-     run: |
-       git config --local user.email "actions@github.com"
-       git config --local user.name "GitHub Actions"
-       git add .github/json2vars-setter/cache/version_cache.json
-       git commit -m "Update version cache"
-       git push
-   ```
+        The default cache location is `.github/json2vars-setter/cache/version_cache.json`. Ensure this directory exists and is writable.
+
+    3. **Commit cache files**:
+
+        ```yaml
+        - name: Commit updated cache
+          run: |
+            git config --local user.email "actions@github.com"
+            git config --local user.name "GitHub Actions"
+            git add .github/json2vars-setter/cache/version_cache.json
+            git commit -m "Update version cache"
+            git push
+        ```
 
 ### Conflicting Strategies
 
-**Symptom**: Unexpected behavior when using multiple strategies.
+!!! Note "Symptom"
 
-**Solution**: Never use `update-matrix: 'true'` and `use-cache: 'true'` together. They are mutually exclusive strategies.
+    Unexpected behavior when using multiple strategies.
 
-```yaml
-# Incorrect - conflicting strategies
-- name: Set variables
-  uses: 7rikazhexde/json2vars-setter@main
-  with:
-    json-file: .github/json2vars-setter/matrix.json
-    update-matrix: 'true'
-    use-cache: 'true'  # Will be ignored when update-matrix is true
+!!! Note "Solutions"
 
-# Correct - choose one strategy
-- name: Set variables with dynamic update
-  uses: 7rikazhexde/json2vars-setter@main
-  with:
-    json-file: .github/json2vars-setter/matrix.json
-    update-matrix: 'true'
-```
+    Never use `update-matrix: 'true'` and `use-cache: 'true'` together. </br>
+    They are mutually exclusive strategies.
+
+    ```yaml
+    # Incorrect - conflicting strategies
+    - name: Set variables
+      uses: 7rikazhexde/json2vars-setter@main
+      with:
+        json-file: .github/json2vars-setter/matrix.json
+        update-matrix: 'true'
+        use-cache: 'true'  # Will be ignored when update-matrix is true
+
+    # Correct - choose one strategy
+    - name: Set variables with dynamic update
+      uses: 7rikazhexde/json2vars-setter@main
+      with:
+        json-file: .github/json2vars-setter/matrix.json
+        update-matrix: 'true'
+    ```
 
 ## Debugging Techniques
 
@@ -327,33 +343,33 @@ Optimize your workflow to reduce API calls:
 
 1. **Use caching with appropriate `max-age`**
 
-   ```yaml
-   - name: Set variables with caching
-     uses: 7rikazhexde/json2vars-setter@main
-     with:
-       json-file: .github/json2vars-setter/matrix.json
-       use-cache: 'true'
-       cache-max-age: '7'  # Update weekly
-   ```
+    ```yaml
+    - name: Set variables with caching
+      uses: 7rikazhexde/json2vars-setter@main
+      with:
+        json-file: .github/json2vars-setter/matrix.json
+        use-cache: 'true'
+        cache-max-age: '7'  # Update weekly
+    ```
 
 2. **Use template-only mode when cache exists**
 
-   ```yaml
-   - name: Set variables from cache
-     uses: 7rikazhexde/json2vars-setter@main
-     with:
-       json-file: .github/json2vars-setter/matrix.json
-       use-cache: 'true'
-       template-only: 'true'  # No API calls
-   ```
+    ```yaml
+    - name: Set variables from cache
+      uses: 7rikazhexde/json2vars-setter@main
+      with:
+        json-file: .github/json2vars-setter/matrix.json
+        use-cache: 'true'
+        template-only: 'true'  # No API calls
+    ```
 
 3. **Schedule updates during low-traffic periods**
 
-   ```yaml
-   on:
-     schedule:
-       - cron: '0 3 * * 0'  # Sunday 3 AM
-   ```
+    ```yaml
+    on:
+      schedule:
+        - cron: '0 3 * * 0'  # Sunday 3 AM
+    ```
 
 ### Using Cache with Incremental Updates
 

@@ -23,14 +23,18 @@ graph TD
     %% Common final step
     G -->|Set| H[GitHub Actions Outputs]
 
-    classDef condition fill:#ff9800,stroke:#e65100,stroke-width:2px,color:#000
+    classDef condition fill:#42a5f5,stroke:#1976d2,stroke-width:1px,color:#fff
     classDef process fill:#43a047,stroke:#2e7d32,stroke-width:2px,color:#fff
+    classDef api fill:#e91e63,stroke:#c2185b,stroke-width:1px,color:#fff
+    classDef json fill:#ffca28,stroke:#fb8c00,stroke-width:1px,color:#333333
     classDef output fill:#42a5f5,stroke:#1976d2,stroke-width:1px,color:#fff
     classDef start fill:#9c27b0,stroke:#6a1b9a,stroke-width:2px,color:#fff
 
     class Start start
     class Condition condition
+    class Step2 api
     class Step1,Step2,Step3,G process
+    class Step4 json
     class H output
 ```
 
@@ -41,16 +45,16 @@ graph TD
 The updater provides flexible version selection through three distinct strategies:
 
 1. **`stable`**: Include only stable versions of the language
-   - Ideal for production environments and critical workflows
-   - Focuses on reliability and backward compatibility
+     - Ideal for production environments and critical workflows
+     - Focuses on reliability and backward compatibility
 
 2. **`latest`**: Include only the latest versions (including pre-releases)
-   - Perfect for cutting-edge testing and forward compatibility checks
-   - Ensures your code works with upcoming language releases
+     - Perfect for cutting-edge testing and forward compatibility checks
+     - Ensures your code works with upcoming language releases
 
 3. **`both`**: Include both stable and latest versions
-   - Comprehensive coverage for both stability and future-proofing
-   - Best for libraries and frameworks that need wide compatibility
+     - Comprehensive coverage for both stability and future-proofing
+     - Best for libraries and frameworks that need wide compatibility
 
 ### Configurable Per Language
 
@@ -244,7 +248,11 @@ The Dynamic Matrix Updater currently supports:
 - **For bleeding-edge testing**, use the `latest` strategy
 - **For libraries and frameworks**, use the `both` strategy to ensure wide compatibility
 - **Set up automated commits** after updates to keep your repository in sync
-- **Consider combining with version caching** for larger projects to optimize API usage (note: do not use both `update-matrix: 'true'` and `use-cache: 'true'` together; they are separate strategies)
+- **Consider combining with version caching** for larger projects to optimize API usage (
+
+!!! note
+
+    do not use both `update-matrix: 'true'` and `use-cache: 'true'` together; they are separate strategies
 
 ## Common Issues and Solutions
 

@@ -67,17 +67,17 @@ The dynamic update feature supports three different strategies:
 Some input parameters have relationships or constraints:
 
 1. **Mutually Exclusive Strategies**:
-   - `update-matrix: 'true'` and `use-cache: 'true'` cannot be used together
-   - If both are specified, `update-matrix` takes precedence
+      - `update-matrix: 'true'` and `use-cache: 'true'` cannot be used together
+      - If both are specified, `update-matrix` takes precedence
 
 2. **Strategy Hierarchy**:
-   - If `update-strategy` is specified, it applies to all languages
-   - Language-specific strategies (e.g., `python-strategy`) override the global strategy
+      - If `update-strategy` is specified, it applies to all languages
+      - Language-specific strategies (e.g., `python-strategy`) override the global strategy
 
 3. **Cache-Related Dependencies**:
-   - `template-only` requires an existing cache file
-   - `force-cache-update` is only relevant when `use-cache: 'true'`
-   - `cache-incremental` works best with a higher `cache-count` value
+      - `template-only` requires an existing cache file
+      - `force-cache-update` is only relevant when `use-cache: 'true'`
+      - `cache-incremental` works best with a higher `cache-count` value
 
 ### Example Usage
 
