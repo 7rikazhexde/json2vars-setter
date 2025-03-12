@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe JsonVarsSetter::JsonParser do
-  let(:config_path) { File.expand_path('../../../.github/workflows/ruby_project_matrix.json', __dir__) }
+  let(:config_path) { File.expand_path('../ruby_project_matrix.json', __dir__) }
 
   describe '.parse_config' do
     it 'JSONファイルを解析できること' do

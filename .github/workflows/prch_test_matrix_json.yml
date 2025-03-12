@@ -23,7 +23,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: tests/python_project_matrix.json
 
       - name: Debug output values
         run: |
@@ -132,7 +132,7 @@ jobs:
         # Windowss
         # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
         run: |
-          poetry run task test_ci_xml
+          poetry run task testcixml
           coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "Current coverage: $coverage_percentage%"
           echo "COVERAGE=$coverage_percentage" >> "$GITHUB_ENV"
@@ -199,7 +199,7 @@ jobs:
           message="'dependabot_prch' workflow completed with status: $status
 
           Check URL:
-          https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dependabot_prch.yml"
+          https://github.com/7rikazhexde/json2vars-setter/actions/json2vars-setter/dependabot_prch.yml"
 
           curl -X POST https://notify-api.line.me/api/notify \
             -H "Authorization: Bearer $LINE_NOTIFY_TOKEN" \

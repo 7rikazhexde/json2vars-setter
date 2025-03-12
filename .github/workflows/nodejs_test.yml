@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/nodejs/**'
-      - '.github/workflows/nodejs_test.yml'
+      - '.github/json2vars-setter/nodejs_test.yml'
 
 jobs:
   set_variables:
@@ -25,7 +25,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/workflows/matrix.json
+          json-file: examples/nodejs/nodejs_project_matrix.json
 
       - name: Debug output values
         run: |

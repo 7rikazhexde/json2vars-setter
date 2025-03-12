@@ -2,7 +2,7 @@ const path = require('path');
 
 const PROJECT_ROOT = path.resolve(__dirname, '../../../..'); // json2vars-setterまでのパス
 const EXAMPLES_ROOT = path.resolve(__dirname, '../../..'); // examplesまでのパス
-const GITHUB_WORKFLOWS_DIR = path.join(PROJECT_ROOT, '.github/workflows');
+const GITHUB_WORKFLOWS_DIR = path.join(PROJECT_ROOT, 'examples/nodejs');
 
 const paths = {
   projectRoot: PROJECT_ROOT,

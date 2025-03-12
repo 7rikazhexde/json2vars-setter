@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/rust/**'
-      - '.github/workflows/rust_test.yml'
+      - '.github/json2vars-setter/rust_test.yml'
 
 jobs:
   set_variables:
@@ -25,8 +25,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          #json-file: .github/workflows/matrix.json
-          json-file: .github/workflows/rust_project_matrix.json
+          json-file: examples/rust/rust_project_matrix.json
 
       - name: Debug output values
         run: |

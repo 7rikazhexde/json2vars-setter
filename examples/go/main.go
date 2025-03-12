@@ -17,7 +17,7 @@ func main() {
 	}
 
 	// プロジェクトルートからの相対パスでJSONファイルを指定
-	configPath := filepath.Join(filepath.Dir(filename), "../../.github/workflows/go_project_matrix.json")
+	configPath := filepath.Join(filepath.Dir(filename), "./go_project_matrix.json")
 
 	config, err := jsonparser.ParseConfig(configPath, false)
 	if err != nil {

@@ -80,7 +80,7 @@ npm test
 
 ## JSON Configuration Format
 
-Please check [Node.js Releases](https://nodejs.org/en/about/previous-releases) and create `.github/workflows/nodejs_project_matrix.json`
+Please check [Node.js Releases](https://nodejs.org/en/about/previous-releases) and create `.github/json2vars-setter/nodejs_project_matrix.json`
 
 ```json
 {
@@ -102,7 +102,7 @@ Please check [Node.js Releases](https://nodejs.org/en/about/previous-releases) a
 }
 ```
 
-The default path for this configuration is `.github/workflows/nodejs_project_matrix.json` relative to the project root.
+The default path for this configuration is `.github/json2vars-setter/nodejs_project_matrix.json` relative to the project root.
 
 ## Development
 

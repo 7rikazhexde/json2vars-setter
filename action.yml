@@ -5,11 +5,108 @@ branding:
   icon: 'file'
   color: 'green'
 inputs:
+  # Basic Settings
   json-file:
     description: 'Path to the JSON file'
     required: true
-    default: '.github/workflows/matrix.json'
+
+  # Dynamic Update Option
+  update-matrix:
+    description: 'Whether to dynamically update the matrix before parsing'
+    required: false
+    default: 'false'  # Default is to disable dynamic update
+
+  # Update Strategy Option
+  update-strategy:
+    description: 'Default update strategy for all languages (stable, latest, or both)'
+    required: false  # Optional
+
+  # Language-specific Update Strategies
+  python-strategy:
+    description: 'Update strategy for Python versions (stable, latest, or both)'
+    required: false  # Optional
+  nodejs-strategy:
+    description: 'Update strategy for Node.js versions (stable, latest, or both)'
+    required: false  # Optional
+  ruby-strategy:
+    description: 'Update strategy for Ruby versions (stable, latest, or both)'
+    required: false  # Optional
+  go-strategy:
+    description: 'Update strategy for Go versions (stable, latest, or both)'
+    required: false  # Optional
+  rust-strategy:
+    description: 'Update strategy for Rust versions (stable, latest, or both)'
+    required: false  # Optional
+
+  # Safe Mode
+  dry-run:
+    description: 'Run in dry-run mode without updating the JSON file'
+    required: false
+    default: 'false'  # Default is to actually update
+
+  # Cache Version Info Options
+  use-cache:
+    description: 'Whether to use cached version information'
+    required: false
+    default: 'false'  # Default is to not use caching
+
+  cache-languages:
+    description: 'Languages to include in cache operations (comma-separated)'
+    required: false
+    default: 'all'  # Default is all languages
+
+  force-cache-update:
+    description: 'Force cache update even if it is fresh'
+    required: false
+    default: 'false'
+
+  cache-max-age:
+    description: 'Maximum age of cache in days before update'
+    required: false
+    default: '1'
+
+  cache-count:
+    description: 'Number of versions to fetch per language'
+    required: false
+    default: '10'
+
+  output-count:
+    description: 'Number of versions to include in output template. This allows you to cache many versions but limit how many appear in the final matrix.json. When not specified, defaults to using the same value as cache-count.'
+    required: false
+    default: '0'
+
+  cache-incremental:
+    description: 'Add only new versions without replacing existing cache'
+    required: false
+    default: 'false'
+
+  cache-file:
+    description: 'Custom cache file path'
+    required: false
+    default: '.github/json2vars-setter/cache/version_cache.json'
+
+  template-only:
+    description: 'Only generate template from existing cache (no API calls)'
+    required: false
+    default: 'false'
+
+  cache-only:
+    description: 'Only update the cache, do not generate the template'
+    required: false
+    default: 'false'
+
+  keep-existing:
+    description: 'Maintain existing version information when generating template'
+    required: false
+    default: 'true'
+
+  sort-order:
+    description: 'Version sort order (desc: newest first, asc: oldest first)'
+    required: false
+    default: 'desc'
+
 outputs:
+  # Output Variables
   os:
     description: 'List of operating systems'
     value: ${{ steps.set_outputs.outputs.os }}
@@ -31,22 +128,165 @@ outputs:
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
+
 runs:
   using: "composite"
   steps:
+    # Set up Python environment
     - name: Set up Python
       uses: actions/setup-python@v5.4.0
       with:
         python-version: '3.13'
 
+    # Install required dependencies in isolated virtual environment
+    - name: Install dependencies
+      shell: bash
+      run: |
+        # Create isolated virtual environment for the action
+        python -m venv ${{ github.action_path }}/json2vars_venv
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+        # Install dependencies
+        pip install requests typer
+        # Create a script to easily activate the venv in subsequent steps
+        echo '#!/bin/bash' > activate_venv.sh
+        echo '. ${{ github.action_path }}/json2vars_venv/bin/activate' >> activate_venv.sh
+        chmod +x activate_venv.sh
+        # Deactivate virtual environment
+        deactivate || true
+
+    # Set up PYTHONPATH to ensure module imports work correctly
+    - name: Set environment variables
+      shell: bash
+      run: |
+        echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
+
+    # Dynamic matrix update (highest priority)
+    - name: Update matrix if requested
+      if: ${{ inputs.update-matrix == 'true' }}  # Execute only if update-matrix is true
+      shell: bash
+      run: |
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+
+        echo "Dynamically updating matrix..."
+        ARGS=()
+        ARGS+=("--json-file" "${{ inputs.json-file }}")
+
+        # Apply common strategy to all languages if specified
+        if [[ -n "${{ inputs.update-strategy }}" ]]; then
+          ARGS+=("--all" "${{ inputs.update-strategy }}")
+        else
+          # Apply individual strategies for each language if specified
+          if [[ -n "${{ inputs.python-strategy }}" ]]; then
+            ARGS+=("--python" "${{ inputs.python-strategy }}")
+          fi
+          if [[ -n "${{ inputs.nodejs-strategy }}" ]]; then
+            ARGS+=("--nodejs" "${{ inputs.nodejs-strategy }}")
+          fi
+          if [[ -n "${{ inputs.ruby-strategy }}" ]]; then
+            ARGS+=("--ruby" "${{ inputs.ruby-strategy }}")
+          fi
+          if [[ -n "${{ inputs.go-strategy }}" ]]; then
+            ARGS+=("--go" "${{ inputs.go-strategy }}")
+          fi
+          if [[ -n "${{ inputs.rust-strategy }}" ]]; then
+            ARGS+=("--rust" "${{ inputs.rust-strategy }}")
+          fi
+        fi
+
+        # Set dry-run flag
+        if [[ "${{ inputs.dry-run }}" == "true" ]]; then
+          ARGS+=("--dry-run")
+        fi
+
+        # Enable verbose logging
+        ARGS+=("--verbose")
+
+        # Execute update script
+        python -m json2vars_setter.update_matrix_dynamic "${ARGS[@]}"
+
+        # Deactivate virtual environment
+        deactivate || true
+
+    # Cache version info update (medium priority)
+    - name: Update using cache version info if requested
+      if: ${{ inputs.update-matrix != 'true' && inputs.use-cache == 'true' }}  # Only if dynamic update not requested
+      shell: bash
+      run: |
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+
+        echo "Using cached version information..."
+        ARGS=()
+
+        # Parse languages list
+        IFS=',' read -ra LANGS <<< "${{ inputs.cache-languages }}"
+        if [[ "${LANGS[*]}" != "all" ]]; then
+          ARGS+=("--languages" "${LANGS[@]}")
+        fi
+
+        # Add cache configuration options
+        if [[ "${{ inputs.force-cache-update }}" == "true" ]]; then
+          ARGS+=("--force")
+        fi
+
+        ARGS+=("--max-age" "${{ inputs.cache-max-age }}")
+        ARGS+=("--count" "${{ inputs.cache-count }}")
+
+        if [[ "${{ inputs.output-count }}" != "0" ]]; then
+          ARGS+=("--output-count" "${{ inputs.output-count }}")
+        fi
+
+        ARGS+=("--cache-file" "${{ inputs.cache-file }}")
+        ARGS+=("--template-file" "${{ inputs.json-file }}")
+
+        if [[ "${{ inputs.template-only }}" == "true" ]]; then
+          ARGS+=("--template-only")
+        fi
+
+        if [[ "${{ inputs.cache-only }}" == "true" ]]; then
+          ARGS+=("--cache-only")
+        fi
+
+        if [[ "${{ inputs.cache-incremental }}" == "true" ]]; then
+          ARGS+=("--incremental")
+        fi
+
+        if [[ "${{ inputs.keep-existing }}" == "true" ]]; then
+          ARGS+=("--keep-existing")
+        fi
+
+        ARGS+=("--sort" "${{ inputs.sort-order }}")
+
+        # Enable verbose logging
+        ARGS+=("--verbose")
+
+        # Output the full command for debugging
+        echo "Running command: python -m json2vars_setter.cache_version_info ${ARGS[*]}"
+
+        # Execute cache version info script
+        python -m json2vars_setter.cache_version_info "${ARGS[@]}"
+
+        # Deactivate virtual environment
+        deactivate || true
+
+    # JSON parsing (always executed)
     - name: Parse JSON and set outputs
       id: set_outputs
       shell: bash
       run: |
-        python ${{ github.action_path }}/json2vars_setter/json_to_github_output.py ${{ inputs.json-file }}
+        # Activate virtual environment
+        . ${{ github.action_path }}/json2vars_venv/bin/activate
+
+        python -m json2vars_setter.json_to_github_output ${{ inputs.json-file }}
+
+        # Deactivate virtual environment
+        deactivate || true
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
 
+    # Output debug information
     - name: Debug Output Values
       shell: bash
       run: |

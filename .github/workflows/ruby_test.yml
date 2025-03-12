@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/ruby/**'
-      - '.github/workflows/ruby_test.yml'
+      - '.github/json2vars-setter/ruby_test.yml'
 
 jobs:
   set_variables:
@@ -25,8 +25,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          #json-file: .github/workflows/matrix.json
-          json-file: .github/workflows/ruby_project_matrix.json
+          json-file: examples/ruby/ruby_project_matrix.json
 
       - name: Debug output values
         run: |

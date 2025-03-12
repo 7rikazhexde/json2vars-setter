@@ -8,6 +8,8 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 poetry = "^2.1.1"
+requests = "^2.32.3"
+typer = "^0.15.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -21,6 +23,9 @@ pytest-testmon = "^2.1.3"
 ruff = "^0.9.10"
 mypy = "^1.15.0"
 taskipy = "^1.14.1"
+mkdocs-material = "^9.6.7"
+mkdocs-glightbox = "^0.4.0"
+mkdocs-git-revision-date-localized-plugin = "^1.4.2"
 
 [build-system]
 requires = ["poetry-core"]
@@ -78,13 +83,17 @@ log_cli = true
 log_cli_level = "INFO"
 log_cli_format = "%(asctime)s [%(levelname)s] %(message)s"
 
+filterwarnings = [
+    "ignore::DeprecationWarning:typer.*:",
+]
+
 [tool.taskipy.tasks]
-test_coverage_verbose = "pytest -s -vv --cov=. --cov-branch --cov-report term-missing --cov-report html"
-test_html_report = "pytest --html=htmlcov/report_page.html"
-test_ci_xml = "python scripts/run_tests.py --report xml"
-test_ci_term = "python scripts/run_tests.py --report term"
-test_testmon = "pytest --testmon"
-test_coverage = "pytest --cov=. --cov-branch --cov-report=term-missing --cov-report=html"
+testcoverage = "pytest --cov=json2vars_setter --cov-branch --cov-report term-missing --cov-report html"
+testcoverageverbose = "pytest -s -vv --cov=json2vars_setter --cov-branch --cov-report term-missing --cov-report html"
+testhtmlreport = "pytest --html=htmlcov/report_page.html"
+testcixml = "python scripts/run_tests.py --report xml"
+testciterm = "python scripts/run_tests.py --report term"
+usage = "python json2vars_setter/cache_version_info.py --help\n\npython json2vars_setter/update_matrix_dynamic.py --help\n\n"
 
 [tool.coverage.run]
 source = ["json2vars_setter"]
@@ -102,8 +111,13 @@ exclude_lines = [
     "raise NotImplementedError",
     "pass",
     "except ImportError:",
-    "def main"
+    "def main",
+    "@abstractmethod",
+    "abc.abstractmethod"
 ]
 
 [tool.coverage.html]
 directory = "htmlcov"
+
+[tool.poetry.scripts]
+json2vars = "json2vars_setter.cli:app"
