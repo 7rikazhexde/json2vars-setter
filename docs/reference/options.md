@@ -88,7 +88,7 @@ Some input parameters have relationships or constraints:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
     python-strategy: 'stable'
     nodejs-strategy: 'latest'
@@ -101,7 +101,7 @@ Some input parameters have relationships or constraints:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
     cache-max-age: '7'
     cache-languages: 'python,nodejs'
@@ -115,7 +115,7 @@ Some input parameters have relationships or constraints:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
 ```
 
 ## Best Practices

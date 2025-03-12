@@ -67,7 +67,7 @@ def test_parse_matrix_static_json() -> None:
         "VERSIONS_RUST_6": "1.84.1",
         "VERSIONS_RUST_7": "1.85.0",
         "VERSIONS_RUST_8": "stable",
-        "GHPAGES_BRANCH": "ghgapes",
+        "GHPAGES_BRANCH": "gh-gapes",
     }
 
     outputs = parse_json(data)

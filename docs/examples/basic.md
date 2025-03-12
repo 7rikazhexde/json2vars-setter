@@ -49,7 +49,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
 
       - name: Check outputs
         run: |
@@ -80,7 +80,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
 
   test:
     needs: set_variables
@@ -129,7 +129,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
           python-strategy: 'stable'
           nodejs-strategy: 'latest'
@@ -178,7 +178,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
           cache-max-age: '7'  # Update cache if older than 7 days
           cache-languages: 'python'
@@ -211,7 +211,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/python_project_matrix.json
+          json-file: .github/json2vars-setter/sample/python_project_matrix.json
 
       - name: Show configured versions
         run: |
@@ -258,7 +258,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
 
   test_python:
     needs: set_variables
@@ -318,7 +318,7 @@ jobs:
       - name: Update matrix.json
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
           all: 'stable'  # Use stable versions for all languages
 

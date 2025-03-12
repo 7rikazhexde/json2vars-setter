@@ -146,8 +146,22 @@ python json2vars_setter/cache_version_info.py --incremental --count 30
 
 #### Output to specific file
 
+##### Write support language version (python,nodejs,ruby,go,rust)
+
 ```bash
-python json2vars_setter/cache_version_info.py --template-file ./my_matrix.json
+python json2vars_setter/cache_version_info.py --template-file ./your_project_matrix.json
+```
+
+##### Write specified support language version (python,nodejs)
+
+```bash
+python json2vars_setter/cache_version_info.py --lang python nodejs --template-file ./your_project_matrix.json
+```
+
+##### Write specified support language version (python)
+
+```bash
+python json2vars_setter/cache_version_info.py --lang python --template-file ./your_python_matrix.json
 ```
 
 #### Maintain existing file structure
@@ -187,7 +201,7 @@ In GitHub Actions, these options are mapped to action inputs:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
     cache-languages: 'python,nodejs'
     cache-max-age: '7'
@@ -265,7 +279,7 @@ When fetching version information from GitHub APIs, you might encounter rate lim
       id: json2vars
       uses: 7rikazhexde/json2vars-setter@main
       with:
-        json-file: .github/json2vars-setter/matrix.json
+        json-file: .github/json2vars-setter/sample/matrix.json
         use-cache: 'true'
         cache-languages: 'python,nodejs'
       env:

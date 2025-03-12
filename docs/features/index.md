@@ -122,7 +122,7 @@ The flexibility of json2vars-setter allows you to choose the components that bes
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
 ```
 
 ### Dynamic Updates (Automated Version Management)
@@ -131,7 +131,7 @@ The flexibility of json2vars-setter allows you to choose the components that bes
 - name: Update matrix with latest versions
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
     python-strategy: 'stable'
     nodejs-strategy: 'latest'
@@ -143,7 +143,7 @@ The flexibility of json2vars-setter allows you to choose the components that bes
 - name: Update using cached version info
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
     cache-max-age: '7'
     cache-incremental: 'true'

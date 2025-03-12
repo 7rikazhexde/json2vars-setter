@@ -44,7 +44,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
 ```
 
 ## Components

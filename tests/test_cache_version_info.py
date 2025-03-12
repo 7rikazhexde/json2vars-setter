@@ -1889,7 +1889,7 @@ def test_merge_versions_count_metadata_update() -> None:
 
 # Assuming these are defined in your module
 DEFAULT_OS = ["ubuntu-latest", "windows-latest", "macos-latest"]
-DEFAULT_GHPAGES_BRANCH = "ghpages"
+DEFAULT_GHPAGES_BRANCH = "gh-pages"
 
 
 def test_generate_version_template_missing_branches(

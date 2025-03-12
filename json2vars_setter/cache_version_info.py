@@ -36,7 +36,7 @@ DEFAULT_TEMPLATE_FILE = CACHE_DIR / "version_template.json"
 
 # Default values for matrix.json
 DEFAULT_OS = ["ubuntu-latest", "windows-latest", "macos-latest"]
-DEFAULT_GHPAGES_BRANCH = "ghpages"
+DEFAULT_GHPAGES_BRANCH = "gh-pages"
 
 
 class VersionCache:

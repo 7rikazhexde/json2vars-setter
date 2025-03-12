@@ -19,7 +19,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -114,7 +114,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
         - name: Force cache update
           uses: 7rikazhexde/json2vars-setter@main
           with:
-            json-file: .github/json2vars-setter/matrix.json
+            json-file: .github/json2vars-setter/sample/matrix.json
             use-cache: 'true'
             force-cache-update: 'true'
         ```
@@ -151,7 +151,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
     - name: Set variables
       uses: 7rikazhexde/json2vars-setter@main
       with:
-        json-file: .github/json2vars-setter/matrix.json
+        json-file: .github/json2vars-setter/sample/matrix.json
         update-matrix: 'true'
         use-cache: 'true'  # Will be ignored when update-matrix is true
 
@@ -159,7 +159,7 @@ This guide helps you diagnose and resolve common issues when using the JSON to V
     - name: Set variables with dynamic update
       uses: 7rikazhexde/json2vars-setter@main
       with:
-        json-file: .github/json2vars-setter/matrix.json
+        json-file: .github/json2vars-setter/sample/matrix.json
         update-matrix: 'true'
     ```
 
@@ -182,7 +182,7 @@ Or use the built-in debug output:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
     verbose: 'true'  # Enable verbose logging
 ```
@@ -311,7 +311,7 @@ Select update strategy based on specific conditions:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: ${{ steps.strategy.outputs.update }}
     all: ${{ steps.strategy.outputs.strategy }}
 ```
@@ -331,7 +331,7 @@ Use GitHub authentication to increase API rate limits:
   id: json2vars
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
   env:
     GITHUB_TOKEN: ${{ env.GITHUB_TOKEN }}
@@ -347,7 +347,7 @@ Optimize your workflow to reduce API calls:
     - name: Set variables with caching
       uses: 7rikazhexde/json2vars-setter@main
       with:
-        json-file: .github/json2vars-setter/matrix.json
+        json-file: .github/json2vars-setter/sample/matrix.json
         use-cache: 'true'
         cache-max-age: '7'  # Update weekly
     ```
@@ -358,7 +358,7 @@ Optimize your workflow to reduce API calls:
     - name: Set variables from cache
       uses: 7rikazhexde/json2vars-setter@main
       with:
-        json-file: .github/json2vars-setter/matrix.json
+        json-file: .github/json2vars-setter/sample/matrix.json
         use-cache: 'true'
         template-only: 'true'  # No API calls
     ```
@@ -379,7 +379,7 @@ Keep a comprehensive version history while minimizing API usage:
 - name: Update cache incrementally
   uses: 7rikazhexde/json2vars-setter@main
   with:
-    json-file: .github/json2vars-setter/matrix.json
+    json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
     cache-max-age: '7'
     cache-incremental: 'true'

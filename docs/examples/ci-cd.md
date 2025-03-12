@@ -32,7 +32,7 @@ jobs:
         id: update_matrix
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
           python-strategy: 'stable'
           nodejs-strategy: 'stable'
@@ -66,7 +66,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
 
   # Step 3: Run tests across matrix
   test:
@@ -109,7 +109,7 @@ jobs:
       - name: Update matrix configuration
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
           python-strategy: 'stable'
           nodejs-strategy: 'stable'
@@ -192,14 +192,14 @@ jobs:
         if: steps.environment.outputs.env == 'production'
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/production_matrix.json
+          json-file: .github/json2vars-setter/sample/production_matrix.json
 
       - name: Set variables for development
         id: json2vars_dev
         if: steps.environment.outputs.env == 'development'
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/development_matrix.json
+          json-file: .github/json2vars-setter/sample/development_matrix.json
           update-matrix: 'true'
           all: 'latest'
 
@@ -300,7 +300,7 @@ jobs:
       - name: Update version cache
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
           force-cache-update: 'true'
           cache-incremental: 'true'
@@ -333,7 +333,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
           template-only: 'true'  # Use existing cache
           sort-order: 'desc'
@@ -404,7 +404,7 @@ jobs:
       - name: Update version cache
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/matrix.json
+          json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
           cache-max-age: '1'  # Force update
           cache-incremental: 'true'
@@ -414,7 +414,7 @@ jobs:
       - name: Update dynamic versions
         uses: 7rikazhexde/json2vars-setter@main
         with:
-          json-file: .github/json2vars-setter/latest_matrix.json
+          json-file: .github/json2vars-setter/sample/latest_matrix.json
           update-matrix: 'true'
           all: 'latest'
 

@@ -56,7 +56,7 @@ jobs:
             local file="$1"
             local gist_id="$2"
             local json_payload
-            # jqにfileとcontentを渡してJSONを構築
+            # Construct JSON with file and content using jq
             json_payload=$(jq -n --arg fname "$file" --arg content "$(cat "$file")" '{"files": {($fname): {"content": $content}}}')
             curl -X PATCH \
               -H "Authorization: token $GIST_TOKEN" \
