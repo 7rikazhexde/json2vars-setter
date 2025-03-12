@@ -15,7 +15,7 @@ end
 
 # スクリプトが直接実行された場合の処理
 if __FILE__ == $0
-  config_path = File.expand_path('../../../.github/json2vars-setter/ruby_project_matrix.json', __dir__)
+  config_path = File.expand_path('../ruby_project_matrix.json', __dir__)
   result = JsonVarsSetter::JsonParser.parse_config(config_path)
   puts JSON.pretty_generate(result) if result
 end

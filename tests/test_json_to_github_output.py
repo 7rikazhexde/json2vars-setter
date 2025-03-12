@@ -9,7 +9,7 @@ from _pytest.monkeypatch import MonkeyPatch
 
 from json2vars_setter.json_to_github_output import parse_json, set_github_output
 
-MATRIX_JSON_PATH = ".github/json2vars-setter/matrix_static.json"
+MATRIX_JSON_PATH = "./tests/matrix_static.json"
 
 
 # --- Test case for parse_json() ---

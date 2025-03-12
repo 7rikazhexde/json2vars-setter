@@ -3,12 +3,7 @@ use std::path::PathBuf;
 
 #[test]
 fn test_parse_valid_config() {
-    let config_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("..")
-        .join("..")
-        .join(".github")
-        .join("json2vars-setter")
-        .join("rust_project_matrix.json");
+    let config_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("rust_project_matrix.json");
 
     #[allow(clippy::needless_borrows_for_generic_args)]
     let config = parse_config(&config_path, false).expect("Failed to parse config");
