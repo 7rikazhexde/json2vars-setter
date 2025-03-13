@@ -15,7 +15,7 @@ graph TD
 
     %% True path - update then parse
     Condition -->|true| Step1[Read JSON File<br>#40;If not specified, read in matrix.json#41;]
-    Step1 --> Step2[Fetch from APIs]
+    Step1 --> Step2[Fetch from GitHub API]
     Step2 --> Step3[Filter by Strategy]
     Step3 --> Step4[Update JSON File]
     Step4 --> G
@@ -235,7 +235,7 @@ sequenceDiagram
 The Dynamic Matrix Updater currently supports:
 
 - **Python**: Fetches from Python releases via GitHub API
-- **Node.js**: Fetches from Node.js release API
+- **Node.js**: Fetches from Node.js releases via GitHub API
 - **Ruby**: Fetches from Ruby releases via GitHub API
 - **Go**: Fetches from Go releases via GitHub API
 - **Rust**: Fetches from Rust releases via GitHub API

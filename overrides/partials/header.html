@@ -59,7 +59,6 @@ set class = class ~ " md-header--shadow md-header--lifted" %} {% elif
         <!--
           Material for MkDocsのタイトルテキストをリンク化
           参考記事: https://dev.classmethod.jp/articles/material-for-mkdocs-title-text-link-url/
-          実装日: 2024-01-23
         -->
         <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}" class="md-header__topic">
           <span class="md-ellipsis">
