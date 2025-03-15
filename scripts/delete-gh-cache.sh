@@ -38,6 +38,10 @@ show_help() {
   echo "  ./$(basename "$0") --delete"
   echo "  # Delete a specific cache by ID"
   echo "  ./$(basename "$0") --delete-id 75555748"
+  echo ""
+  echo "Reference:"
+  echo "  # Source code and updates"
+  echo "  https://gist.github.com/7rikazhexde/662a051f522e9e6cd48c1e2dfd74f217"
 }
 
 # Check if gh is installed
