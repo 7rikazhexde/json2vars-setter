@@ -138,40 +138,70 @@ runs:
       with:
         python-version: '3.13'
 
-    # Install required dependencies in isolated virtual environment
-    - name: Install dependencies
-      shell: bash
+    # Get Python version and set as output
+    - name: Get Python version
+      id: get-python-version
       run: |
-        # Create isolated virtual environment for the action
-        python -m venv ${{ github.action_path }}/json2vars_venv
-        # Activate virtual environment
-        . ${{ github.action_path }}/json2vars_venv/bin/activate
-        # Install dependencies
-        pip install requests typer
-        # Create a script to easily activate the venv in subsequent steps
-        echo '#!/bin/bash' > activate_venv.sh
-        echo '. ${{ github.action_path }}/json2vars_venv/bin/activate' >> activate_venv.sh
-        chmod +x activate_venv.sh
-        # Deactivate virtual environment
-        deactivate || true
+        python_version=$(python -c "import sys; print(f'{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')")
+        echo "python-version=$python_version" >> $GITHUB_OUTPUT
+      shell: bash
 
-    # Set up PYTHONPATH to ensure module imports work correctly
-    - name: Set environment variables
+    # Setup poetry with curl-based installation
+    - name: Setup Poetry for Action
       shell: bash
       run: |
-        echo "PYTHONPATH=${{ github.action_path }}" >> $GITHUB_ENV
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        export PATH="$HOME/.local/bin:$PATH"
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project false
+        poetry config virtualenvs.path ${{ github.action_path }}/json2vars-venv
+        poetry config installer.parallel true
+
+    # Cache the action-specific dependencies
+    - name: Cache Poetry dependencies for Action
+      uses: actions/cache@v4.2.2
+      id: poetry-cache
+      with:
+        path: |
+          ${{ github.action_path }}/json2vars-venv
+          ~/.cache/pypoetry/action-cache
+        key: ${{ runner.os }}-json2vars-action-py${{ steps.get-python-version.outputs.python-version }}-${{ hashFiles('${{ github.action_path }}/poetry.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-json2vars-action-py${{ steps.get-python-version.outputs.python-version }}-
+          ${{ runner.os }}-json2vars-action-
+
+    # Install dependencies if cache doesn't exist - with isolated environment
+    - name: Install dependencies
+      if: steps.poetry-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        # Set up a Poetry configuration for this action only
+        poetry config virtualenvs.path ${{ github.action_path }}/json2vars-venv
+        poetry config cache-dir ~/.cache/pypoetry/action-cache
+        # Install dependencies
+        poetry install --only main --no-interaction --no-root
 
     # Dynamic matrix update (highest priority)
     - name: Update matrix if requested
-      if: ${{ inputs.update-matrix == 'true' }}  # Execute only if update-matrix is true
+      if: ${{ inputs.update-matrix == 'true' }}
       shell: bash
       run: |
-        # Activate virtual environment
-        . ${{ github.action_path }}/json2vars_venv/bin/activate
-
         echo "Dynamically updating matrix..."
         ARGS=()
-        ARGS+=("--json-file" "${{ inputs.json-file }}")
+
+        # Use absolute path for JSON file
+        JSON_ABSOLUTE_PATH="${{ github.workspace }}/${{ inputs.json-file }}"
+        ARGS+=("--json-file" "${JSON_ABSOLUTE_PATH}")
+
+        echo "JSON file path: ${JSON_ABSOLUTE_PATH}"
+
+        # Check if file exists
+        if [ ! -f "${JSON_ABSOLUTE_PATH}" ]; then
+          echo "ERROR: Required JSON file not found at ${JSON_ABSOLUTE_PATH}"
+          exit 1
+        fi
 
         # Apply common strategy to all languages if specified
         if [[ -n "${{ inputs.update-strategy }}" ]]; then
@@ -203,20 +233,15 @@ runs:
         # Enable verbose logging
         ARGS+=("--verbose")
 
-        # Execute update script
-        python -m json2vars_setter.update_matrix_dynamic "${ARGS[@]}"
-
-        # Deactivate virtual environment
-        deactivate || true
+        # Execute update script using Poetry with isolated environment
+        cd ${{ github.action_path }}
+        poetry run python -m json2vars_setter.update_matrix_dynamic "${ARGS[@]}"
 
     # Cache version info update (medium priority)
     - name: Update using cache version info if requested
-      if: ${{ inputs.update-matrix != 'true' && inputs.use-cache == 'true' }}  # Only if dynamic update not requested
+      if: ${{ inputs.update-matrix != 'true' && inputs.use-cache == 'true' }}
       shell: bash
       run: |
-        # Activate virtual environment
-        . ${{ github.action_path }}/json2vars_venv/bin/activate
-
         echo "Using cached version information..."
         ARGS=()
 
@@ -238,8 +263,21 @@ runs:
           ARGS+=("--output-count" "${{ inputs.output-count }}")
         fi
 
-        ARGS+=("--cache-file" "${{ inputs.cache-file }}")
-        ARGS+=("--template-file" "${{ inputs.json-file }}")
+        # Use absolute paths for all file inputs
+        CACHE_FILE="${{ github.workspace }}/${{ inputs.cache-file }}"
+        JSON_FILE="${{ github.workspace }}/${{ inputs.json-file }}"
+
+        # Check if JSON file exists
+        if [ ! -f "${JSON_FILE}" ]; then
+          echo "ERROR: Required JSON file not found at ${JSON_FILE}"
+          exit 1
+        fi
+
+        # Create parent directory for cache file if it doesn't exist
+        mkdir -p $(dirname "${CACHE_FILE}")
+
+        ARGS+=("--cache-file" "${CACHE_FILE}")
+        ARGS+=("--template-file" "${JSON_FILE}")
 
         if [[ "${{ inputs.template-only }}" == "true" ]]; then
           ARGS+=("--template-only")
@@ -263,26 +301,32 @@ runs:
         ARGS+=("--verbose")
 
         # Output the full command for debugging
-        echo "Running command: python -m json2vars_setter.cache_version_info ${ARGS[*]}"
+        echo "Running command: poetry run python -m json2vars_setter.cache_version_info with files:"
+        echo "  Cache file: ${CACHE_FILE}"
+        echo "  Template file: ${JSON_FILE}"
 
-        # Execute cache version info script
-        python -m json2vars_setter.cache_version_info "${ARGS[@]}"
-
-        # Deactivate virtual environment
-        deactivate || true
+        # Execute cache version info script using Poetry with isolated environment
+        cd ${{ github.action_path }}
+        poetry run python -m json2vars_setter.cache_version_info "${ARGS[@]}"
 
     # JSON parsing (always executed)
     - name: Parse JSON and set outputs
       id: set_outputs
       shell: bash
       run: |
-        # Activate virtual environment
-        . ${{ github.action_path }}/json2vars_venv/bin/activate
+        # Define JSON file path with absolute path
+        JSON_ABSOLUTE_PATH="${{ github.workspace }}/${{ inputs.json-file }}"
+        echo "Processing JSON file: ${JSON_ABSOLUTE_PATH}"
 
-        python -m json2vars_setter.json_to_github_output ${{ inputs.json-file }}
+        # Verify that the file exists
+        if [ ! -f "${JSON_ABSOLUTE_PATH}" ]; then
+          echo "ERROR: Required JSON file not found at ${JSON_ABSOLUTE_PATH}"
+          exit 1
+        fi
 
-        # Deactivate virtual environment
-        deactivate || true
+        # Execute script from action directory with isolated environment
+        cd ${{ github.action_path }}
+        poetry run python -m json2vars_setter.json_to_github_output "${JSON_ABSOLUTE_PATH}"
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
 
