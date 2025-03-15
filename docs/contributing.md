@@ -107,15 +107,17 @@ Before starting any work, please check existing issues or create a new one to di
 1. **Create a branch**:
 
     ```bash
-    git checkout -b feature/your-feature-name
+    git checkout -b feature-your-feature-name
     ```
 
-    Branch naming conventions:
+    Branch naming conventions:  
+    Branches must follow the format: `<type>-<short-description>`.  
+    Use the following prefixes based on the purpose of the branch:
 
-    - `feature/...` for new features
-    - `bugfix/...` for bug fixes
-    - `docs/...` for documentation changes
-    - `refactor/...` for code refactoring
+    - `feature-<description>`: For implementing new features (e.g., feature-add-user-login).
+    - `bugfix-<description>`: For fixing bugs (e.g., bugfix-fix-login-error).
+    - `docs-<description>`: For documentation updates (e.g., docs-update-readme).
+    - `refactor-<description>`: For code refactoring without functional changes (e.g., refactor-cleanup-utils).
 
 2. **Make your changes**:
 
