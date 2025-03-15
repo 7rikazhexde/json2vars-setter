@@ -162,16 +162,41 @@ jobs:
     runs-on: ubuntu-latest
     if: github.actor == 'dependabot[bot]' && !startsWith(github.event.pull_request.title, 'Bump version')
     steps:
-      - name: Send LINE Notify
+      - name: Send Discord Notification
         env:
-          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          WORKFLOW_ACTOR: ${{ github.actor }}
         run: |
-          status="${{ contains(needs.run_tests.result, 'failure') && 'FAILED' || 'SUCCESS' }}"
-          message="'dependabot_prch' workflow completed with status: ${status}
+          workflow_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          status="${{ contains(needs.run_tests.result, 'failure') && 'FAILED ❌' || 'SUCCESS ✅' }}"
 
-          Check URL:
-          https://github.com/7rikazhexde/python-project-sandbox/actions/json2vars-setter/dependabot_prch.yml"
+          message="## Dependabot PR Check Completed
 
-          curl -X POST https://notify-api.line.me/api/notify \
-            -H "Authorization: Bearer ${LINE_NOTIFY_TOKEN}" \
-            -F "message=${message}"
+          ### Workflow Information
+          • **Name:** ${{ github.workflow }}
+          • **Status:** ${status}
+          • **Run:** [View Details]($workflow_url)
+          • **PR Title:** ${PR_TITLE}
+          • **Actor:** ${WORKFLOW_ACTOR}"
+
+          timestamp="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          json_payload=$(jq -n \
+            --arg title "${{ github.workflow }} - Dependabot Check Status" \
+            --arg description "$message" \
+            --argjson color "${{ contains(needs.run_tests.result, 'failure') && '16711680' || '65280' }}" \
+            --arg timestamp "$timestamp" \
+            '{
+              "embeds": [
+                {
+                  "title": $title,
+                  "description": $description,
+                  "color": $color,
+                  "timestamp": $timestamp
+                }
+              ]
+            }')
+
+          curl -X POST -H "Content-Type: application/json" \
+            -d "$json_payload" \
+            "$DISCORD_WEBHOOK_URL"
