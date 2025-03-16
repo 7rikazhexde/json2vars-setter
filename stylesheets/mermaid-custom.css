@@ -1,15 +1,50 @@
+/* Main container styles for Mermaid diagrams */
 .md-typeset .mermaid {
+  /* Keep background transparent to work with both light and dark modes */
   background-color: transparent !important;
+
+  /* Add some padding around the diagram for better visual spacing */
   padding: 1em !important;
+
+  /* Rounded corners for the border */
   border-radius: 4px !important;
+
+  /* Default border color (will be overridden by color scheme specific rules) */
   border: 1px solid #444 !important;
+
+  /* Remove default shadow effects */
   box-shadow: none !important;
+
+  /* Set transform origin to center to ensure scaling happens from the center point */
+  transform-origin: center center !important;
+
+  /* Auto margins on left and right to center the element horizontally in its container */
+  margin: 0 auto !important;
+
+  /* Make the element a block to ensure it takes full width, allowing margin auto to work */
+  display: block !important;
+
+  /* Center any text content within the container */
+  text-align: center !important;
 }
 
+/* Dark mode specific styles */
 [data-md-color-scheme="slate"] .md-typeset .mermaid {
+  /* Darker border for dark mode */
   border: 1px solid #444 !important;
 }
 
+/* Light mode specific styles */
 [data-md-color-scheme="default"] .md-typeset .mermaid {
+  /* Slightly darker border for light mode */
   border: 1px solid #666 !important;
+}
+
+/* Ensure the SVG element itself is centered within its container */
+.md-typeset .mermaid svg {
+  /* Inline-block allows the SVG to be treated as text for alignment purposes */
+  display: inline-block !important;
+
+  /* Auto margins ensure horizontal centering */
+  margin: 0 auto !important;
 }
