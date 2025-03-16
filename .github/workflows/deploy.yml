@@ -19,13 +19,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        with:
+          json-file: .github/json2vars-setter/sample/cicd_matrix.json
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
           git config user.email 33836132+github-actions[bot]@users.noreply.github.com
       - uses: actions/setup-python@v5.4.0
         with:
-          python-version: '3.13'
+          python-version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}
       - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
       - uses: actions/cache@v4
         with:

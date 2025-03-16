@@ -79,6 +79,10 @@ The parser generates these outputs:
 
 ## Usage
 
+!!! tip "Reference"
+
+    Please also refer to the workflow ([Python Test](https://github.com/7rikazhexde/json2vars-setter/blob/main/.github/workflows/python_test.yml)).
+
 ### Basic Example
 
 ```yaml
