@@ -41,6 +41,8 @@ Please be respectful to all contributors and users. I aim to foster an inclusive
 
 2. **Set up a virtual environment**:
 
+    !!! note "When using the `poetry install` command, venv is created under the project, so there is no need to manually create a virtual environment (venv)."
+
     ```bash
     python -m venv venv
     source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -114,8 +116,8 @@ Before starting any work, please check existing issues or create a new one to di
     Branches must follow the format: `<type>-<short-description>`.  
     Use the following prefixes based on the purpose of the branch:
 
-    - `feature-<description>`: For implementing new features (e.g., feature-add-user-login).
-    - `bugfix-<description>`: For fixing bugs (e.g., bugfix-fix-login-error).
+    - `feature-<description>`: For implementing new features (e.g., feature-newlang-supprt).
+    - `bugfix-<description>`: For fixing bugs (e.g., bugfix-fetch-python-version-error).
     - `docs-<description>`: For documentation updates (e.g., docs-update-readme).
     - `refactor-<description>`: For code refactoring without functional changes (e.g., refactor-cleanup-utils).
 
@@ -234,19 +236,13 @@ Before starting any work, please check existing issues or create a new one to di
 
 For MkDocs documentation:
 
-1. **Install MkDocs dependencies**:
-
-    ```bash
-    pip install mkdocs-material
-    ```
-
-2. **Test documentation locally**:
+1. **Test documentation locally**:
 
     ```bash
     mkdocs serve
     ```
 
-3. **Build documentation**:
+2. **Build documentation**:
 
     ```bash
     mkdocs build
