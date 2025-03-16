@@ -63,7 +63,7 @@ One of the key advantages is the ability to specify different update strategies 
 ```yaml
 - name: Set variables from dynamically updated JSON
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@main
+  uses: 7rikazhexde/json2vars-setter@v1.0.1
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
@@ -79,7 +79,7 @@ Test your update strategies without modifying your JSON file using the dry-run o
 ```yaml
 - name: Test dynamic update without changing files
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@main
+  uses: 7rikazhexde/json2vars-setter@v1.0.1
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
@@ -112,7 +112,7 @@ jobs:
 
       - name: Set variables with dynamic update
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@main
+        uses: 7rikazhexde/json2vars-setter@v1.0.1
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
@@ -132,7 +132,7 @@ You can mix and match update strategies for different languages:
 ```yaml
 - name: Set variables with mixed update strategies
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@main
+  uses: 7rikazhexde/json2vars-setter@v1.0.1
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
@@ -160,7 +160,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update matrix.json
-        uses: 7rikazhexde/json2vars-setter@main
+        uses: 7rikazhexde/json2vars-setter@v1.0.1
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
