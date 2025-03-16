@@ -65,10 +65,19 @@ For example, when processing this JSON structure:
 
 ```json
 {
-  "os": ["ubuntu-latest", "windows-latest"],
-  "versions": {
-    "python": ["3.10", "3.11", "3.12"]
-  }
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "python": [
+            "3.10",
+            "3.11",
+            "3.12"
+        ]
+    },
+    "ghpages_branch": "gh-pages"
 }
 ```
 

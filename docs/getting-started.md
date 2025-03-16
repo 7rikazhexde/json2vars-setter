@@ -115,9 +115,7 @@ The action provides the following outputs:
 | `versions_rust`   | List of Rust versions      |
 | `ghpages_branch`  | GitHub Pages branch name   |
 
-## Tips
-
-!!! tip "count vs output-count"
+!!! tip "How to refer to Output in subsequent steps or jobs"
 
     - When accessing list variables (like `os` or `versions_python`), always use the `fromJson()` function to parse the JSON string.
     - For shell scripts, use single quotes (`'`) around the JSON string to preserve its structure.

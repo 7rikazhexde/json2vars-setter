@@ -23,6 +23,9 @@ graph TD
     %% Common final step
     G -->|Set| H[GitHub Actions Outputs]
 
+    %% 中央配置の設定
+    linkStyle default stroke-width:2px
+
     classDef condition fill:#42a5f5,stroke:#1976d2,stroke-width:1px,color:#fff
     classDef process fill:#43a047,stroke:#2e7d32,stroke-width:2px,color:#fff
     classDef api fill:#e91e63,stroke:#c2185b,stroke-width:1px,color:#fff
@@ -33,7 +36,7 @@ graph TD
     class Start start
     class Condition condition
     class Step2 api
-    class Step1,Step2,Step3,G process
+    class Step1,Step3,G process
     class Step4 json
     class H output
 ```
