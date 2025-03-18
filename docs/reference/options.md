@@ -8,7 +8,7 @@ This page provides a comprehensive reference for all configuration options avail
 
 | Parameter | Description | Required | Default | Notes |
 |-----------|-------------|:--------:|:-------:|-------|
-| `json-file` | Path to the JSON file | ✓ | - | The JSON file containing matrix configuration |
+| `json-file` | Path to the JSON file | ✓ | `.github/json2vars-setter/matrix.json` | The JSON file containing matrix configuration |
 
 ### Dynamic Update Options
 
