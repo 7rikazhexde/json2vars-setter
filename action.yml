@@ -9,6 +9,7 @@ inputs:
   json-file:
     description: 'Path to the JSON file'
     required: true
+    default: '.github/json2vars-setter/matrix.json'
 
   # Dynamic Update Option
   update-matrix:
