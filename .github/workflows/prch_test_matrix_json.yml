@@ -226,6 +226,12 @@ jobs:
               ]
             }')
 
+          # Validate the Discord webhook URL
+          if [[ ! $DISCORD_WEBHOOK_URL =~ ^https://discord(app)?.com/api/webhooks/ ]]; then
+            echo "Error: Invalid Discord webhook URL format. Please check your secret configuration."
+            exit 1
+          fi
+
           curl -X POST -H "Content-Type: application/json" \
             -d "$json_payload" \
             "$DISCORD_WEBHOOK_URL"

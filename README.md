@@ -72,7 +72,7 @@ The action consists of three main components that work together to provide a pow
 
 ## Documentation
 
-For detailed documentation, please visit our [Documentation Site](https://7rikazhexde.github.io/json2vars-setter/).
+For detailed information, please check the [Documentation Site](https://7rikazhexde.github.io/json2vars-setter/).
 
 The documentation includes:
 - Getting Started guide

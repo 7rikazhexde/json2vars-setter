@@ -37,7 +37,7 @@ class ReleaseInfo:
             return NotImplemented
         return not result
 
-    # 比較演算子を明示的に禁止する
+    # Explicitly disallow comparison operators
     def __lt__(self, other: Any) -> bool:
         raise TypeError(
             f"'<' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
@@ -66,7 +66,7 @@ class VersionInfo:
     latest: Optional[str] = None
     stable: Optional[str] = None
     recent_releases: List[ReleaseInfo] = field(default_factory=list)
-    details: Dict[str, Any] = field(default_factory=dict)  # Optional を追加
+    details: Dict[str, Any] = field(default_factory=dict)
 
     def has_error(self) -> bool:
         """Check if the version info contains an error."""
@@ -95,12 +95,12 @@ def clean_version(version: str) -> str:
             break
 
     # Handle underscore-separated versions (like Ruby's v3_0_0)
-    # 連続するアンダースコアを単一に正規化
+    # Normalize consecutive underscores to a single
     while "__" in cleaned:
         cleaned = cleaned.replace("__", "_")
     cleaned = cleaned.replace("_", ".")
 
-    # 先頭ドットを削除
+    # Remove leading dot
     return cleaned.lstrip(".").strip()
 
 
