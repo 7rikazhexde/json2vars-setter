@@ -34,6 +34,8 @@ jobs:
         with:
           python-version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}
       - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
+      - name: Create cache directory
+        run: mkdir -p .cache
       - uses: actions/cache@v4
         with:
           key: mkdocs-material-${{ env.cache_id }}
