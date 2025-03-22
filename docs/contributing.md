@@ -158,11 +158,12 @@ Before starting any work, please check existing issues or create a new one to di
     ```bash
     # Run basic tests
     pytest
+    # Or use poetry
+    poetry run pytest
+    ```
 
-    # Run with coverage report
-    poetry run task testcoverage
-
-    # Run verbose coverage tests
+    ```bash
+    # Run verbose coverage tests and create report
     poetry run task testcoverageverbose
     ```
 
