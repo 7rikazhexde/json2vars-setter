@@ -148,6 +148,11 @@ Before starting any work, please check existing issues or create a new one to di
 
 ### Testing Changes
 
+!!! note "About the Testing Policy"
+
+      - Test code should be created using pytest
+      - Coverage must be at least 95% (ideally 100%)
+
 1. **Run unit tests** (required):
 
     ```bash
