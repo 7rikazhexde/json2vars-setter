@@ -7,13 +7,13 @@ JSON to Variables Setter (json2vars-setter) provides a comprehensive set of feat
 ```mermaid
 graph TD
     subgraph "JSON to Variables Setter"
-        A[json_to_github_output.py] -->|Reads| B[Matrix JSON File]
+        A[JSON to Variables Parser ] -->|Reads| B[Matrix JSON File]
         A -->|Sets| C[GitHub Actions Outputs]
 
-        D[update_matrix_dynamic.py] -->|Updates| B
+        D[Dynamic Matrix Updater] -->|Updates| B
         D -->|Fetches from| E[GitHub API]
 
-        F[cache_version_info.py] -->|Caches| G[Version Information]
+        F[Version Cache Manager] -->|Caches| G[Version Information]
         F -->|Fetches from| E
         F -->|Generates| B
     end
