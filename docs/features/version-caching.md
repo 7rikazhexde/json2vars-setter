@@ -10,10 +10,13 @@ This component reduces external API calls by caching version information, making
 
 ```mermaid
 graph TD
-    Start[cache_version_info.py] --> MainPurpose{Main Functions}
+    Start[json2vars-setter Action] -->|Input Parameters| GHACondition{use-cache?}
+    GHACondition --> |true| MainPurpose1[cache_version_info.py]
 
-    MainPurpose -->|Create Template JSON| TemplateCreation[Template Creation]
-    MainPurpose -->|Cache Version Info| CacheCreation[Cache Creation]
+    MainPurpose1[cache_version_info.py] --> MainPurpose2{Main Functions}
+
+    MainPurpose2 -->|Create Template JSON| TemplateCreation[Template Creation]
+    MainPurpose2 -->|Cache Version Info| CacheCreation[Cache Creation]
 
     TemplateCreation --> TemplateSource{Information Source}
     TemplateSource -->|From Existing Cache| UseCache[--template-only]
@@ -41,6 +44,7 @@ graph TD
     CommonOptions --> VerboseLog[--verbose]
 
     %% Style definitions for better visibility in dark mode
+    classDef ghacondition fill:#42a5f5,stroke:#1976d2,stroke-width:1px,color:#fff
     classDef start fill:#9c27b0,stroke:#6a1b9a,stroke-width:2px,color:#ffffff
     classDef main fill:#43a047,stroke:#2e7d32,stroke-width:2px,color:#ffffff
     classDef condition fill:#ff9800,stroke:#e65100,stroke-width:2px,color:#000000
@@ -48,7 +52,8 @@ graph TD
     classDef common fill:#42a5f5,stroke:#1976d2,stroke-width:1px,color:#ffffff
 
     class Start start
-    class MainPurpose,TemplateCreation,CacheCreation main
+    class GHACondition ghacondition
+    class MainPurpose1,MainPurpose2,TemplateCreation,CacheCreation main
     class TemplateSource,UpdateFrequency,CommonOptions condition
     class UseCache,UseAPI,ForceUpdate,ConditionalUpdate,History option
     class Languages,FilePaths,CacheCount,VersionCount,SortOrder,KeepExisting,CacheOnly,VerboseLog common

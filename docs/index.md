@@ -28,6 +28,8 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 
 ## Quick Start
 
+!!! info "See [Basic Usage Examples](https://7rikazhexde.github.io/json2vars-setter/examples/basic/) for details."
+
 ```yaml
 jobs:
   set_variables:
@@ -45,6 +47,25 @@ jobs:
         uses: 7rikazhexde/json2vars-setter@v1.0.1
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.5.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      # Other steps
 ```
 
 ## Components
@@ -54,13 +75,13 @@ The action consists of three main components that work together to provide a pow
 ```mermaid
 graph TD
     subgraph "JSON to Variables Setter"
-        A[json_to_github_output.py] -->|Reads| B[Matrix JSON File]
+        A[JSON to Variables Parser ] -->|Reads| B[Matrix JSON File]
         A -->|Sets| C[GitHub Actions Outputs]
 
-        D[update_matrix_dynamic.py] -->|Updates| B
+        D[Dynamic Matrix Updater] -->|Updates| B
         D -->|Fetches from| E[GitHub API]
 
-        F[cache_version_info.py] -->|Caches| G[Version Information]
+        F[Version Cache Manager] -->|Caches| G[Version Information]
         F -->|Fetches from| E
         F -->|Generates| B
     end
