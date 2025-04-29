@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.10"
 poetry = "^2.1.2"
 requests = "^2.32.3"
-typer = "^0.15.2"
+typer = "^0.15.3"
 
 
 [tool.poetry.group.dev.dependencies]
