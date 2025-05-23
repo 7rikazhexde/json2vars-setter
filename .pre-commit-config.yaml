@@ -65,13 +65,13 @@ repos:
   # Reference: https://github.com/DavidAnson/markdownlint-cli2#overview
   # > markdownlint-cli is a traditional command-line interface for markdownlint.
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.44.0
+    rev: v0.45.0
     hooks:
       - id: markdownlint
         args: ["--config", ".markdownlint.jsonc", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.11.10
+    rev: v0.11.11
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
