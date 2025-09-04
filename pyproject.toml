@@ -24,7 +24,7 @@ ruff = "^0.12.11"
 mypy = "^1.17.1"
 taskipy = "^1.14.1"
 mkdocs-material = "^9.6.18"
-mkdocs-glightbox = "^0.4.0"
+mkdocs-glightbox = "^0.5.0"
 mkdocs-git-revision-date-localized-plugin = "^1.4.7"
 
 [build-system]
