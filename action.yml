@@ -147,17 +147,25 @@ runs:
         echo "python-version=$python_version" >> $GITHUB_OUTPUT
       shell: bash
 
-    # Setup poetry with curl-based installation
+    # Setup Poetry using pip (simple and reliable method)
     - name: Setup Poetry for Action
       shell: bash
       run: |
-        curl -sSL https://install.python-poetry.org | python3 -
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
-        export PATH="$HOME/.local/bin:$PATH"
+        echo "Installing Poetry using pip..."
+
+        # Install Poetry using pip (most reliable method)
+        python3 -m pip install --upgrade pip
+        python3 -m pip install poetry
+
+        # Configure Poetry for this action's isolated environment
         poetry config virtualenvs.create true
         poetry config virtualenvs.in-project false
         poetry config virtualenvs.path ${{ github.action_path }}/json2vars-venv
         poetry config installer.parallel true
+
+        # Verify installation
+        poetry --version
+        echo "✅ Poetry setup completed"
 
     # Cache the action-specific dependencies
     - name: Cache Poetry dependencies for Action
