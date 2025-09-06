@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "json2vars-setter"
-version = "1.0.1"
+version = "1.0.2"
 description = "JSON to Variables Setter (json2vars-setter) is a GitHub Action that parses a JSON file and sets its values as output variables (such as operating systems, Python versions, and GitHub Pages branch) in GitHub Actions workflows."
 authors = ["7rikazhexde"]
 readme = "README.md"
