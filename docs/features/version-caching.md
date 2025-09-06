@@ -204,7 +204,7 @@ In GitHub Actions, these options are mapped to action inputs:
 ```yaml
 - name: Set variables with cached versions
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@v1.0.1
+  uses: 7rikazhexde/json2vars-setter@v1.0.2
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
@@ -282,7 +282,7 @@ When fetching version information from GitHub APIs, you might encounter rate lim
     ```yaml
     - name: Set variables with cached versions
       id: json2vars
-      uses: 7rikazhexde/json2vars-setter@v1.0.1
+      uses: 7rikazhexde/json2vars-setter@v1.0.2
       with:
         json-file: .github/json2vars-setter/sample/matrix.json
         use-cache: 'true'

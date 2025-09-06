@@ -120,7 +120,7 @@ The flexibility of json2vars-setter allows you to choose the components that bes
 ```yaml
 - name: Set variables from JSON
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@v1.0.1
+  uses: 7rikazhexde/json2vars-setter@v1.0.2
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
 ```
@@ -129,7 +129,7 @@ The flexibility of json2vars-setter allows you to choose the components that bes
 
 ```yaml
 - name: Update matrix with latest versions
-  uses: 7rikazhexde/json2vars-setter@v1.0.1
+  uses: 7rikazhexde/json2vars-setter@v1.0.2
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
@@ -141,7 +141,7 @@ The flexibility of json2vars-setter allows you to choose the components that bes
 
 ```yaml
 - name: Update using cached version info
-  uses: 7rikazhexde/json2vars-setter@v1.0.1
+  uses: 7rikazhexde/json2vars-setter@v1.0.2
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
