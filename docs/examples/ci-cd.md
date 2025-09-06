@@ -30,7 +30,7 @@ jobs:
 
       - name: Update matrix configuration
         id: update_matrix
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
@@ -64,7 +64,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
 
@@ -107,7 +107,7 @@ jobs:
 
       # Apply matrix updates again since they were not committed yet
       - name: Update matrix configuration
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
@@ -190,14 +190,14 @@ jobs:
       - name: Set variables for production
         id: json2vars_prod
         if: steps.environment.outputs.env == 'production'
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/production_matrix.json
 
       - name: Set variables for development
         id: json2vars_dev
         if: steps.environment.outputs.env == 'development'
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/development_matrix.json
           update-matrix: 'true'
@@ -298,7 +298,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Update version cache
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
@@ -331,7 +331,7 @@ jobs:
 
       - name: Set variables from cache
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
@@ -402,7 +402,7 @@ jobs:
           fetch-depth: 0
 
       - name: Update version cache
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
@@ -412,7 +412,7 @@ jobs:
           keep-existing: 'true'
 
       - name: Update dynamic versions
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: .github/json2vars-setter/sample/latest_matrix.json
           update-matrix: 'true'
@@ -481,7 +481,7 @@ jobs:
 
       - name: Set variables for Project A
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: project-a/.github/matrix.json
           use-cache: 'true'
@@ -525,7 +525,7 @@ jobs:
 
       - name: Set variables for Project B
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.1
+        uses: 7rikazhexde/json2vars-setter@v1.0.2
         with:
           json-file: project-b/.github/matrix.json
           use-cache: 'true'
