@@ -71,7 +71,7 @@ jobs:
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
       - name: Create Release
-        uses: softprops/action-gh-release@v2.3.2
+        uses: softprops/action-gh-release@v2.3.3
         with:
           tag_name: v${{ steps.update_version.outputs.new_version }}
           name: json2vars-setter-v${{ steps.update_version.outputs.new_version }}
