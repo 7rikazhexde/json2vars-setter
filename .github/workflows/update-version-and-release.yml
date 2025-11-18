@@ -28,7 +28,7 @@ jobs:
   update-version-and-release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5.0.0
+      - uses: actions/checkout@v5.0.1
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_FOR_PUSHES }}

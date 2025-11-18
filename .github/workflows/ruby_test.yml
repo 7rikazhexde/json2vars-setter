@@ -17,7 +17,7 @@ jobs:
       ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
         with:
           fetch-depth: 0
 
@@ -59,12 +59,12 @@ jobs:
       test_status: ${{ steps.set_status.outputs.status }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5.0.1
         with:
           fetch-depth: 0
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1.267.0
+        uses: ruby/setup-ruby@v1.268.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
