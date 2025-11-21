@@ -17,7 +17,7 @@ jobs:
       ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.1
+        uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
 
@@ -55,12 +55,12 @@ jobs:
       test_status: ${{ steps.set_status.outputs.status }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.1
+        uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
 
       - name: Set up Go
-        uses: actions/setup-go@v6.0.0
+        uses: actions/setup-go@v6.1.0
         with:
           go-version: ${{ matrix.go-version }}
           # Cache is disabled because:
