@@ -35,7 +35,7 @@ repos:
   # https://python-poetry.org/docs/pre-commit-hooks/#usage
   - repo: https://github.com/python-poetry/poetry
     # Cannot be executed with local designation (as of 24.8.3)
-    rev: 2.3.1
+    rev: 2.3.2
     hooks:
       - id: poetry-check
         verbose: true
@@ -71,7 +71,7 @@ repos:
         args: ["--config", ".markdownlint.jsonc", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.14.14
+    rev: v0.15.0
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
