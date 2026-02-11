@@ -25,8 +25,7 @@ describe('parseConfigJson', () => {
     expect(result.os).toContain('macos-latest');
 
     expect(result.versions).toHaveProperty('nodejs');
-    expect(result.versions.nodejs).toHaveLength(5);
-    expect(result.versions.nodejs).toContain('16');
+    expect(result.versions.nodejs).toHaveLength(4);
     expect(result.versions.nodejs).toContain('18');
     expect(result.versions.nodejs).toContain('20');
     expect(result.versions.nodejs).toContain('22');
