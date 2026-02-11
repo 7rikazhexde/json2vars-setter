@@ -10,19 +10,19 @@
   {% endif %}
 
   {% set description = config.site_description %}
-  {% if page and page.meta.description and page.meta.description|trim != "" %}
+  {% if page.meta and page.meta.description %}
     {% set description = page.meta.description %}
   {% endif %}
 
   {# OGP用の画像設定（デフォルト：長方形 1920x1080） #}
   {% set og_image = config.site_url ~ 'assets/img/site-img.jpg' %}
-  {% if page and page.meta.og_image and page.meta.og_image|trim != "" %}
+  {% if page.meta and page.meta.og_image %}
     {% set og_image = config.site_url ~ page.meta.og_image %}
   {% endif %}
 
   {# Twitter用の画像設定（デフォルト：正方形 1080x1080） #}
   {% set twitter_image = config.site_url ~ 'assets/img/site-img-square.jpg' %}
-  {% if page and page.meta.twitter_image and page.meta.twitter_image|trim != "" %}
+  {% if page.meta and page.meta.twitter_image %}
     {% set twitter_image = config.site_url ~ page.meta.twitter_image %}
   {% endif %}
 
