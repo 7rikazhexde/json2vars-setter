@@ -34,5 +34,8 @@
   // Forced code block style / indented:,consistent,fencedのルールを強制する
   // pymdownx.tabbed(コードブロックのタブ)を有効にするため無効にする
   "MD046": false,
-  "MD051": false
+  "MD051": false,
+  // Table column style / テーブルカラムのスタイル
+  // compactスタイルのテーブル区切り行を許可する
+  "MD060": false
 }

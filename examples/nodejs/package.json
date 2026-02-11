@@ -4,7 +4,7 @@
     "description": "An experimental Node.js project to test out various tools.",
     "main": "src/index.js",
     "engines": {
-      "node": ">=16.0.0"
+      "node": ">=18.0.0"
     },
     "scripts": {
       "test": "jest",
