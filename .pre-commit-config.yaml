@@ -19,7 +19,6 @@ repos:
       - id: check-toml
       # yaml syntax check
       - id: check-yaml
-        exclude: '^mkdocs\.yml$'
 
   # https://github.com/shellcheck-py/shellcheck-py?tab=readme-ov-file#usage
   - repo: https://github.com/shellcheck-py/shellcheck-py
