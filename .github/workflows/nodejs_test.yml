@@ -6,6 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/nodejs/**'
+      - '.github/workflows/nodejs_test.yml'
       - '.github/json2vars-setter/nodejs_test.yml'
 
 jobs:
