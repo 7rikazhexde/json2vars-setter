@@ -1,0 +1,8 @@
+/* Make the site name in the header a clickable link to the homepage */
+a.md-header__topic {
+  z-index: 1;
+  pointer-events: auto !important;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
