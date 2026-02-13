@@ -52,6 +52,7 @@ features = [
   "content.tabs.link",
   "search.highlight",
   "toc.follow",
+  "navigation.top",
 ]
 
 [project.theme.icon]
