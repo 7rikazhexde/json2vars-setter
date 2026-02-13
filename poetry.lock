@@ -2312,25 +2312,25 @@ test = ["pytest"]
 
 [[package]]
 name = "zensical"
-version = "0.0.21"
+version = "0.0.23"
 description = "A modern static site generator built by the creators of Material for MkDocs"
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "zensical-0.0.21-cp310-abi3-macosx_10_12_x86_64.whl", hash = "sha256:67404cc70c330246dfb7269bcdb60a25be0bb60a212a09c9c50229a1341b1f84"},
-    {file = "zensical-0.0.21-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:d4fd253ccfbf5af56434124f13bac01344e456c020148369b18d8836b6537c3c"},
-    {file = "zensical-0.0.21-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:440e40cdc30a29bf7466bcd6f43ed7bd1c54ea3f1a0fefca65619358b481a5bc"},
-    {file = "zensical-0.0.21-cp310-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:368e832fc8068e75dc45cab59379db4cefcd81eb116f48d058db8fb7b7aa8d14"},
-    {file = "zensical-0.0.21-cp310-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f4ab962d47f9dd73510eed168469326c7a452554dfbfdb9cdf85efc7140244df"},
-    {file = "zensical-0.0.21-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b846d53dfce007f056ff31848f87f3f2a388228e24d4851c0cafdce0fa204c9b"},
-    {file = "zensical-0.0.21-cp310-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:daac1075552d230d52d621d2e4754ba24d5afcaa201a7a991f1a8d57e320c9de"},
-    {file = "zensical-0.0.21-cp310-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:7b380f545adb6d40896f9bd698eb0e1540ed4258d35b83f55f91658d0fdae312"},
-    {file = "zensical-0.0.21-cp310-abi3-musllinux_1_2_i686.whl", hash = "sha256:5c2227fdab64616bea94b40b8340bafe00e2e23631cc58eeea1e7267167e6ac5"},
-    {file = "zensical-0.0.21-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:2e0f5154d236ed0f98662ee68785b67e8cd2138ea9d5e26070649e93c22eeee0"},
-    {file = "zensical-0.0.21-cp310-abi3-win32.whl", hash = "sha256:0b72e1f8a880c130cbd52335e3bc5dff666291cec40eaf09061d5d7a5a9f8068"},
-    {file = "zensical-0.0.21-cp310-abi3-win_amd64.whl", hash = "sha256:eec08ff6fa335c11b81599032aaeda91c65d31ef03b97aa9239074bf19963a98"},
-    {file = "zensical-0.0.21.tar.gz", hash = "sha256:c13563836fa63a3cabeffd83fe3a770ca740cfa5ae7b85df85d89837e31b3b4a"},
+    {file = "zensical-0.0.23-cp310-abi3-macosx_10_12_x86_64.whl", hash = "sha256:35d6d3eb803fe73a67187a1a25443408bd02a8dd50e151f4a4bafd40de3f0928"},
+    {file = "zensical-0.0.23-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:5973267460a190f348f24d445ff0c01e8ed334fd075947687b305e68257f6b18"},
+    {file = "zensical-0.0.23-cp310-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:953adf1f0b346a6c65fc6e05e6cc1c38a6440fec29c50c76fb29700cc1927006"},
+    {file = "zensical-0.0.23-cp310-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:49c1cbd6131dafa056be828e081759184f9b8dd24b99bf38d1e77c8c31b0c720"},
+    {file = "zensical-0.0.23-cp310-abi3-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:f5b7fe22c5d33b2b91899c5df7631ad4ce9cccfabac2560cc92ba73eafe2d297"},
+    {file = "zensical-0.0.23-cp310-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9a3679d6bf6374f503afb74d9f6061da5de83c25922f618042b63a30b16f0389"},
+    {file = "zensical-0.0.23-cp310-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:54d981e21a19c3dcec6e7fa77c4421db47389dfdff20d29fea70df8e1be4062e"},
+    {file = "zensical-0.0.23-cp310-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:afde7865cc3c79c99f6df4a911d638fb2c3b472a1b81367d47163f8e3c36f910"},
+    {file = "zensical-0.0.23-cp310-abi3-musllinux_1_2_i686.whl", hash = "sha256:c484674d7b0a3e6d39db83914db932249bccdef2efaf8a5669671c66c16f584d"},
+    {file = "zensical-0.0.23-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:927d12fe2851f355fb3206809e04641d6651bdd2ff4afe9c205721aa3a32aa82"},
+    {file = "zensical-0.0.23-cp310-abi3-win32.whl", hash = "sha256:ffb79db4244324e9cc063d16adff25a40b145153e5e76d75e0012ba3c05af25d"},
+    {file = "zensical-0.0.23-cp310-abi3-win_amd64.whl", hash = "sha256:a8cfe240dca75231e8e525985366d010d09ee73aec0937930e88f7230694ce01"},
+    {file = "zensical-0.0.23.tar.gz", hash = "sha256:5c4fc3aaf075df99d8cf41b9f2566e4d588180d9a89493014d3607dfe50ac4bc"},
 ]
 
 [package.dependencies]
@@ -2479,4 +2479,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "a34f05565a62285522421d0fa4ea9911c1c94e0173c9356c18a37e5ae691e5b6"
+content-hash = "c1a56c3edf3db29650768a628ca800c390ac96865a60cddb0e276a7a33e8ee51"
