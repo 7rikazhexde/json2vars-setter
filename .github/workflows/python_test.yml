@@ -173,7 +173,7 @@ jobs:
           fi
 
       - name: Create badge
-        uses: schneegans/dynamic-badges-action@v1.7.0
+        uses: schneegans/dynamic-badges-action@v1.8.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: 26cb492ab0cfff920c516a622b2bfa44
