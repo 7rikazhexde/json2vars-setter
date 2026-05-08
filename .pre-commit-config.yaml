@@ -34,7 +34,7 @@ repos:
   # https://python-poetry.org/docs/pre-commit-hooks/#usage
   - repo: https://github.com/python-poetry/poetry
     # Cannot be executed with local designation (as of 24.8.3)
-    rev: 2.3.2
+    rev: 2.4.0
     hooks:
       - id: poetry-check
         verbose: true
@@ -77,7 +77,7 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.20.2
+    rev: v2.0.0
     hooks:
       - id: mypy
         additional_dependencies: [types-requests==2.32.0.20240622]
