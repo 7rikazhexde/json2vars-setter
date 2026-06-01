@@ -211,8 +211,16 @@ def test_get_github_tags_pagination(mocker: MockerFixture) -> None:
 
 
 def test_get_github_tags_api_error(mocker: MockerFixture) -> None:
-    """Test GitHub tag fetching with API error"""
+    """Test GitHub tag fetching with a generic API error"""
     fetcher = ConcreteVersionFetcher()
+
+    # Mock session.get to raise a generic request error (no rate-limit
+    # response) so the test is deterministic and never hits the network.
+    mocker.patch.object(
+        fetcher.session,
+        "get",
+        side_effect=requests.exceptions.RequestException("connection failed"),
+    )
 
     # Test error handling
     with pytest.raises(GitHubAPIError, match="Failed to fetch GitHub tags"):
