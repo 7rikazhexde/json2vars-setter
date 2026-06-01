@@ -98,6 +98,24 @@ def test_parse_json_nested_list() -> None:
     assert outputs == expected_outputs
 
 
+def test_parse_json_scalar_list_with_debug(capsys: Any) -> None:
+    """Test a top-level scalar list with debug enabled.
+
+    Covers the debug-print branches for both the serialized list and each
+    individual scalar item.
+    """
+    data = ["a", "b"]
+    expected_outputs = {"": '["a", "b"]', "0": "a", "1": "b"}
+
+    outputs = parse_json(data, debug=True)
+    assert outputs == expected_outputs
+
+    captured = capsys.readouterr()
+    assert "Debug: Parsed list '' value='[\"a\", \"b\"]'" in captured.out
+    assert "Debug: Parsed list item '0' value='a'" in captured.out
+    assert "Debug: Parsed list item '1' value='b'" in captured.out
+
+
 # --- Test case for set_github_output() ---
 
 

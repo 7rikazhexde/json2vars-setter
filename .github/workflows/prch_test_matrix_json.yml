@@ -173,6 +173,10 @@ jobs:
         with:
           pytest-coverage-path: ./pytest-coverage.txt
           pytest-xml-coverage-path: ./coverage.xml
+          # coverage.xml records file paths relative to the json2vars_setter
+          # package, so prefix them with the package dir to keep the report's
+          # file links pointing at the real repo paths (otherwise they 404).
+          coverage-path-prefix: json2vars_setter/
           title: Coverage Report (${{ matrix.os }} / Python ${{ matrix.python-version }})
           badge-title: coverage
           hide-badge: false
