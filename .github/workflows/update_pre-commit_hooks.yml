@@ -13,27 +13,18 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_FOR_PUSHES }}
-      - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: '3.13'
-      - name: Install poetry
-        run: pip install poetry
-      - name: Add plugin
-        run: poetry self add poetry-plugin-export
-      - name: Cache dependencies
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          enable-cache: true
       - name: Install dependencies
-        run: poetry install
+        run: uv sync --frozen
 
       # Update pre-commit hooks and check for changes
       - name: Update pre-commit hooks
         id: update_hooks
         run: |
-          poetry run pre-commit autoupdate
+          uv run pre-commit autoupdate
           if git diff --exit-code .pre-commit-config.yaml; then
             echo "has_updates=false" >> "$GITHUB_OUTPUT"
             echo "No updates to pre-commit hooks. Exiting workflow."
@@ -47,8 +38,8 @@ jobs:
         if: steps.update_hooks.outputs.has_updates == 'true'
         shell: bash
         run: |
-          poetry run task testcixml
-          coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          uv run python scripts/run_tests.py --report xml
+          coverage_percentage=$(uv run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "Current coverage: ${coverage_percentage}%"
           echo "COVERAGE=${coverage_percentage}" >> "$GITHUB_ENV"
 

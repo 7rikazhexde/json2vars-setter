@@ -4,12 +4,11 @@ name: Update Requirements after Dependabot Merge
 # 1. トリガー条件:
 #    - プルリクエストがマージされたとき、かつ、Dependabot によるマージであること
 #    - 手動でワークフローをトリガーするとき
-# 2. 環境のセットアップ（Ubuntu、Python、Poetry）
-# 3. poetry.lock ファイルの更新
-# 4. 依存関係のインストール（更新された lock ファイルを使用）
-# 5. requirements.txt と requirements-dev.txt の生成
-# 6. Gist にファイル（requirements.txt と requirements-dev.txt）をアップロード
-# 7. requirements.txt と requirements-dev.txt を削除
+# 2. 環境のセットアップ（Ubuntu、uv）
+# 3. uv.lock ファイルの更新
+# 4. requirements.txt と requirements-dev.txt の生成（uv export）
+# 5. Gist にファイル（requirements.txt と requirements-dev.txt）をアップロード
+# 6. requirements.txt と requirements-dev.txt を削除
 
 on:
   pull_request:
@@ -26,27 +25,18 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.PAT_FOR_PUSHES }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          python-version: '3.13'
-
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Add plugin
-        run: poetry self add poetry-plugin-export
+          enable-cache: true
 
       - name: Update lock file
-        run: poetry lock
-
-      - name: Install dependencies
-        run: poetry install
+        run: uv lock
 
       - name: Generate requirements files
         run: |
-          poetry export -f requirements.txt -o requirements.txt --without-hashes
-          poetry export -f requirements.txt -o requirements-dev.txt --without-hashes --with dev
+          uv export --frozen --no-hashes --no-emit-project --no-dev -o requirements.txt
+          uv export --frozen --no-hashes --no-emit-project -o requirements-dev.txt
 
       - name: Upload requirements files to Gist
         env:

@@ -39,25 +39,19 @@ Please be respectful to all contributors and users. I aim to foster an inclusive
     cd json2vars-setter
     ```
 
-2. **Set up a virtual environment**:
+2. **Install dependencies**:
 
-    !!! note "When using the `poetry install` command, venv is created under the project, so there is no need to manually create a virtual environment (venv)."
+    Option 1: Using uv (recommended)
 
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
-    ```
-
-3. **Install dependencies**:
-
-    Option 1: Using Poetry (recommended)
+    !!! note "`uv sync` creates the virtual environment (`.venv`) under the project automatically from `uv.lock`, so there is no need to manually create one."
 
     ```bash
-    # Install Poetry if not already installed
-    pip install poetry
+    # Install uv if not already installed (see https://docs.astral.sh/uv/)
+    # macOS/Linux: curl -LsSf https://astral.sh/uv/install.sh | sh
+    # Windows:     powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 
-    # Install all dependencies
-    poetry install
+    # Install all dependencies (incl. dev tools) into .venv
+    uv sync
     ```
 
     Option 2: Using pip with requirements files
@@ -70,10 +64,10 @@ Please be respectful to all contributors and users. I aim to foster an inclusive
     pip install -r requirements-dev.txt
     ```
 
-4. **Set up pre-commit hooks**:
+3. **Set up pre-commit hooks**:
 
     ```bash
-    pre-commit install
+    uv run pre-commit install
     ```
 
 ### Project Structure
@@ -157,28 +151,24 @@ Before starting any work, please check existing issues or create a new one to di
 
     ```bash
     # Run basic tests
-    pytest
-    # Or use poetry
-    poetry run pytest
+    uv run pytest
     ```
 
     ```bash
     # Run verbose coverage tests and create report
-    poetry run task testcoverageverbose
+    just test-cov-verbose
     ```
 
 2. **Run linters** (required):
 
     ```bash
     # Run all pre-commit hooks
-    pre-commit run --all-files
-    # Or use poetry to run pre-commit
-    poetry run pre-commit run --all-files
+    uv run pre-commit run --all-files
 
     # Run specific linters
-    ruff check json2vars_setter
-    ruff format json2vars_setter
-    mypy json2vars_setter
+    uv run ruff check json2vars_setter
+    uv run ruff format json2vars_setter
+    uv run mypy json2vars_setter
     ```
 
 3. **Manual testing**:
@@ -225,7 +215,7 @@ Before starting any work, please check existing issues or create a new one to di
       - [markdownlint](https://github.com/DavidAnson/markdownlint) for Markdown files
       - [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows
       - [shellcheck](https://github.com/shellcheck-py/shellcheck-py) for shell script checking
-- You can run all linters at once using: `poetry run pre-commit run --all-files`
+- You can run all linters at once using: `uv run pre-commit run --all-files`
 
 **Testing** (required)
 
@@ -245,13 +235,13 @@ For MkDocs documentation:
 1. **Test documentation locally**:
 
     ```bash
-    mkdocs serve
+    uv run zensical serve
     ```
 
 2. **Build documentation**:
 
     ```bash
-    mkdocs build
+    uv run zensical build
     ```
 
 ## Core Components Development

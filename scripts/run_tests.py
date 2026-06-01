@@ -1,12 +1,12 @@
 import argparse
-import platform
 import subprocess
+import sys
 
 
-def run_command(command: str) -> str:
+def run_command(command: list[str]) -> str:
+    """Run a command, stream its output live, and return the captured text."""
     process = subprocess.Popen(
         command,
-        shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
@@ -17,27 +17,21 @@ def run_command(command: str) -> str:
         for line in process.stdout:
             print(line, end="")
             output += line
+    process.wait()
     return output
 
 
-def get_test_command(report_type: str) -> str:
-    base_command: str = "pytest --durations=0 --junitxml=pytest.xml"
+def get_test_command(report_type: str) -> list[str]:
+    base_command = ["pytest", "--durations=0", "--junitxml=pytest.xml"]
 
     if report_type == "xml":
-        cov_report = '--cov-report "xml:coverage.xml"'
+        cov_report = "--cov-report=xml:coverage.xml"
     elif report_type == "term":
         cov_report = "--cov-report=term-missing"
     else:
         raise ValueError(f"Unsupported report type: {report_type}")
 
-    full_command = f"{base_command} {cov_report} --cov=json2vars_setter tests/"
-
-    if platform.system() == "Windows":
-        print(f"system/OS is {platform.system()}")
-        return f'powershell -Command "{full_command} | Tee-Object -FilePath pytest-coverage.txt"'
-    else:
-        print(f"system/OS is {platform.system()}")
-        return f"{full_command} | tee pytest-coverage.txt"
+    return [*base_command, cov_report, "--cov=json2vars_setter", "tests/"]
 
 
 def main() -> None:
@@ -52,8 +46,11 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    command: str = get_test_command(args.report)
-    output: str = run_command(command)
+    # Run pytest once, streaming to the console while capturing the output so it
+    # can be written to pytest-coverage.txt in a single pass (no shell-specific
+    # tee/Tee-Object branching, no redundant re-write).
+    command = get_test_command(args.report)
+    output = run_command([sys.executable, "-m", *command])
 
     with open("pytest-coverage.txt", "w", encoding="utf-8") as f:
         f.write(output)

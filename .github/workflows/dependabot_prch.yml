@@ -9,9 +9,8 @@ name: Dependabot PR Check
 # 3. Set variables using 7rikazhexde/json2vars-setter action
 # 4. Set up your time zone (Asia/Tokyo)
 # 5. Repository Checkout
-# 6. Installing Poetry
-# 7. Dependency cache
-# 8. Install Project Dependencies
+# 6. Installing uv (with built-in dependency cache)
+# 7. Install Project Dependencies
 # 9. Test execution and coverage calculation
 # 10. Check that coverage is at least 90%.
 # 11. Generate test results and coverage reports
@@ -58,8 +57,38 @@ jobs:
           echo "versions_python[3]: ${{ fromJson(steps.json2vars.outputs.versions_python)[3] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
-  run_tests:
+  # Remove the coverage comments from previous runs so the PR always shows only
+  # the latest result for each (os / python-version) combination.
+  cleanup_pr_comments:
     needs: set_variables
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Delete previous coverage comments
+        uses: actions/github-script@v9
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            for (const comment of comments) {
+              // MishaKav/pytest-coverage-comment watermark:
+              // "<!-- Pytest Coverage Comment: <job-name> -->"
+              if (comment.body && comment.body.startsWith('<!-- Pytest Coverage Comment: run_tests ')) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id,
+                });
+              }
+            }
+
+  run_tests:
+    needs: [set_variables, cleanup_pr_comments]
     strategy:
       matrix:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
@@ -88,25 +117,22 @@ jobs:
           echo "System date: $(date)"
           echo "TZ environment variable: ${TZ}"
           python -c "import datetime, platform; print(f'Python timezone: {datetime.datetime.now().astimezone().tzinfo}'); print(f'OS: {platform.system()}')"
-      - name: Install poetry
-        run: pip install poetry
-      - name: Cache dependencies
-        uses: actions/cache@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          enable-cache: true
       - name: Install dependencies
-        run: poetry install
+        run: uv sync --frozen
       - name: Run test
         shell: bash
         id: pytest
         # Mac / Linux
-        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | tee pytest-coverage.txt
+        # run: uv run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | tee pytest-coverage.txt
         # Windowss
-        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
+        # run: uv run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
         run: |
-          poetry run task testcixml
-          coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          uv run python scripts/run_tests.py --report xml
+          coverage_percentage=$(uv run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "Current coverage: ${coverage_percentage}%"
           echo "COVERAGE=${coverage_percentage}" >> "$GITHUB_ENV"
       - name: Check coverage

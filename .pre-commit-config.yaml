@@ -31,35 +31,28 @@ repos:
     hooks:
       - id: actionlint
 
-  # https://python-poetry.org/docs/pre-commit-hooks/#usage
-  - repo: https://github.com/python-poetry/poetry
-    # Cannot be executed with local designation (as of 24.8.3)
-    rev: 2.4.1
+  # https://github.com/astral-sh/uv-pre-commit
+  # Keep uv.lock in sync with pyproject.toml
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.17
     hooks:
-      - id: poetry-check
-        verbose: true
-      - id: poetry-lock
+      - id: uv-lock
         verbose: true
 
   # requirements.txt and requirements-dev.txt are updated and managed by Dependabot
+  # (regenerated from uv.lock via the update-requirements-after-dependabot workflow)
   #- repo: local
   #  hooks:
-  #    - id: poetry-export
+  #    - id: uv-export
   #      name: Export requirements.txt
-  #      entry: poetry export -f requirements.txt -o requirements.txt --without-hashes
-  #      language: python
+  #      entry: uv export --frozen --no-hashes --no-emit-project --no-dev -o requirements.txt
+  #      language: system
   #      pass_filenames: false
-  #      additional_dependencies:
-  #        - "poetry"
-  #        - "poetry-plugin-export"
-  #    - id: poetry-export-dev
+  #    - id: uv-export-dev
   #      name: Export dev requirements.txt
-  #      entry: poetry export --with dev -f requirements.txt -o requirements-dev.txt --without-hashes
-  #      language: python
+  #      entry: uv export --frozen --no-hashes --no-emit-project -o requirements-dev.txt
+  #      language: system
   #      pass_filenames: false
-  #      additional_dependencies:
-  #        - "poetry"
-  #        - "poetry-plugin-export"
 
   # Reference: https://github.com/DavidAnson/markdownlint-cli2#overview
   # > markdownlint-cli is a traditional command-line interface for markdownlint.
