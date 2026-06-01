@@ -1,0 +1,82 @@
+name: Cleanup Caches
+
+# Keeps GitHub Actions caches from piling up against the 10 GB per-repo limit:
+#   1. When a PR is closed/merged, delete the caches scoped to that PR branch
+#      (they can never be reused once the branch is gone).
+#   2. Weekly, prune any cache that has not been accessed recently so stale
+#      entries (old lock hashes, abandoned branches, etc.) never linger.
+
+on:
+  pull_request:
+    types:
+      - closed
+  schedule:
+    # Every Monday at 00:00 UTC
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  # Remove caches created for a PR once it is closed or merged.
+  cleanup-pr-caches:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete caches for the closed PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          BRANCH: refs/pull/${{ github.event.pull_request.number }}/merge
+        run: |
+          gh extension install actions/gh-actions-cache
+          echo "Fetching caches for ${BRANCH}..."
+          deleted=0
+          while IFS= read -r key; do
+            [ -z "$key" ] && continue
+            echo "Deleting cache: ${key}"
+            gh actions-cache delete "$key" -R "$GH_REPO" -B "$BRANCH" --confirm
+            deleted=$((deleted + 1))
+          done < <(gh actions-cache list -R "$GH_REPO" -B "$BRANCH" --limit 100 | cut -f 1)
+          echo "Done. Deleted ${deleted} cache(s) for ${BRANCH}."
+
+  # Weekly prune of caches that have not been accessed within MAX_AGE_DAYS.
+  cleanup-stale-caches:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    env:
+      MAX_AGE_DAYS: 7
+    steps:
+      - name: Delete caches not accessed in the last MAX_AGE_DAYS days
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          threshold=$(date -u -d "-${MAX_AGE_DAYS} days" +%s)
+          echo "Deleting caches last accessed before $(date -u -d "@${threshold}")"
+
+          # Collect every cache across all pages first; deleting during
+          # pagination would shift page boundaries and skip entries.
+          caches="$(mktemp)"
+          page=1
+          while :; do
+            response=$(gh api -H "Accept: application/vnd.github+json" \
+              "/repos/${GH_REPO}/actions/caches?per_page=100&page=${page}")
+            count=$(echo "$response" | jq '.actions_caches | length')
+            [ "$count" -eq 0 ] && break
+            echo "$response" | jq -r '.actions_caches[] | [.id, .key, .last_accessed_at] | @tsv' >> "$caches"
+            page=$((page + 1))
+          done
+
+          deleted=0
+          while IFS=$'\t' read -r id key last; do
+            [ -z "$id" ] && continue
+            last_epoch=$(date -u -d "$last" +%s)
+            if [ "$last_epoch" -lt "$threshold" ]; then
+              echo "Deleting cache id=${id} key=${key} (last_accessed=${last})"
+              gh api --method DELETE "/repos/${GH_REPO}/actions/caches/${id}" >/dev/null && deleted=$((deleted + 1))
+            fi
+          done < "$caches"
+          echo "Done. Deleted ${deleted} stale cache(s)."

@@ -8,34 +8,40 @@ json2vars-setter is a **GitHub Action** (composite action) that parses JSON file
 
 ## Common Commands
 
-```bash
-# Install dependencies
-poetry install
+This project uses [uv](https://docs.astral.sh/uv/) for dependency management and
+[just](https://github.com/casey/just) as the task runner (see `justfile`).
 
-# Run tests with coverage
-poetry run task testcoverage
+```bash
+# Install dependencies (creates .venv from uv.lock)
+uv sync
+
+# Run tests with coverage (just recipe)
+just test-cov
 
 # Run tests verbose
-poetry run task testcoverageverbose
+just test-cov-verbose
+
+# List all available just recipes
+just
 
 # Run a single test file
-poetry run pytest tests/test_json_to_github_output.py
+uv run pytest tests/test_json_to_github_output.py
 
 # Run a single test by name
-poetry run pytest tests/test_cache_version_info.py -k "test_function_name"
+uv run pytest tests/test_cache_version_info.py -k "test_function_name"
 
 # Lint (ruff)
-poetry run ruff check json2vars_setter
-poetry run ruff format --check json2vars_setter
+uv run ruff check json2vars_setter
+uv run ruff format --check json2vars_setter
 
 # Type check (mypy)
-poetry run mypy --config-file=pyproject.toml
+uv run mypy --config-file=pyproject.toml
 
 # Pre-commit hooks (runs all checks)
-poetry run pre-commit run --all-files
+uv run pre-commit run --all-files
 
 # CLI usage help
-poetry run json2vars --help
+uv run json2vars --help
 ```
 
 ## Architecture
@@ -62,7 +68,7 @@ A pluggable architecture for fetching language versions from GitHub:
 ### Entry Points
 
 - **GitHub Action**: `action.yml` defines the composite action with inputs/outputs
-- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via Poetry scripts
+- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`
 - **Direct module execution**: `python -m json2vars_setter.<module>`
 
 ## Code Conventions

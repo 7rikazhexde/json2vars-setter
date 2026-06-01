@@ -6,7 +6,7 @@ on:
     paths:
       - 'docs/**'
       - 'pyproject.toml'
-      - 'poetry.lock'
+      - 'uv.lock'
       - 'zensical.toml'
 
 permissions:
@@ -31,6 +31,10 @@ jobs:
       - uses: actions/setup-python@v6.2.0
         with:
           python-version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
       - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
       - name: Create cache directory
         run: mkdir -p .cache
@@ -40,12 +44,10 @@ jobs:
           path: .cache
           restore-keys: |
             zensical-
-      - name: Install Poetry
-        run: pip install poetry
-      - name: Poetry Setup
-        run: poetry install
+      - name: Install dependencies
+        run: uv sync --frozen
       - name: Build documentation
-        run: poetry run zensical build --clean
+        run: uv run zensical build --clean
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:

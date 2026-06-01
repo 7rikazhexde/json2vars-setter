@@ -8,7 +8,7 @@ For detailed contribution guidelines, please visit the [Contributing Guide](http
 
 ## Key Points
 
-- **Development Environment**: Use Poetry for dependency management
+- **Development Environment**: Use uv for dependency management and just as the task runner
 - **Code Style**: Follow PEP 8 and use pre-commit hooks
 - **Branching**: Use prefix-based naming (`feature-`, `bugfix-`, `docs-`, `refactor-`)
 - **Commits**: Follow [gitmoji](https://gitmoji.dev/) conventions

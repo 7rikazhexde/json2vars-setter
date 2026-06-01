@@ -113,8 +113,9 @@ def test_cache_version_error(monkeypatch: MonkeyPatch) -> None:
     # Execute the command
     result = runner.invoke(app, ["cache-version"], catch_exceptions=False)
 
-    # Verification
-    assert "Error:" in result.stdout
+    # Verification (the error message is written to stderr via typer.echo(err=True);
+    # Click >=8.2 keeps stderr separate from stdout in CliRunner)
+    assert "Error:" in result.stderr
     # Verify that sys.exit was called with the appropriate code
     assert len(exit_calls) > 0
     assert 1 in exit_calls  # At least one call with code 1
@@ -198,8 +199,9 @@ def test_update_matrix_error(monkeypatch: MonkeyPatch) -> None:
     # Execute the command
     result = runner.invoke(app, ["update-matrix"], catch_exceptions=False)
 
-    # Verification
-    assert "Error:" in result.stdout
+    # Verification (the error message is written to stderr via typer.echo(err=True);
+    # Click >=8.2 keeps stderr separate from stdout in CliRunner)
+    assert "Error:" in result.stderr
     # Verify that sys.exit was called with the appropriate code
     assert len(exit_calls) > 0
     assert 1 in exit_calls  # At least one call with code 1
