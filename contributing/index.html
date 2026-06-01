@@ -1329,71 +1329,66 @@
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
-<p><strong>Set up a virtual environment</strong>:</p>
+<p><strong>Install dependencies</strong>:</p>
+<p>Option 1: Using uv (recommended)</p>
 <div class="admonition note">
-<p class="admonition-title">When using the <code>poetry install</code> command, venv is created under the project, so there is no need to manually create a virtual environment (venv).</p>
+<p class="admonition-title"><code>uv sync</code> creates the virtual environment (<code>.venv</code>) under the project automatically from <code>uv.lock</code>, so there is no need to manually create one.</p>
 </div>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv
-<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="nb">source</span><span class="w"> </span>venv/bin/activate<span class="w">  </span><span class="c1"># On Windows: venv\Scripts\activate</span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># Install uv if not already installed (see https://docs.astral.sh/uv/)</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="c1"># macOS/Linux: curl -LsSf https://astral.sh/uv/install.sh | sh</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="c1"># Windows:     powershell -c &quot;irm https://astral.sh/uv/install.ps1 | iex&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4"></a>
+<a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="c1"># Install all dependencies (incl. dev tools) into .venv</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6"></a>uv<span class="w"> </span>sync
 </code></pre></div></td></tr></table></div>
-</li>
-<li>
-<p><strong>Install dependencies</strong>:</p>
-<p>Option 1: Using Poetry (recommended)</p>
+<p>Option 2: Using pip with requirements files</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">2</a></span>
 <span class="normal"><a href="#__codelineno-2-3">3</a></span>
 <span class="normal"><a href="#__codelineno-2-4">4</a></span>
-<span class="normal"><a href="#__codelineno-2-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Install Poetry if not already installed</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a>pip<span class="w"> </span>install<span class="w"> </span>poetry
+<span class="normal"><a href="#__codelineno-2-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Download requirements-dev.txt from my official Gist</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a>curl<span class="w"> </span>-O<span class="w"> </span>https://gist.githubusercontent.com/7rikazhexde/ee63b33bcb6bb21ac872c5ed41dbf4a6/raw/requirements-dev.txt
 <a id="__codelineno-2-3" name="__codelineno-2-3"></a>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1"># Install all dependencies</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a>poetry<span class="w"> </span>install
-</code></pre></div></td></tr></table></div>
-<p>Option 2: Using pip with requirements files</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
-<span class="normal"><a href="#__codelineno-3-2">2</a></span>
-<span class="normal"><a href="#__codelineno-3-3">3</a></span>
-<span class="normal"><a href="#__codelineno-3-4">4</a></span>
-<span class="normal"><a href="#__codelineno-3-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="c1"># Download requirements-dev.txt from my official Gist</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2"></a>curl<span class="w"> </span>-O<span class="w"> </span>https://gist.githubusercontent.com/7rikazhexde/ee63b33bcb6bb21ac872c5ed41dbf4a6/raw/requirements-dev.txt
-<a id="__codelineno-3-3" name="__codelineno-3-3"></a>
-<a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="c1"># Install development dependencies</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1"># Install development dependencies</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
 <p><strong>Set up pre-commit hooks</strong>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>pre-commit<span class="w"> </span>install
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>install
 </code></pre></div></td></tr></table></div>
 </li>
 </ol>
 <h3 id="project-structure">Project Structure</h3>
 <p>My project is organized as follows:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-5-10">10</a></span>
-<span class="normal"><a href="#__codelineno-5-11">11</a></span>
-<span class="normal"><a href="#__codelineno-5-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>json2vars-setter/
-<a id="__codelineno-5-2" name="__codelineno-5-2"></a>├── .github/           # GitHub specific files (workflows, templates)
-<a id="__codelineno-5-3" name="__codelineno-5-3"></a>├── json2vars_setter/  # Core Python module
-<a id="__codelineno-5-4" name="__codelineno-5-4"></a>│   ├── __init__.py
-<a id="__codelineno-5-5" name="__codelineno-5-5"></a>│   ├── json_to_github_output.py  # JSON parser component
-<a id="__codelineno-5-6" name="__codelineno-5-6"></a>│   ├── update_matrix_dynamic.py  # Dynamic update component
-<a id="__codelineno-5-7" name="__codelineno-5-7"></a>│   ├── cache_version_info.py     # Version caching component
-<a id="__codelineno-5-8" name="__codelineno-5-8"></a>│   └── version/       # Version fetching modules
-<a id="__codelineno-5-9" name="__codelineno-5-9"></a>├── tests/             # Test files
-<a id="__codelineno-5-10" name="__codelineno-5-10"></a>├── docs/              # Documentation files
-<a id="__codelineno-5-11" name="__codelineno-5-11"></a>├── action.yml         # Action definition
-<a id="__codelineno-5-12" name="__codelineno-5-12"></a>└── README.md          # Project documentation
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-4-10">10</a></span>
+<span class="normal"><a href="#__codelineno-4-11">11</a></span>
+<span class="normal"><a href="#__codelineno-4-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>json2vars-setter/
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a>├── .github/           # GitHub specific files (workflows, templates)
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a>├── json2vars_setter/  # Core Python module
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a>│   ├── __init__.py
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a>│   ├── json_to_github_output.py  # JSON parser component
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a>│   ├── update_matrix_dynamic.py  # Dynamic update component
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>│   ├── cache_version_info.py     # Version caching component
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a>│   └── version/       # Version fetching modules
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a>├── tests/             # Test files
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a>├── docs/              # Documentation files
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a>├── action.yml         # Action definition
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a>└── README.md          # Project documentation
 </code></pre></div></td></tr></table></div>
 <h2 id="development-workflow">Development Workflow</h2>
 <h3 id="creating-issues">Creating Issues</h3>
@@ -1406,7 +1401,7 @@
 <ol>
 <li>
 <p><strong>Create a branch</strong>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature-your-feature-name
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feature-your-feature-name
 </code></pre></div></td></tr></table></div>
 <p>Branch naming conventions:<br />
 Branches must follow the format: <code>&lt;type&gt;-&lt;short-description&gt;</code>.<br />
@@ -1427,11 +1422,11 @@ Use the following prefixes based on the purpose of the branch:</p>
 </li>
 <li>
 <p><strong>Commit your changes</strong> using <a href="https://gitmoji.dev/">gitmoji</a>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
-<span class="normal"><a href="#__codelineno-7-2">2</a></span>
-<span class="normal"><a href="#__codelineno-7-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;✨ Add new feature&quot;</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;🐛 Fix bug in function X&quot;</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;📝 Update documentation&quot;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;✨ Add new feature&quot;</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;🐛 Fix bug in function X&quot;</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;📝 Update documentation&quot;</span>
 </code></pre></div></td></tr></table></div>
 <p>Recommended gitmoji conventions:</p>
 <ul>
@@ -1457,38 +1452,30 @@ Use the following prefixes based on the purpose of the branch:</p>
 <ol>
 <li>
 <p><strong>Run unit tests</strong> (required):</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
-<span class="normal"><a href="#__codelineno-8-2">2</a></span>
-<span class="normal"><a href="#__codelineno-8-3">3</a></span>
-<span class="normal"><a href="#__codelineno-8-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="c1"># Run basic tests</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2"></a>pytest
-<a id="__codelineno-8-3" name="__codelineno-8-3"></a><span class="c1"># Or use poetry</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4"></a>poetry<span class="w"> </span>run<span class="w"> </span>pytest
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="c1"># Run basic tests</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>uv<span class="w"> </span>run<span class="w"> </span>pytest
 </code></pre></div></td></tr></table></div>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
-<span class="normal"><a href="#__codelineno-9-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="c1"># Run verbose coverage tests and create report</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2"></a>poetry<span class="w"> </span>run<span class="w"> </span>task<span class="w"> </span>testcoverageverbose
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
+<span class="normal"><a href="#__codelineno-8-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="c1"># Run verbose coverage tests and create report</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2"></a>just<span class="w"> </span>test-cov-verbose
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
 <p><strong>Run linters</strong> (required):</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
-<span class="normal"><a href="#__codelineno-10-2">2</a></span>
-<span class="normal"><a href="#__codelineno-10-3">3</a></span>
-<span class="normal"><a href="#__codelineno-10-4">4</a></span>
-<span class="normal"><a href="#__codelineno-10-5">5</a></span>
-<span class="normal"><a href="#__codelineno-10-6">6</a></span>
-<span class="normal"><a href="#__codelineno-10-7">7</a></span>
-<span class="normal"><a href="#__codelineno-10-8">8</a></span>
-<span class="normal"><a href="#__codelineno-10-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a><span class="c1"># Run all pre-commit hooks</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2"></a>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
-<a id="__codelineno-10-3" name="__codelineno-10-3"></a><span class="c1"># Or use poetry to run pre-commit</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4"></a>poetry<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
-<a id="__codelineno-10-5" name="__codelineno-10-5"></a>
-<a id="__codelineno-10-6" name="__codelineno-10-6"></a><span class="c1"># Run specific linters</span>
-<a id="__codelineno-10-7" name="__codelineno-10-7"></a>ruff<span class="w"> </span>check<span class="w"> </span>json2vars_setter
-<a id="__codelineno-10-8" name="__codelineno-10-8"></a>ruff<span class="w"> </span>format<span class="w"> </span>json2vars_setter
-<a id="__codelineno-10-9" name="__codelineno-10-9"></a>mypy<span class="w"> </span>json2vars_setter
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span>
+<span class="normal"><a href="#__codelineno-9-2">2</a></span>
+<span class="normal"><a href="#__codelineno-9-3">3</a></span>
+<span class="normal"><a href="#__codelineno-9-4">4</a></span>
+<span class="normal"><a href="#__codelineno-9-5">5</a></span>
+<span class="normal"><a href="#__codelineno-9-6">6</a></span>
+<span class="normal"><a href="#__codelineno-9-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a><span class="c1"># Run all pre-commit hooks</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2"></a>uv<span class="w"> </span>run<span class="w"> </span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
+<a id="__codelineno-9-3" name="__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4"></a><span class="c1"># Run specific linters</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>check<span class="w"> </span>json2vars_setter
+<a id="__codelineno-9-6" name="__codelineno-9-6"></a>uv<span class="w"> </span>run<span class="w"> </span>ruff<span class="w"> </span>format<span class="w"> </span>json2vars_setter
+<a id="__codelineno-9-7" name="__codelineno-9-7"></a>uv<span class="w"> </span>run<span class="w"> </span>mypy<span class="w"> </span>json2vars_setter
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1500,7 +1487,7 @@ Use the following prefixes based on the purpose of the branch:</p>
 <ol>
 <li>
 <p><strong>Push your branch</strong>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/your-feature-name
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>feature/your-feature-name
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -1543,7 +1530,7 @@ Use the following prefixes based on the purpose of the branch:</p>
 <li><a href="https://github.com/shellcheck-py/shellcheck-py">shellcheck</a> for shell script checking</li>
 </ul>
 </li>
-<li>You can run all linters at once using: <code>poetry run pre-commit run --all-files</code></li>
+<li>You can run all linters at once using: <code>uv run pre-commit run --all-files</code></li>
 </ul>
 <p><strong>Testing</strong> (required)</p>
 <ul>
@@ -1562,12 +1549,12 @@ Use the following prefixes based on the purpose of the branch:</p>
 <ol>
 <li>
 <p><strong>Test documentation locally</strong>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a>mkdocs<span class="w"> </span>serve
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>uv<span class="w"> </span>run<span class="w"> </span>zensical<span class="w"> </span>serve
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
 <p><strong>Build documentation</strong>:</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a>mkdocs<span class="w"> </span>build
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a>uv<span class="w"> </span>run<span class="w"> </span>zensical<span class="w"> </span>build
 </code></pre></div></td></tr></table></div>
 </li>
 </ol>
