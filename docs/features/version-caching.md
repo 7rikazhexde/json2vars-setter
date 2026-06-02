@@ -61,12 +61,12 @@ graph TD
 
 ### Tips
 
-!!! tip "[*1]: Specify language"
+!!! tip "\[*1\]: Specify language"
 
     - Specify languages separated by **spaces**; if `all` is specified, all target languages are retrieved.
     - Target languages: `python`, `nodejs`, `ruby`, `go`, `rust`
 
-!!! tip "[*2]: specify a path"
+!!! tip "\[*2\]: specify a path"
 
     - If the file does not exist in the path, an error will occur, so please create it beforehand.
 
