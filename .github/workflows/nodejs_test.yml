@@ -24,7 +24,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.2
+        uses: 7rikazhexde/json2vars-setter@v1.0.4
         with:
           json-file: examples/nodejs/nodejs_project_matrix.json
 
@@ -126,9 +126,9 @@ jobs:
         id: npm_test
         working-directory: ./examples/nodejs
         shell: bash
-        run: |
-          output="$(npm test)"
-          echo "${output}"
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: npm test
 
   update_badge:
     needs: run_tests

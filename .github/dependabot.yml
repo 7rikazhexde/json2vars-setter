@@ -1,6 +1,16 @@
 version: 2
+
+# Update policy
+# - The shipped Python package (pip) and GitHub Actions are updated daily,
+#   including major versions, so the action itself stays current and secure.
+# - The language examples (npm / bundler / gomod / cargo) are demos. They are
+#   updated weekly and **major-version bumps are ignored**, because a major bump
+#   can raise a dependency's required language runtime above what the example
+#   test matrix covers (e.g. parallel 1.x -> 2.1.0 requiring Ruby >= 3.3; see
+#   issues #482 / #484). Bump example majors intentionally alongside a matrix
+#   review instead of automatically.
 updates:
-  # Python dependencies
+  # Python dependencies (shipped package)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
@@ -11,48 +21,60 @@ updates:
           - "*"
     open-pull-requests-limit: 10
 
-  # Node.js dependencies
+  # Node.js dependencies (example)
   - package-ecosystem: "npm"
     directory: "/examples/nodejs"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 10
 
-  # Ruby dependencies
+  # Ruby dependencies (example)
   - package-ecosystem: "bundler"
     directory: "/examples/ruby"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 10
 
-  # Go dependencies
+  # Go dependencies (example)
   - package-ecosystem: "gomod"
     directory: "/examples/go"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 10
 
-  # Rust dependencies
+  # Rust dependencies (example)
   - package-ecosystem: "cargo"
     directory: "/examples/rust"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       dependencies:
         patterns:
           - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 10
 
   # GitHub Actions

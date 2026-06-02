@@ -23,7 +23,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.2
+        uses: 7rikazhexde/json2vars-setter@v1.0.4
         with:
           json-file: examples/ruby/ruby_project_matrix.json
 
@@ -126,10 +126,11 @@ jobs:
         id: ruby_test
         working-directory: ./examples/ruby
         shell: bash
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
         run: |
           bundle install
-          output="$(bundle exec rake test)"
-          echo "${output}"
+          bundle exec rake test
 
   update_badge:
     needs: run_tests

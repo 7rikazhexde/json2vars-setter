@@ -81,6 +81,10 @@ A pluggable architecture for fetching language versions from GitHub:
 - **Test coverage**: Minimum 95%, goal 100%. Branch coverage is disabled in config due to testmon compatibility
 - **Testing framework**: pytest with pytest-mock, pytest-cov, pytest-xdist
 
+## Versioning Rule
+
+When the action version is bumped, **all usage examples must be pinned to the new version**. Every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference across `README.md`, `docs/**`, and the example workflows in `.github/workflows/**` must point to the version being released — usage examples must never lag behind the latest tag. The release workflow (`.github/workflows/update-version-and-release.yml`) automates this via its "Sync action version references" step; keep that step in sync if reference locations change, and apply the same rule for any manual version bump.
+
 ## Key File Locations
 
 - Matrix JSON: `.github/json2vars-setter/matrix.json`

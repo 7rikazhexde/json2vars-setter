@@ -6,10 +6,11 @@ name: Version Update and Release
 # 2. Environment Setup (Ubuntu, uv)
 # 3. Retrieve the current version
 # 4. Update to the new version (patch, minor, or major)
-# 5. Commit and push the changes
-# 6. Create and push a new tag
-# 7. Generate the changelog
-# 8. Create a GitHub release
+# 5. Sync `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` references in docs/examples
+# 6. Commit and push the changes
+# 7. Create and push a new tag
+# 8. Generate the changelog
+# 9. Create a GitHub release
 
 on:
   workflow_dispatch:
@@ -48,9 +49,22 @@ jobs:
         run: |
           uv version --bump ${{ github.event.inputs.update_type }} --no-sync
           echo "new_version=$(uv version --short)" >> "$GITHUB_OUTPUT"
+      - name: Sync action version references in docs and examples
+        # Keep every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference across
+        # README, docs and example workflows pinned to the version being released,
+        # so usage examples never lag behind the latest tag.
+        run: |
+          new_version="${{ steps.update_version.outputs.new_version }}"
+          mapfile -t files < <(grep -rlE "7rikazhexde/json2vars-setter@v[0-9]+\.[0-9]+\.[0-9]+" --include="*.md" --include="*.yml" .)
+          if [ "${#files[@]}" -gt 0 ]; then
+            sed -E -i "s#(7rikazhexde/json2vars-setter@v)[0-9]+\.[0-9]+\.[0-9]+#\1${new_version}#g" "${files[@]}"
+            printf 'Updated action version reference in:\n%s\n' "$(printf '  %s\n' "${files[@]}")"
+          else
+            echo "No action version references found to update."
+          fi
       - name: Commit and push if changed
         run: |
-          git add pyproject.toml uv.lock
+          git add pyproject.toml uv.lock README.md docs .github
           git commit -m ":wrench:Bump version to ${{ steps.update_version.outputs.new_version }}" || echo "No changes to commit"
           git push
       - name: Create and push new tag

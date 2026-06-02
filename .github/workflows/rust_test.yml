@@ -23,7 +23,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.2
+        uses: 7rikazhexde/json2vars-setter@v1.0.4
         with:
           json-file: examples/rust/rust_project_matrix.json
 
@@ -134,9 +134,9 @@ jobs:
         id: rust_test
         working-directory: ./examples/rust
         shell: bash
-        run: |
-          output="$(cargo test --verbose)"
-          echo "${output}"
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: cargo test --verbose
 
       # Optional: Add code format check
       - name: Check formatting
