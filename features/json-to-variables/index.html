@@ -1301,11 +1301,11 @@
 
 
 <h1 id="json-to-variables">JSON to Variables</h1>
-<p>The JSON to Variables Parser (<code>json_to_github_output.py</code>) is the core component of the json2vars-setter action. It reads a JSON configuration file and sets its values as output variables in GitHub Actions workflows.</p>
+<p>The JSON to Variables Parser (<code>github_output.py</code>) is the core component of the json2vars-setter action. It reads a JSON configuration file and sets its values as output variables in GitHub Actions workflows.</p>
 <h2 id="overview">Overview</h2>
 <p>This component serves as the foundation of the entire action, transforming static JSON configuration into dynamic workflow variables. It parses a JSON file and converts its contents into GitHub Actions output variables, making them available for use in subsequent steps or jobs in your workflow.</p>
 <pre class="mermaid"><code>graph LR
-    A[JSON File] --&gt;|Read| B[json_to_github_output.py]
+    A[JSON File] --&gt;|Read| B[github_output.py]
     B --&gt;|Parse| C[Extract Values]
     C --&gt;|Format| D[Set GitHub Outputs]
     D --&gt;|Available in| E[Workflow Steps]
@@ -1534,7 +1534,7 @@
 <li><strong>Debugging</strong>: Use <code>--debug</code> flag with the script for verbose output when troubleshooting</li>
 </ul>
 <h2 id="technical-details">Technical Details</h2>
-<p>The <code>json_to_github_output.py</code> script:</p>
+<p>The <code>github_output.py</code> script:</p>
 <ol>
 <li>Accepts a JSON file path as input</li>
 <li>Uses Python's <code>json</code> module to parse the file</li>

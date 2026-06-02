@@ -944,10 +944,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#json-to-github-output-parser-json_to_github_outputpy" class="md-nav__link">
+  <a href="#json-to-github-output-parser-github_outputpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        JSON to GitHub Output Parser (<code>json_to_github_output.py</code>)
+        JSON to GitHub Output Parser (<code>github_output.py</code>)
       </span>
     </span>
   </a>
@@ -955,10 +955,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dynamic-matrix-updater-update_matrix_dynamicpy" class="md-nav__link">
+  <a href="#dynamic-matrix-updater-matrix_updatepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>)
+        Dynamic Matrix Updater (<code>matrix_update.py</code>)
       </span>
     </span>
   </a>
@@ -966,10 +966,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#version-cache-manager-cache_version_infopy" class="md-nav__link">
+  <a href="#version-cache-manager-version_cachepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Version Cache Manager (<code>cache_version_info.py</code>)
+        Version Cache Manager (<code>version_cache.py</code>)
       </span>
     </span>
   </a>
@@ -1208,10 +1208,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#json-to-github-output-parser-json_to_github_outputpy" class="md-nav__link">
+  <a href="#json-to-github-output-parser-github_outputpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        JSON to GitHub Output Parser (<code>json_to_github_output.py</code>)
+        JSON to GitHub Output Parser (<code>github_output.py</code>)
       </span>
     </span>
   </a>
@@ -1219,10 +1219,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dynamic-matrix-updater-update_matrix_dynamicpy" class="md-nav__link">
+  <a href="#dynamic-matrix-updater-matrix_updatepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>)
+        Dynamic Matrix Updater (<code>matrix_update.py</code>)
       </span>
     </span>
   </a>
@@ -1230,10 +1230,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#version-cache-manager-cache_version_infopy" class="md-nav__link">
+  <a href="#version-cache-manager-version_cachepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Version Cache Manager (<code>cache_version_info.py</code>)
+        Version Cache Manager (<code>version_cache.py</code>)
       </span>
     </span>
   </a>
@@ -1308,9 +1308,9 @@
 <li><a href="#coding-guidelines">Coding Guidelines</a></li>
 <li><a href="#documentation">Documentation</a></li>
 <li><a href="#core-components-development">Core Components Development</a><ul>
-<li><a href="#json-to-github-output-parser-json_to_github_outputpy">JSON to GitHub Output Parser (<code>json_to_github_output.py</code>)</a></li>
-<li><a href="#dynamic-matrix-updater-update_matrix_dynamicpy">Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>)</a></li>
-<li><a href="#version-cache-manager-cache_version_infopy">Version Cache Manager (<code>cache_version_info.py</code>)</a></li>
+<li><a href="#json-to-github-output-parser-github_outputpy">JSON to GitHub Output Parser (<code>github_output.py</code>)</a></li>
+<li><a href="#dynamic-matrix-updater-matrix_updatepy">Dynamic Matrix Updater (<code>matrix_update.py</code>)</a></li>
+<li><a href="#version-cache-manager-version_cachepy">Version Cache Manager (<code>version_cache.py</code>)</a></li>
 </ul>
 </li>
 <li><a href="#release-process">Release Process</a></li>
@@ -1377,18 +1377,28 @@
 <span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-4-10">10</a></span>
 <span class="normal"><a href="#__codelineno-4-11">11</a></span>
-<span class="normal"><a href="#__codelineno-4-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>json2vars-setter/
+<span class="normal"><a href="#__codelineno-4-12">12</a></span>
+<span class="normal"><a href="#__codelineno-4-13">13</a></span>
+<span class="normal"><a href="#__codelineno-4-14">14</a></span>
+<span class="normal"><a href="#__codelineno-4-15">15</a></span>
+<span class="normal"><a href="#__codelineno-4-16">16</a></span>
+<span class="normal"><a href="#__codelineno-4-17">17</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>json2vars-setter/
 <a id="__codelineno-4-2" name="__codelineno-4-2"></a>├── .github/           # GitHub specific files (workflows, templates)
 <a id="__codelineno-4-3" name="__codelineno-4-3"></a>├── json2vars_setter/  # Core Python module
 <a id="__codelineno-4-4" name="__codelineno-4-4"></a>│   ├── __init__.py
-<a id="__codelineno-4-5" name="__codelineno-4-5"></a>│   ├── json_to_github_output.py  # JSON parser component
-<a id="__codelineno-4-6" name="__codelineno-4-6"></a>│   ├── update_matrix_dynamic.py  # Dynamic update component
-<a id="__codelineno-4-7" name="__codelineno-4-7"></a>│   ├── cache_version_info.py     # Version caching component
-<a id="__codelineno-4-8" name="__codelineno-4-8"></a>│   └── version/       # Version fetching modules
-<a id="__codelineno-4-9" name="__codelineno-4-9"></a>├── tests/             # Test files
-<a id="__codelineno-4-10" name="__codelineno-4-10"></a>├── docs/              # Documentation files
-<a id="__codelineno-4-11" name="__codelineno-4-11"></a>├── action.yml         # Action definition
-<a id="__codelineno-4-12" name="__codelineno-4-12"></a>└── README.md          # Project documentation
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a>│   ├── cli.py            # Typer CLI (json2vars), runs features in-process
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a>│   ├── features/         # The three action stages
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a>│   │   ├── github_output.py  # JSON parser component (always runs)
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a>│   │   ├── matrix_update.py   # Dynamic update component
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a>│   │   └── version_cache.py   # Version caching component
+<a id="__codelineno-4-10" name="__codelineno-4-10"></a>│   └── version/          # Version fetching modules
+<a id="__codelineno-4-11" name="__codelineno-4-11"></a>│       ├── registry.py   # get_version_fetcher() (single source of truth)
+<a id="__codelineno-4-12" name="__codelineno-4-12"></a>│       ├── core/         # Base fetcher, exceptions, utils
+<a id="__codelineno-4-13" name="__codelineno-4-13"></a>│       └── fetchers/     # Per-language fetchers
+<a id="__codelineno-4-14" name="__codelineno-4-14"></a>├── tests/             # Test files
+<a id="__codelineno-4-15" name="__codelineno-4-15"></a>├── docs/              # Documentation files
+<a id="__codelineno-4-16" name="__codelineno-4-16"></a>├── action.yml         # Action definition
+<a id="__codelineno-4-17" name="__codelineno-4-17"></a>└── README.md          # Project documentation
 </code></pre></div></td></tr></table></div>
 <h2 id="development-workflow">Development Workflow</h2>
 <h3 id="creating-issues">Creating Issues</h3>
@@ -1560,19 +1570,19 @@ Use the following prefixes based on the purpose of the branch:</p>
 </ol>
 <h2 id="core-components-development">Core Components Development</h2>
 <p>When working on my core components, consider the following guidelines:</p>
-<h3 id="json-to-github-output-parser-json_to_github_outputpy">JSON to GitHub Output Parser (<code>json_to_github_output.py</code>)</h3>
+<h3 id="json-to-github-output-parser-github_outputpy">JSON to GitHub Output Parser (<code>github_output.py</code>)</h3>
 <ul>
 <li>Maintain backward compatibility with existing JSON structures</li>
 <li>Ensure proper error handling for malformed JSON</li>
 <li>Optimize for performance with large JSON files</li>
 </ul>
-<h3 id="dynamic-matrix-updater-update_matrix_dynamicpy">Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>)</h3>
+<h3 id="dynamic-matrix-updater-matrix_updatepy">Dynamic Matrix Updater (<code>matrix_update.py</code>)</h3>
 <ul>
 <li>Keep the code DRY (Don't Repeat Yourself) when implementing different language fetchers</li>
 <li>Handle API rate limits gracefully</li>
 <li>Implement proper error handling and logging</li>
 </ul>
-<h3 id="version-cache-manager-cache_version_infopy">Version Cache Manager (<code>cache_version_info.py</code>)</h3>
+<h3 id="version-cache-manager-version_cachepy">Version Cache Manager (<code>version_cache.py</code>)</h3>
 <ul>
 <li>Ensure thread-safety for file operations</li>
 <li>Optimize disk I/O and API calls</li>

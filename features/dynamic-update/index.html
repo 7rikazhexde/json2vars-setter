@@ -1233,14 +1233,14 @@
 
 
 <h1 id="dynamic-matrix-update">Dynamic Matrix Update</h1>
-<p>The Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>) automatically updates your matrix configuration with the latest or stable language versions from official sources.</p>
+<p>The Dynamic Matrix Updater (<code>matrix_update.py</code>) automatically updates your matrix configuration with the latest or stable language versions from official sources.</p>
 <h2 id="overview">Overview</h2>
 <p>This component eliminates the need for manual version updates in your testing matrices. It fetches language version information from official APIs and updates your matrix JSON file based on specified strategies, ensuring your CI/CD workflows always test against relevant language versions.</p>
 <pre class="mermaid"><code>graph TD
     Start[json2vars-setter Action] --&gt;|Input Parameters| Condition{update-matrix?}
 
     %% False path - direct JSON parsing
-    Condition --&gt;|false| G[json_to_github_output.py]
+    Condition --&gt;|false| G[github_output.py]
 
     %% True path - update then parse
     Condition --&gt;|true| Step1[Read JSON File&lt;br&gt;#40;If not specified, read in matrix.json#41;]
@@ -1539,14 +1539,14 @@
 <li><strong>Apply Update Strategy</strong>: Versions are filtered based on the specified strategy for each language</li>
 <li><strong>Create a Backup</strong>: Before making changes, a backup of the original file is created (unless in dry-run mode)</li>
 <li><strong>Update the Matrix</strong>: The JSON file is updated with the new version information</li>
-<li><strong>Parse JSON</strong>: The updated JSON file is processed by json_to_github_output.py</li>
+<li><strong>Parse JSON</strong>: The updated JSON file is processed by github_output.py</li>
 <li><strong>Set Outputs</strong>: The values from the JSON file are set as GitHub Actions outputs</li>
 </ol>
 <pre class="mermaid"><code>sequenceDiagram
     participant Workflow as GitHub Workflow
     participant Action as json2vars-setter
-    participant Updater as update_matrix_dynamic.py
-    participant Parser as json_to_github_output.py
+    participant Updater as matrix_update.py
+    participant Parser as github_output.py
     participant API as Language APIs
     participant File as matrix.json
 

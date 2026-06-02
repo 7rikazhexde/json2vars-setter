@@ -1669,15 +1669,15 @@
 
 
 <h1 id="version-caching">Version Caching</h1>
-<p>The Version Cache Manager (<code>cache_version_info.py</code>) manages version information cache to optimize API usage and workflow performance.</p>
+<p>The Version Cache Manager (<code>version_cache.py</code>) manages version information cache to optimize API usage and workflow performance.</p>
 <h2 id="overview">Overview</h2>
 <p>This component reduces external API calls by caching version information, making your workflows faster and more resilient. It's especially useful for frequently run workflows or environments with API rate limits.</p>
 <h2 id="component-overview">Component Overview</h2>
 <pre class="mermaid"><code>graph TD
     Start[json2vars-setter Action] --&gt;|Input Parameters| GHACondition{use-cache?}
-    GHACondition --&gt; |true| MainPurpose1[cache_version_info.py]
+    GHACondition --&gt; |true| MainPurpose1[version_cache.py]
 
-    MainPurpose1[cache_version_info.py] --&gt; MainPurpose2{Main Functions}
+    MainPurpose1[version_cache.py] --&gt; MainPurpose2{Main Functions}
 
     MainPurpose2 --&gt;|Create Template JSON| TemplateCreation[Template Creation]
     MainPurpose2 --&gt;|Cache Version Info| CacheCreation[Cache Creation]
@@ -1830,52 +1830,52 @@
 <h2 id="common-usage-examples">Common Usage Examples</h2>
 <h3 id="template-creation">Template Creation</h3>
 <h4 id="generate-template-from-existing-cache-without-api-calls">Generate template from existing cache without API calls</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--template-only
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--template-only
 </code></pre></div></td></tr></table></div>
 <h4 id="update-specific-languages-only-maintain-other-language-information">Update specific languages only (maintain other language information)</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--template-only<span class="w"> </span>--languages<span class="w"> </span>python<span class="w"> </span>--keep-existing
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--template-only<span class="w"> </span>--languages<span class="w"> </span>python<span class="w"> </span>--keep-existing
 </code></pre></div></td></tr></table></div>
 <h4 id="fetch-latest-information-from-api-and-create-template">Fetch latest information from API and create template</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py
 </code></pre></div></td></tr></table></div>
 <h4 id="cache-many-versions-but-limit-output-to-most-recent-ones">Cache many versions but limit output to most recent ones</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--count<span class="w"> </span><span class="m">10</span><span class="w"> </span>--output-count<span class="w"> </span><span class="m">3</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--count<span class="w"> </span><span class="m">10</span><span class="w"> </span>--output-count<span class="w"> </span><span class="m">3</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="cache-creation-and-management">Cache Creation and Management</h3>
 <h4 id="force-fetch-latest-information">Force fetch latest information</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--force
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--force
 </code></pre></div></td></tr></table></div>
 <h4 id="update-only-after-a-certain-period-eg-7-days">Update only after a certain period (e.g., 7 days)</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--max-age<span class="w"> </span><span class="m">7</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--max-age<span class="w"> </span><span class="m">7</span>
 </code></pre></div></td></tr></table></div>
 <h4 id="accumulate-version-history-add-new-versions">Accumulate version history (add new versions)</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--incremental<span class="w"> </span>--count<span class="w"> </span><span class="m">30</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--incremental<span class="w"> </span>--count<span class="w"> </span><span class="m">30</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="advanced-usage">Advanced Usage</h2>
 <h3 id="custom-file-specification">Custom File Specification</h3>
 <h4 id="output-to-specific-file">Output to specific file</h4>
 <h5 id="write-support-language-version-pythonnodejsrubygorust">Write support language version (python,nodejs,ruby,go,rust)</h5>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--template-file<span class="w"> </span>./your_project_matrix.json
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--template-file<span class="w"> </span>./your_project_matrix.json
 </code></pre></div></td></tr></table></div>
 <h5 id="write-specified-support-language-version-pythonnodejs">Write specified support language version (python,nodejs)</h5>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--lang<span class="w"> </span>python<span class="w"> </span>nodejs<span class="w"> </span>--template-file<span class="w"> </span>./your_project_matrix.json
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--lang<span class="w"> </span>python<span class="w"> </span>nodejs<span class="w"> </span>--template-file<span class="w"> </span>./your_project_matrix.json
 </code></pre></div></td></tr></table></div>
 <h5 id="write-specified-support-language-version-python">Write specified support language version (python)</h5>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--lang<span class="w"> </span>python<span class="w"> </span>--template-file<span class="w"> </span>./your_python_matrix.json
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--lang<span class="w"> </span>python<span class="w"> </span>--template-file<span class="w"> </span>./your_python_matrix.json
 </code></pre></div></td></tr></table></div>
 <h4 id="maintain-existing-file-structure">Maintain existing file structure</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--existing-template<span class="w"> </span>./project_matrix.json<span class="w"> </span>--template-file<span class="w"> </span>./updated_matrix.json
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--existing-template<span class="w"> </span>./project_matrix.json<span class="w"> </span>--template-file<span class="w"> </span>./updated_matrix.json
 </code></pre></div></td></tr></table></div>
 <h3 id="version-control-flexibility">Version Control Flexibility</h3>
 <h4 id="cache-complete-history-but-test-only-latest-versions">Cache complete history but test only latest versions</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--count<span class="w"> </span><span class="m">15</span><span class="w"> </span>--output-count<span class="w"> </span><span class="m">3</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--count<span class="w"> </span><span class="m">15</span><span class="w"> </span>--output-count<span class="w"> </span><span class="m">3</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="cicd-integration">CI/CD Integration</h3>
 <h4 id="scheduled-job-cache-update-only">Scheduled job (cache update only)</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--max-age<span class="w"> </span><span class="m">7</span><span class="w"> </span>--cache-only
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-12-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--max-age<span class="w"> </span><span class="m">7</span><span class="w"> </span>--cache-only
 </code></pre></div></td></tr></table></div>
 <h4 id="pre-build-processing-template-generation-only">Pre-build processing (template generation only)</h4>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a>python<span class="w"> </span>json2vars_setter/cache_version_info.py<span class="w"> </span>--template-only
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-13-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1"></a>python<span class="w"> </span>json2vars_setter/features/version_cache.py<span class="w"> </span>--template-only
 </code></pre></div></td></tr></table></div>
 <h2 id="github-actions-integration">GitHub Actions Integration</h2>
 <p>In GitHub Actions, these options are mapped to action inputs:</p>
@@ -1919,14 +1919,14 @@
 <li>Otherwise, <code>cache-count</code> versions are included</li>
 </ul>
 </li>
-<li><strong>Parse JSON</strong>: The matrix JSON file is processed by json_to_github_output.py</li>
+<li><strong>Parse JSON</strong>: The matrix JSON file is processed by github_output.py</li>
 <li><strong>Set Outputs</strong>: The values from the JSON file are set as GitHub Actions outputs</li>
 </ol>
 <pre class="mermaid"><code>sequenceDiagram
     participant Workflow as GitHub Workflow
     participant Action as json2vars-setter
-    participant CacheMgr as cache_version_info.py
-    participant Parser as json_to_github_output.py
+    participant CacheMgr as version_cache.py
+    participant Parser as github_output.py
     participant API as Language APIs
     participant Cache as version_cache.json
     participant File as matrix.json

@@ -803,15 +803,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-json-to-variables-parser-json_to_github_outputpy" class="md-nav__link">
+  <a href="#1-json-to-variables-parser-github_outputpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. JSON to Variables Parser (<code>json_to_github_output.py</code>)
+        1. JSON to Variables Parser (<code>github_output.py</code>)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="1. JSON to Variables Parser (json_to_github_output.py)">
+    <nav class="md-nav" aria-label="1. JSON to Variables Parser (github_output.py)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -831,15 +831,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-dynamic-matrix-updater-update_matrix_dynamicpy" class="md-nav__link">
+  <a href="#2-dynamic-matrix-updater-matrix_updatepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>)
+        2. Dynamic Matrix Updater (<code>matrix_update.py</code>)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Dynamic Matrix Updater (update_matrix_dynamic.py)">
+    <nav class="md-nav" aria-label="2. Dynamic Matrix Updater (matrix_update.py)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -859,15 +859,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#3-version-cache-manager-cache_version_infopy" class="md-nav__link">
+  <a href="#3-version-cache-manager-version_cachepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. Version Cache Manager (<code>cache_version_info.py</code>)
+        3. Version Cache Manager (<code>version_cache.py</code>)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="3. Version Cache Manager (cache_version_info.py)">
+    <nav class="md-nav" aria-label="3. Version Cache Manager (version_cache.py)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1011,7 +1011,7 @@
     class C output
     class I external
     class E api</code></pre>
-<h3 id="1-json-to-variables-parser-json_to_github_outputpy">1. JSON to Variables Parser (<code>json_to_github_output.py</code>)</h3>
+<h3 id="1-json-to-variables-parser-github_outputpy">1. JSON to Variables Parser (<code>github_output.py</code>)</h3>
 <p>The core component of the action. It reads a JSON configuration file and converts its contents into GitHub Actions output variables that can be used in your workflows.</p>
 <h4 id="key-capabilities">Key Capabilities</h4>
 <ul>
@@ -1021,7 +1021,7 @@
 <li>Convert complex data structures into workflow-friendly formats</li>
 </ul>
 <p><a href="json-to-variables/">Learn more about JSON to Variables</a></p>
-<h3 id="2-dynamic-matrix-updater-update_matrix_dynamicpy">2. Dynamic Matrix Updater (<code>update_matrix_dynamic.py</code>)</h3>
+<h3 id="2-dynamic-matrix-updater-matrix_updatepy">2. Dynamic Matrix Updater (<code>matrix_update.py</code>)</h3>
 <p>Automatically updates your matrix configuration with the latest or stable language versions from official sources.</p>
 <h4 id="key-capabilities_1">Key Capabilities</h4>
 <ul>
@@ -1031,7 +1031,7 @@
 <li>Dry-run mode for testing before committing changes</li>
 </ul>
 <p><a href="dynamic-update/">Learn more about Dynamic Updates</a></p>
-<h3 id="3-version-cache-manager-cache_version_infopy">3. Version Cache Manager (<code>cache_version_info.py</code>)</h3>
+<h3 id="3-version-cache-manager-version_cachepy">3. Version Cache Manager (<code>version_cache.py</code>)</h3>
 <p>Manages version information cache to optimize API usage and workflow performance.</p>
 <h4 id="key-capabilities_2">Key Capabilities</h4>
 <ul>
@@ -1045,12 +1045,12 @@
 <h2 id="how-these-components-work-together">How These Components Work Together</h2>
 <p>The components of json2vars-setter can be used independently or in combination:</p>
 <pre class="mermaid"><code>graph LR
-    A[Manual Configuration] --&gt;|Option 1| D[json_to_github_output.py]
+    A[Manual Configuration] --&gt;|Option 1| D[github_output.py]
 
-    B[Dynamic Update] --&gt;|Option 2| C[update_matrix_dynamic.py]
+    B[Dynamic Update] --&gt;|Option 2| C[matrix_update.py]
     C --&gt;|Updates| D
 
-    E[Cached Versions] --&gt;|Option 3| F[cache_version_info.py]
+    E[Cached Versions] --&gt;|Option 3| F[version_cache.py]
     F --&gt;|Generates| D
 
     D --&gt;|Sets| G[GitHub Outputs]
