@@ -12,21 +12,48 @@ runner = CliRunner()
 
 
 def test_usage_command() -> None:
-    """Test for the usage command"""
+    """The usage command prints a task-oriented goal->command guide"""
     result = runner.invoke(app, ["usage"])
 
     assert result.exit_code == 0
 
-    # Verify the output content
-    assert "json2vars_setter Usage Examples" in result.stdout
-    assert "Available commands:" in result.stdout
-    assert "cache-version" in result.stdout
-    assert "update-matrix" in result.stdout
-    assert "usage" in result.stdout
+    # Task-oriented headings and the commands they map to
+    assert "what do you want to do?" in result.stdout
+    assert "json2vars update-matrix --all latest" in result.stdout
+    assert "json2vars cache-version" in result.stdout
+    assert "json2vars parse" in result.stdout
+    assert "GITHUB_OUTPUT" in result.stdout
 
-    # Verify examples
-    assert "Cache Version Information:" in result.stdout
-    assert "Update Matrix:" in result.stdout
+
+def test_no_args_shows_help() -> None:
+    """Running with no command shows the help/command list, not just an error"""
+    result = runner.invoke(app, [])
+
+    # no_args_is_help renders the full help (Usage + Commands). Click uses
+    # exit code 2 for a missing command; the point is the guidance is shown.
+    assert result.exit_code == 2
+    assert "Usage" in result.stdout
+    assert "update-matrix" in result.stdout
+    assert "cache-version" in result.stdout
+    assert "parse" in result.stdout
+
+
+def test_version_option() -> None:
+    """--version prints the installed package version and exits 0"""
+    result = runner.invoke(app, ["--version"])
+
+    assert result.exit_code == 0
+    assert "json2vars-setter" in result.stdout
+
+
+def test_parse_passthrough(mocker: MockerFixture) -> None:
+    """parse forwards the JSON path (and flags) to github_output.main in-process"""
+    mock_main = mocker.patch("json2vars_setter.cli.github_output.main")
+
+    result = runner.invoke(app, ["parse", "matrix.json", "--debug"])
+
+    assert result.exit_code == 0
+    mock_main.assert_called_once_with(["matrix.json", "--debug"])
 
 
 def test_cache_version_passthrough(mocker: MockerFixture) -> None:
