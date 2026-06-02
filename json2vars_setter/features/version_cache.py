@@ -13,13 +13,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
 
-from json2vars_setter.version.core.base import BaseVersionFetcher, VersionInfo
+from json2vars_setter.version.core.base import VersionInfo
 from json2vars_setter.version.core.utils import get_utc_now
-from json2vars_setter.version.fetchers.go import GoVersionFetcher
-from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
-from json2vars_setter.version.fetchers.python import PythonVersionFetcher
-from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
-from json2vars_setter.version.fetchers.rust import RustVersionFetcher
+from json2vars_setter.version.registry import get_version_fetcher
 
 # Set up logging
 logging.basicConfig(
@@ -27,7 +23,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
-logger = logging.getLogger("cache_version_info")
+logger = logging.getLogger("version_cache")
 
 # Default paths
 CACHE_DIR = Path(".github") / "json2vars-setter" / "cache"
@@ -274,34 +270,6 @@ class VersionCache:
         self.new_versions_found[language] = len(new_versions)
 
         return bool(new_versions), new_versions
-
-
-def get_version_fetcher(language: str) -> BaseVersionFetcher:
-    """
-    Get the appropriate version fetcher for the language
-
-    Args:
-        language: Programming language name
-
-    Returns:
-        Instantiated version fetcher for the specified language
-
-    Raises:
-        ValueError: If language is not supported
-    """
-    fetcher_classes = {
-        "python": (PythonVersionFetcher, "python", "cpython"),
-        "nodejs": (NodejsVersionFetcher, "nodejs", "node"),
-        "ruby": (RubyVersionFetcher, "ruby", "ruby"),
-        "go": (GoVersionFetcher, "golang", "go"),
-        "rust": (RustVersionFetcher, "rust-lang", "rust"),
-    }
-
-    if language not in fetcher_classes:
-        raise ValueError(f"Unsupported language: {language}")
-
-    fetcher_class, owner, repo = fetcher_classes[language]
-    return fetcher_class()
 
 
 def update_versions(
@@ -584,8 +552,8 @@ def generate_version_template(
     logger.info(f"Version template written to {output_file}")
 
 
-def main() -> None:
-    """Main function to parse arguments and update cache"""
+def build_parser() -> argparse.ArgumentParser:
+    """Build the argument parser for the version-cache command"""
     parser = argparse.ArgumentParser(
         description="""
 Cache version information for programming languages.
@@ -605,43 +573,43 @@ Common usage patterns:
 
 1. Basic updates:
   # Update all languages with default settings
-  python json2vars_setter/cache_version_info.py
+  python -m json2vars_setter.features.version_cache
 
 2. Efficient API usage:
   # Update only when cache is older than 7 days
-  python json2vars_setter/cache_version_info.py --max-age 7
+  python -m json2vars_setter.features.version_cache --max-age 7
 
   # Generate template only from existing cache (no API calls)
-  python json2vars_setter/cache_version_info.py --template-only
+  python -m json2vars_setter.features.version_cache --template-only
 
 3. Language-specific updates:
   # Update only Python and Node.js
-  python json2vars_setter/cache_version_info.py --languages python nodejs
+  python -m json2vars_setter.features.version_cache --languages python nodejs
 
   # Update only Python information in existing template (preserve other data)
-  python json2vars_setter/cache_version_info.py --template-only --languages python --keep-existing
+  python -m json2vars_setter.features.version_cache --template-only --languages python --keep-existing
 
 4. Advanced version management:
   # Add new versions while preserving existing cache
-  python json2vars_setter/cache_version_info.py --incremental
+  python -m json2vars_setter.features.version_cache --incremental
 
   # Accumulate up to 30 versions per language incrementally
-  python json2vars_setter/cache_version_info.py --incremental --count 30
+  python -m json2vars_setter.features.version_cache --incremental --count 30
 
 5. CI/CD workflow usage:
   # Separate cache updates and template generation
-  python json2vars_setter/cache_version_info.py --cache-only  # Periodic background job
-  python json2vars_setter/cache_version_info.py --template-only  # Pre-build step
+  python -m json2vars_setter.features.version_cache --cache-only  # Periodic background job
+  python -m json2vars_setter.features.version_cache --template-only  # Pre-build step
 
 Detailed examples:
   # Force update Python and Node.js with 20 versions each
-  python json2vars_setter/cache_version_info.py --languages python nodejs --force --count 20
+  python -m json2vars_setter.features.version_cache --languages python nodejs --force --count 20
 
   # Generate template with versions in ascending order (oldest first)
-  python json2vars_setter/cache_version_info.py --sort asc
+  python -m json2vars_setter.features.version_cache --sort asc
 
   # Update only Python version info in an existing project template
-  python json2vars_setter/cache_version_info.py --template-only --languages python --existing-template .github/json2vars-setter/python_project_matrix.json --template-file .github/json2vars-setter/python_project_matrix.json --keep-existing
+  python -m json2vars_setter.features.version_cache --template-only --languages python --existing-template .github/json2vars-setter/python_project_matrix.json --template-file .github/json2vars-setter/python_project_matrix.json --keep-existing
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -720,7 +688,13 @@ Detailed examples:
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
     )
 
-    args = parser.parse_args()
+    return parser
+
+
+def main(argv: Optional[List[str]] = None) -> None:
+    """Parse arguments and update the version cache"""
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     # Set log level based on verbosity
     if args.verbose:

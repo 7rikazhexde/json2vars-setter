@@ -33,7 +33,7 @@ graph TD
     class E api
 ```
 
-### 1. JSON to Variables Parser (`json_to_github_output.py`)
+### 1. JSON to Variables Parser (`github_output.py`)
 
 The core component of the action. It reads a JSON configuration file and converts its contents into GitHub Actions output variables that can be used in your workflows.
 
@@ -46,7 +46,7 @@ The core component of the action. It reads a JSON configuration file and convert
 
 [Learn more about JSON to Variables](json-to-variables.md)
 
-### 2. Dynamic Matrix Updater (`update_matrix_dynamic.py`)
+### 2. Dynamic Matrix Updater (`matrix_update.py`)
 
 Automatically updates your matrix configuration with the latest or stable language versions from official sources.
 
@@ -59,7 +59,7 @@ Automatically updates your matrix configuration with the latest or stable langua
 
 [Learn more about Dynamic Updates](dynamic-update.md)
 
-### 3. Version Cache Manager (`cache_version_info.py`)
+### 3. Version Cache Manager (`version_cache.py`)
 
 Manages version information cache to optimize API usage and workflow performance.
 
@@ -79,12 +79,12 @@ The components of json2vars-setter can be used independently or in combination:
 
 ```mermaid
 graph LR
-    A[Manual Configuration] -->|Option 1| D[json_to_github_output.py]
+    A[Manual Configuration] -->|Option 1| D[github_output.py]
 
-    B[Dynamic Update] -->|Option 2| C[update_matrix_dynamic.py]
+    B[Dynamic Update] -->|Option 2| C[matrix_update.py]
     C -->|Updates| D
 
-    E[Cached Versions] -->|Option 3| F[cache_version_info.py]
+    E[Cached Versions] -->|Option 3| F[version_cache.py]
     F -->|Generates| D
 
     D -->|Sets| G[GitHub Outputs]

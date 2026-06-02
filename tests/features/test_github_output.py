@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
-from json2vars_setter.json_to_github_output import parse_json, set_github_output
+from json2vars_setter.features.github_output import parse_json, set_github_output
 
 MATRIX_JSON_PATH = "./tests/matrix_static.json"
 
@@ -167,7 +167,7 @@ def test_main_execution_with_matrix_json(monkeypatch: MonkeyPatch, tmpdir: Any) 
     result = subprocess.run(
         [
             "python",
-            "json2vars_setter/json_to_github_output.py",
+            "json2vars_setter/features/github_output.py",
             MATRIX_JSON_PATH,
             "--debug",
         ],

@@ -1,6 +1,6 @@
 # Dynamic Matrix Update
 
-The Dynamic Matrix Updater (`update_matrix_dynamic.py`) automatically updates your matrix configuration with the latest or stable language versions from official sources.
+The Dynamic Matrix Updater (`matrix_update.py`) automatically updates your matrix configuration with the latest or stable language versions from official sources.
 
 ## Overview
 
@@ -11,7 +11,7 @@ graph TD
     Start[json2vars-setter Action] -->|Input Parameters| Condition{update-matrix?}
 
     %% False path - direct JSON parsing
-    Condition -->|false| G[json_to_github_output.py]
+    Condition -->|false| G[github_output.py]
 
     %% True path - update then parse
     Condition -->|true| Step1[Read JSON File<br>#40;If not specified, read in matrix.json#41;]
@@ -203,15 +203,15 @@ When you set `update-matrix: 'true'`, the action performs these steps internally
 3. **Apply Update Strategy**: Versions are filtered based on the specified strategy for each language
 4. **Create a Backup**: Before making changes, a backup of the original file is created (unless in dry-run mode)
 5. **Update the Matrix**: The JSON file is updated with the new version information
-6. **Parse JSON**: The updated JSON file is processed by json_to_github_output.py
+6. **Parse JSON**: The updated JSON file is processed by github_output.py
 7. **Set Outputs**: The values from the JSON file are set as GitHub Actions outputs
 
 ```mermaid
 sequenceDiagram
     participant Workflow as GitHub Workflow
     participant Action as json2vars-setter
-    participant Updater as update_matrix_dynamic.py
-    participant Parser as json_to_github_output.py
+    participant Updater as matrix_update.py
+    participant Parser as github_output.py
     participant API as Language APIs
     participant File as matrix.json
 

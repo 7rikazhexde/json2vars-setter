@@ -101,11 +101,11 @@ graph TD
     class E api
 ```
 
-1. **JSON to Variables Parser** (`json_to_github_output.py`): Core component that parses JSON and converts it to GitHub Actions outputs. Makes your configuration data accessible throughout your workflow.
+1. **JSON to Variables Parser** (`github_output.py`): Core component that parses JSON and converts it to GitHub Actions outputs. Makes your configuration data accessible throughout your workflow.
 
-2. **Dynamic Matrix Updater** (`update_matrix_dynamic.py`): Updates your matrix configuration with the latest or stable language versions. Ensures your CI/CD tests run against current language versions without manual updates.
+2. **Dynamic Matrix Updater** (`matrix_update.py`): Updates your matrix configuration with the latest or stable language versions. Ensures your CI/CD tests run against current language versions without manual updates.
 
-3. **Version Cache Manager** (`cache_version_info.py`): Manages cached version information to optimize API usage. Reduces external API calls by intelligently caching data, improving workflow performance and reliability.
+3. **Version Cache Manager** (`version_cache.py`): Manages cached version information to optimize API usage. Reduces external API calls by intelligently caching data, improving workflow performance and reliability.
 
 ## Learn More
 

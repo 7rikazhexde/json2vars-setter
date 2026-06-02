@@ -18,9 +18,9 @@ Thank you for your interest in contributing to my JSON to Variables Setter actio
   - [Coding Guidelines](#coding-guidelines)
   - [Documentation](#documentation)
   - [Core Components Development](#core-components-development)
-    - [JSON to GitHub Output Parser (`json_to_github_output.py`)](#json-to-github-output-parser-json_to_github_outputpy)
-    - [Dynamic Matrix Updater (`update_matrix_dynamic.py`)](#dynamic-matrix-updater-update_matrix_dynamicpy)
-    - [Version Cache Manager (`cache_version_info.py`)](#version-cache-manager-cache_version_infopy)
+    - [JSON to GitHub Output Parser (`github_output.py`)](#json-to-github-output-parser-github_outputpy)
+    - [Dynamic Matrix Updater (`matrix_update.py`)](#dynamic-matrix-updater-matrix_updatepy)
+    - [Version Cache Manager (`version_cache.py`)](#version-cache-manager-version_cachepy)
   - [Release Process](#release-process)
   - [Feedback](#feedback)
 
@@ -79,10 +79,15 @@ json2vars-setter/
 ├── .github/           # GitHub specific files (workflows, templates)
 ├── json2vars_setter/  # Core Python module
 │   ├── __init__.py
-│   ├── json_to_github_output.py  # JSON parser component
-│   ├── update_matrix_dynamic.py  # Dynamic update component
-│   ├── cache_version_info.py     # Version caching component
-│   └── version/       # Version fetching modules
+│   ├── cli.py            # Typer CLI (json2vars), runs features in-process
+│   ├── features/         # The three action stages
+│   │   ├── github_output.py  # JSON parser component (always runs)
+│   │   ├── matrix_update.py   # Dynamic update component
+│   │   └── version_cache.py   # Version caching component
+│   └── version/          # Version fetching modules
+│       ├── registry.py   # get_version_fetcher() (single source of truth)
+│       ├── core/         # Base fetcher, exceptions, utils
+│       └── fetchers/     # Per-language fetchers
 ├── tests/             # Test files
 ├── docs/              # Documentation files
 ├── action.yml         # Action definition
@@ -248,19 +253,19 @@ For MkDocs documentation:
 
 When working on my core components, consider the following guidelines:
 
-### JSON to GitHub Output Parser (`json_to_github_output.py`)
+### JSON to GitHub Output Parser (`github_output.py`)
 
 - Maintain backward compatibility with existing JSON structures
 - Ensure proper error handling for malformed JSON
 - Optimize for performance with large JSON files
 
-### Dynamic Matrix Updater (`update_matrix_dynamic.py`)
+### Dynamic Matrix Updater (`matrix_update.py`)
 
 - Keep the code DRY (Don't Repeat Yourself) when implementing different language fetchers
 - Handle API rate limits gracefully
 - Implement proper error handling and logging
 
-### Version Cache Manager (`cache_version_info.py`)
+### Version Cache Manager (`version_cache.py`)
 
 - Ensure thread-safety for file operations
 - Optimize disk I/O and API calls
