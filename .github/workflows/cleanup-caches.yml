@@ -34,11 +34,17 @@ jobs:
           gh extension install actions/gh-actions-cache
           echo "Fetching caches for ${BRANCH}..."
           deleted=0
+          # Deletions are best-effort: a cache can disappear between list and
+          # delete (concurrent runs, GitHub eviction), so a single failure must
+          # not abort the whole cleanup. Count only successful deletions.
           while IFS= read -r key; do
             [ -z "$key" ] && continue
             echo "Deleting cache: ${key}"
-            gh actions-cache delete "$key" -R "$GH_REPO" -B "$BRANCH" --confirm
-            deleted=$((deleted + 1))
+            if gh actions-cache delete "$key" -R "$GH_REPO" -B "$BRANCH" --confirm; then
+              deleted=$((deleted + 1))
+            else
+              echo "  skip (could not delete; already gone?): ${key}"
+            fi
           done < <(gh actions-cache list -R "$GH_REPO" -B "$BRANCH" --limit 100 | cut -f 1)
           echo "Done. Deleted ${deleted} cache(s) for ${BRANCH}."
 
