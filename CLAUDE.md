@@ -25,10 +25,10 @@ just test-cov-verbose
 just
 
 # Run a single test file
-uv run pytest tests/test_json_to_github_output.py
+uv run pytest tests/features/test_github_output.py
 
 # Run a single test by name
-uv run pytest tests/test_cache_version_info.py -k "test_function_name"
+uv run pytest tests/features/test_version_cache.py -k "test_function_name"
 
 # Lint (ruff)
 uv run ruff check json2vars_setter
@@ -46,20 +46,21 @@ uv run json2vars --help
 
 ## Architecture
 
-### Three Core Modules
+### Three Feature Modules (`json2vars_setter/features/`)
 
-The action has three processing stages with a priority chain: **dynamic update > cache version > JSON parse**.
+The action has three processing stages with a priority chain: **dynamic update > cache version > JSON parse**. Each stage is a module under `json2vars_setter/features/` exposing a `build_parser()` + `main(argv=None)` pair (so it runs both via `python -m` and in-process from the CLI):
 
-1. **`json_to_github_output.py`** — Always runs. Recursively flattens a JSON file into `GITHUB_OUTPUT` key-value pairs. Nested keys are joined with underscores and uppercased (e.g., `versions.python` → `VERSIONS_PYTHON`). Lists are serialized as JSON strings.
+1. **`features/github_output.py`** — Always runs. Recursively flattens a JSON file into `GITHUB_OUTPUT` key-value pairs. Nested keys are joined with underscores and uppercased (e.g., `versions.python` → `VERSIONS_PYTHON`). Lists are serialized as JSON strings.
 
-2. **`update_matrix_dynamic.py`** — Optionally runs (highest priority). Fetches latest/stable language versions from GitHub APIs and updates the matrix JSON in-place before parsing. Uses `VersionStrategy` (STABLE, LATEST, BOTH) per language.
+2. **`features/matrix_update.py`** — Optionally runs (highest priority). Fetches latest/stable language versions from GitHub APIs and updates the matrix JSON in-place before parsing. Uses `VersionStrategy` (STABLE, LATEST, BOTH) per language.
 
-3. **`cache_version_info.py`** — Optionally runs (medium priority, only if dynamic update is off). Manages a TTL-based version cache file, supports incremental updates, and generates matrix templates from cached data.
+3. **`features/version_cache.py`** — Optionally runs (medium priority, only if dynamic update is off). Manages a TTL-based version cache file, supports incremental updates, and generates matrix templates from cached data.
 
 ### Version Fetcher System (`json2vars_setter/version/`)
 
 A pluggable architecture for fetching language versions from GitHub:
 
+- **`version/registry.py`** — `get_version_fetcher(language)` and the `LANGUAGE_FETCHERS` map: the single source of truth pairing each language with its fetcher (shared by the matrix-update and version-cache features)
 - **`version/core/base.py`** — `BaseVersionFetcher` abstract class handles GitHub API pagination, authentication (via `GITHUB_TOKEN`), and defines the interface (`_is_stable_tag()`, `_parse_version_from_tag()`)
 - **`version/core/exceptions.py`** — Exception hierarchy: `VersionFetchError` → `GitHubAPIError`, `ParseError`, `ValidationError`
 - **`version/core/utils.py`** — Shared data classes (`VersionInfo`, `ReleaseInfo`) and helpers
@@ -67,9 +68,9 @@ A pluggable architecture for fetching language versions from GitHub:
 
 ### Entry Points
 
-- **GitHub Action**: `action.yml` defines the composite action with inputs/outputs
-- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`
-- **Direct module execution**: `python -m json2vars_setter.<module>`
+- **GitHub Action**: `action.yml` defines the composite action with inputs/outputs; its steps invoke `python -m json2vars_setter.features.<module>`
+- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess)
+- **Direct module execution**: `python -m json2vars_setter.features.<module>`
 
 ## Code Conventions
 

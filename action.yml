@@ -202,7 +202,7 @@ runs:
 
         # Execute update script using uv with isolated environment
         cd ${{ github.action_path }}
-        uv run --no-sync python -m json2vars_setter.update_matrix_dynamic "${ARGS[@]}"
+        uv run --no-sync python -m json2vars_setter.features.matrix_update "${ARGS[@]}"
 
     # Cache version info update (medium priority)
     - name: Update using cache version info if requested
@@ -268,13 +268,13 @@ runs:
         ARGS+=("--verbose")
 
         # Output the full command for debugging
-        echo "Running command: uv run python -m json2vars_setter.cache_version_info with files:"
+        echo "Running command: uv run python -m json2vars_setter.features.version_cache with files:"
         echo "  Cache file: ${CACHE_FILE}"
         echo "  Template file: ${JSON_FILE}"
 
         # Execute cache version info script using uv with isolated environment
         cd ${{ github.action_path }}
-        uv run --no-sync python -m json2vars_setter.cache_version_info "${ARGS[@]}"
+        uv run --no-sync python -m json2vars_setter.features.version_cache "${ARGS[@]}"
 
     # JSON parsing (always executed)
     - name: Parse JSON and set outputs
@@ -293,7 +293,7 @@ runs:
 
         # Execute script from action directory with isolated environment
         cd ${{ github.action_path }}
-        uv run --no-sync python -m json2vars_setter.json_to_github_output "${JSON_ABSOLUTE_PATH}"
+        uv run --no-sync python -m json2vars_setter.features.github_output "${JSON_ABSOLUTE_PATH}"
       env:
         GITHUB_OUTPUT: $GITHUB_OUTPUT
 

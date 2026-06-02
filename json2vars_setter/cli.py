@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
 json2vars_setter CLI tool.
-Unified interface for calling existing scripts using Typer.
+Unified interface that runs the package features in-process via Typer.
 """
 
-import subprocess
-import sys
-from pathlib import Path
+from typing import Callable, List
 
 import typer
+
+from json2vars_setter.features import matrix_update, version_cache
 
 # Create application instance
 app = typer.Typer(
@@ -16,67 +16,51 @@ app = typer.Typer(
     help="json2vars_setter CLI: Manages multiple scripts within the project",
 )
 
+# Pass-through settings: forward every argument to the feature's own argparse
+# parser (including --help/-h, by disabling Typer's built-in help option).
+_PASSTHROUGH = {
+    "allow_extra_args": True,
+    "ignore_unknown_options": True,
+    "help_option_names": [],
+}
+
+
+def _run_feature(name: str, run: Callable[[List[str]], None], args: List[str]) -> None:
+    """Run a feature's ``main`` in-process, mapping failures to a Typer exit.
+
+    argparse raises ``SystemExit`` for ``--help`` (code 0) and usage errors
+    (non-zero); any other exception is surfaced as a CLI error.
+    """
+    try:
+        run(args)
+    except SystemExit as exc:
+        code = exc.code
+        if code is None or code == 0:
+            return
+        raise typer.Exit(code if isinstance(code, int) else 1)
+    except Exception as exc:  # noqa: BLE001 - surface any failure as a CLI error
+        typer.echo(f"Error: Failed to execute {name} ({exc})", err=True)
+        raise typer.Exit(1)
+
 
 @app.command(
     "cache-version",
-    help="cache_version_info.py: Caches version information of programming languages",
-    context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
+    help="version_cache: Caches version information of programming languages",
+    context_settings=_PASSTHROUGH,
 )
-def cache_version(
-    ctx: typer.Context,
-    help: bool = typer.Option(False, "--help", "-h", is_flag=True, help="Show help"),
-) -> None:
-    """
-    Executes the cache_version_info.py script. All arguments are passed as is.
-    """
-    script_path = Path(__file__).parent / "cache_version_info.py"
-
-    # If the --help flag is specified, display the original script's help
-    if help:
-        args = ["--help"]
-    else:
-        args = ctx.args
-
-    try:
-        result = subprocess.run(
-            [sys.executable, str(script_path)] + args,
-            check=True,
-        )
-        sys.exit(result.returncode)
-    except subprocess.CalledProcessError as e:
-        typer.echo(f"Error: Failed to execute cache_version_info.py ({e})", err=True)
-        sys.exit(e.returncode)
+def cache_version(ctx: typer.Context) -> None:
+    """Run the version-cache feature. All arguments are passed through as-is."""
+    _run_feature("version_cache", version_cache.main, ctx.args)
 
 
 @app.command(
     "update-matrix",
-    help="update_matrix_dynamic.py: Dynamically updates matrix.json with the latest or stable versions",
-    context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
+    help="matrix_update: Dynamically updates matrix.json with the latest or stable versions",
+    context_settings=_PASSTHROUGH,
 )
-def update_matrix(
-    ctx: typer.Context,
-    help: bool = typer.Option(False, "--help", "-h", is_flag=True, help="Show help"),
-) -> None:
-    """
-    Executes the update_matrix_dynamic.py script. All arguments are passed as is.
-    """
-    script_path = Path(__file__).parent / "update_matrix_dynamic.py"
-
-    # If the --help flag is specified, display the original script's help
-    if help:
-        args = ["--help"]
-    else:
-        args = ctx.args
-
-    try:
-        result = subprocess.run(
-            [sys.executable, str(script_path)] + args,
-            check=True,
-        )
-        sys.exit(result.returncode)
-    except subprocess.CalledProcessError as e:
-        typer.echo(f"Error: Failed to execute update_matrix_dynamic.py ({e})", err=True)
-        sys.exit(e.returncode)
+def update_matrix(ctx: typer.Context) -> None:
+    """Run the update-matrix feature. All arguments are passed through as-is."""
+    _run_feature("matrix_update", matrix_update.main, ctx.args)
 
 
 @app.command("usage", help="Displays available commands and their usage")

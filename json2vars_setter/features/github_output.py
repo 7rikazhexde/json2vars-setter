@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 
 def set_github_output(outputs: Dict[str, str], debug: bool) -> None:
@@ -71,10 +71,18 @@ def parse_json(data: Any, prefix: str = "", debug: bool = False) -> Dict[str, st
     return outputs
 
 
-if __name__ == "__main__":
+def main(argv: Optional[List[str]] = None) -> None:
+    """Read a JSON file and write its contents to GITHUB_OUTPUT.
+
+    Args:
+        argv: Argument list (defaults to ``sys.argv[1:]``). The first element is
+            the JSON file path; ``--debug`` enables debug output.
+    """
+    args = sys.argv[1:] if argv is None else argv
+
     # Retrieve the JSON file path and optional debug flag from command line arguments
-    json_file: str = sys.argv[1]
-    debug = "--debug" in sys.argv
+    json_file = args[0]
+    debug = "--debug" in args
 
     # Load the JSON data from the file
     with open(json_file, "r") as f:
@@ -83,3 +91,7 @@ if __name__ == "__main__":
     # Parse the JSON data and write to GITHUB_OUTPUT
     collected_outputs = parse_json(data, debug=debug)
     set_github_output(collected_outputs, debug=debug)
+
+
+if __name__ == "__main__":
+    main()

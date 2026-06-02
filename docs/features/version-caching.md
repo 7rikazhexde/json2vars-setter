@@ -1,6 +1,6 @@
 # Version Caching
 
-The Version Cache Manager (`cache_version_info.py`) manages version information cache to optimize API usage and workflow performance.
+The Version Cache Manager (`version_cache.py`) manages version information cache to optimize API usage and workflow performance.
 
 ## Overview
 
@@ -11,9 +11,9 @@ This component reduces external API calls by caching version information, making
 ```mermaid
 graph TD
     Start[json2vars-setter Action] -->|Input Parameters| GHACondition{use-cache?}
-    GHACondition --> |true| MainPurpose1[cache_version_info.py]
+    GHACondition --> |true| MainPurpose1[version_cache.py]
 
-    MainPurpose1[cache_version_info.py] --> MainPurpose2{Main Functions}
+    MainPurpose1[version_cache.py] --> MainPurpose2{Main Functions}
 
     MainPurpose2 -->|Create Template JSON| TemplateCreation[Template Creation]
     MainPurpose2 -->|Cache Version Info| CacheCreation[Cache Creation]
@@ -104,25 +104,25 @@ graph TD
 #### Generate template from existing cache without API calls
 
 ```bash
-python json2vars_setter/cache_version_info.py --template-only
+python json2vars_setter/features/version_cache.py --template-only
 ```
 
 #### Update specific languages only (maintain other language information)
 
 ```bash
-python json2vars_setter/cache_version_info.py --template-only --languages python --keep-existing
+python json2vars_setter/features/version_cache.py --template-only --languages python --keep-existing
 ```
 
 #### Fetch latest information from API and create template
 
 ```bash
-python json2vars_setter/cache_version_info.py
+python json2vars_setter/features/version_cache.py
 ```
 
 #### Cache many versions but limit output to most recent ones
 
 ```bash
-python json2vars_setter/cache_version_info.py --count 10 --output-count 3
+python json2vars_setter/features/version_cache.py --count 10 --output-count 3
 ```
 
 ### Cache Creation and Management
@@ -130,19 +130,19 @@ python json2vars_setter/cache_version_info.py --count 10 --output-count 3
 #### Force fetch latest information
 
 ```bash
-python json2vars_setter/cache_version_info.py --force
+python json2vars_setter/features/version_cache.py --force
 ```
 
 #### Update only after a certain period (e.g., 7 days)
 
 ```bash
-python json2vars_setter/cache_version_info.py --max-age 7
+python json2vars_setter/features/version_cache.py --max-age 7
 ```
 
 #### Accumulate version history (add new versions)
 
 ```bash
-python json2vars_setter/cache_version_info.py --incremental --count 30
+python json2vars_setter/features/version_cache.py --incremental --count 30
 ```
 
 ## Advanced Usage
@@ -154,25 +154,25 @@ python json2vars_setter/cache_version_info.py --incremental --count 30
 ##### Write support language version (python,nodejs,ruby,go,rust)
 
 ```bash
-python json2vars_setter/cache_version_info.py --template-file ./your_project_matrix.json
+python json2vars_setter/features/version_cache.py --template-file ./your_project_matrix.json
 ```
 
 ##### Write specified support language version (python,nodejs)
 
 ```bash
-python json2vars_setter/cache_version_info.py --lang python nodejs --template-file ./your_project_matrix.json
+python json2vars_setter/features/version_cache.py --lang python nodejs --template-file ./your_project_matrix.json
 ```
 
 ##### Write specified support language version (python)
 
 ```bash
-python json2vars_setter/cache_version_info.py --lang python --template-file ./your_python_matrix.json
+python json2vars_setter/features/version_cache.py --lang python --template-file ./your_python_matrix.json
 ```
 
 #### Maintain existing file structure
 
 ```bash
-python json2vars_setter/cache_version_info.py --existing-template ./project_matrix.json --template-file ./updated_matrix.json
+python json2vars_setter/features/version_cache.py --existing-template ./project_matrix.json --template-file ./updated_matrix.json
 ```
 
 ### Version Control Flexibility
@@ -180,7 +180,7 @@ python json2vars_setter/cache_version_info.py --existing-template ./project_matr
 #### Cache complete history but test only latest versions
 
 ```bash
-python json2vars_setter/cache_version_info.py --count 15 --output-count 3
+python json2vars_setter/features/version_cache.py --count 15 --output-count 3
 ```
 
 ### CI/CD Integration
@@ -188,13 +188,13 @@ python json2vars_setter/cache_version_info.py --count 15 --output-count 3
 #### Scheduled job (cache update only)
 
 ```bash
-python json2vars_setter/cache_version_info.py --max-age 7 --cache-only
+python json2vars_setter/features/version_cache.py --max-age 7 --cache-only
 ```
 
 #### Pre-build processing (template generation only)
 
 ```bash
-python json2vars_setter/cache_version_info.py --template-only
+python json2vars_setter/features/version_cache.py --template-only
 ```
 
 ## GitHub Actions Integration
@@ -230,15 +230,15 @@ When you set `use-cache: 'true'`, the action performs these steps internally:
 4. **Generate Template**: It creates or updates the matrix JSON file based on the cached data, respecting version limits
     - If `output-count` is specified, only that many versions are included in the template
     - Otherwise, `cache-count` versions are included
-5. **Parse JSON**: The matrix JSON file is processed by json_to_github_output.py
+5. **Parse JSON**: The matrix JSON file is processed by github_output.py
 6. **Set Outputs**: The values from the JSON file are set as GitHub Actions outputs
 
 ```mermaid
 sequenceDiagram
     participant Workflow as GitHub Workflow
     participant Action as json2vars-setter
-    participant CacheMgr as cache_version_info.py
-    participant Parser as json_to_github_output.py
+    participant CacheMgr as version_cache.py
+    participant Parser as github_output.py
     participant API as Language APIs
     participant Cache as version_cache.json
     participant File as matrix.json

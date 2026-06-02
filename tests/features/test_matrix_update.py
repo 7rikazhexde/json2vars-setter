@@ -7,9 +7,8 @@ from typing import Any, Dict, Generator, Optional
 import pytest
 from pytest_mock import MockerFixture
 
-from json2vars_setter.update_matrix_dynamic import (
+from json2vars_setter.features.matrix_update import (
     VersionStrategy,
-    get_version_fetcher,
     get_versions_from_strategy,
     load_json_file,
     main,
@@ -88,41 +87,6 @@ def test_version_strategy_validation() -> None:
     assert VersionStrategy.is_valid("invalid") is False
 
 
-def test_get_version_fetcher(mocker: MockerFixture) -> None:
-    """Test get_version_fetcher returns correct fetcher for each language"""
-    # Set up mocks for each fetcher
-    mock_python = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.PythonVersionFetcher"
-    )
-    mock_nodejs = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.NodejsVersionFetcher"
-    )
-    mock_ruby = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.RubyVersionFetcher"
-    )
-    mock_go = mocker.patch("json2vars_setter.update_matrix_dynamic.GoVersionFetcher")
-    mock_rust = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.RustVersionFetcher"
-    )
-
-    # Set return values
-    mock_python.return_value = mock_python
-    mock_nodejs.return_value = mock_nodejs
-    mock_ruby.return_value = mock_ruby
-    mock_go.return_value = mock_go
-    mock_rust.return_value = mock_rust
-
-    assert get_version_fetcher("python") == mock_python
-    assert get_version_fetcher("nodejs") == mock_nodejs
-    assert get_version_fetcher("ruby") == mock_ruby
-    assert get_version_fetcher("go") == mock_go
-    assert get_version_fetcher("rust") == mock_rust
-
-    # Test unsupported language
-    with pytest.raises(ValueError, match="Unsupported language: invalid"):
-        get_version_fetcher("invalid")
-
-
 def test_get_versions_from_strategy() -> None:
     """Test get_versions_from_strategy returns correct versions based on strategy"""
     version_info = VersionInfo(stable="2.0.0", latest="2.1.0")
@@ -184,7 +148,7 @@ def test_load_json_file(
 def test_save_json_file_io_error(mocker: MockerFixture, tmp_path: Path) -> None:
     """Test save_json_file handles IOError correctly"""
     # Set up mocks
-    mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.matrix_update.logger")
     mock_exit = mocker.patch("sys.exit")
     test_data = {"test": "value"}
 
@@ -205,7 +169,7 @@ def test_save_json_file_io_error(mocker: MockerFixture, tmp_path: Path) -> None:
 def test_save_json_file_type_error(mocker: MockerFixture, tmp_path: Path) -> None:
     """Test save_json_file handles TypeError correctly"""
     # Set up mocks
-    mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.matrix_update.logger")
     mock_exit = mocker.patch("sys.exit")
     test_data: Dict[str, Any] = {"test": "value"}
 
@@ -244,7 +208,7 @@ def test_save_json_file_content_already_ends_with_newline(
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
 
     # Mock logger to verify log messages
-    mock_logger = mocker.patch("json2vars_setter.update_matrix_dynamic.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.matrix_update.logger")
 
     # Test data
     test_data = {"test": "value"}
@@ -265,15 +229,15 @@ def test_update_matrix_json(
 ) -> None:
     """Test update_matrix_json updates the JSON correctly"""
     # Set up mocks
-    mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
+    mock_load = mocker.patch("json2vars_setter.features.matrix_update.load_json_file")
     mock_load.return_value = sample_matrix_json.copy()
 
-    mock_save = mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
+    mock_save = mocker.patch("json2vars_setter.features.matrix_update.save_json_file")
 
     # Create a real MockVersionFetcher instance
     mock_fetcher_instance = MockVersionFetcher(stable="3.12", latest="3.13")
     mock_get_fetcher = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
+        "json2vars_setter.features.matrix_update.get_version_fetcher"
     )
     mock_get_fetcher.return_value = mock_fetcher_instance
 
@@ -318,14 +282,14 @@ def test_update_matrix_json(
 def test_main_function(mocker: MockerFixture) -> None:
     """Test the main function parses arguments correctly"""
     mock_update = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.update_matrix_json"
+        "json2vars_setter.features.matrix_update.update_matrix_json"
     )
 
     # Test with --all
     mocker.patch(
         "sys.argv",
         [
-            "update_matrix_dynamic.py",
+            "matrix_update.py",
             "--all",
             "stable",
             "--json-file",
@@ -350,7 +314,7 @@ def test_main_function(mocker: MockerFixture) -> None:
     mocker.patch(
         "sys.argv",
         [
-            "update_matrix_dynamic.py",
+            "matrix_update.py",
             "--python",
             "latest",
             "--nodejs",
@@ -367,7 +331,7 @@ def test_main_function(mocker: MockerFixture) -> None:
     )
 
     # Test with no language specified
-    mocker.patch("sys.argv", ["update_matrix_dynamic.py", "--verbose"])
+    mocker.patch("sys.argv", ["matrix_update.py", "--verbose"])
 
     with pytest.raises(SystemExit):
         main()
@@ -377,7 +341,7 @@ def test_main_function_integration(mocker: MockerFixture, temp_json_file: str) -
     """Integration test for the main function"""
     # Mock the fetch_versions to return controlled values
     mock_get_fetcher = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
+        "json2vars_setter.features.matrix_update.get_version_fetcher"
     )
     mock_get_fetcher.return_value = MockVersionFetcher(stable="3.12", latest="3.13")
 
@@ -385,7 +349,7 @@ def test_main_function_integration(mocker: MockerFixture, temp_json_file: str) -
     mocker.patch(
         "sys.argv",
         [
-            "update_matrix_dynamic.py",
+            "matrix_update.py",
             "--json-file",
             temp_json_file,
             "--python",
@@ -422,13 +386,13 @@ def test_update_matrix_json_missing_versions_key(mocker: MockerFixture) -> None:
     # Matrix without versions key
     matrix_without_versions = {"os": ["ubuntu-latest"]}
 
-    mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
+    mock_load = mocker.patch("json2vars_setter.features.matrix_update.load_json_file")
     mock_load.return_value = matrix_without_versions
 
-    mock_save = mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
+    mock_save = mocker.patch("json2vars_setter.features.matrix_update.save_json_file")
 
     mock_get_fetcher = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
+        "json2vars_setter.features.matrix_update.get_version_fetcher"
     )
     mock_get_fetcher.return_value = MockVersionFetcher(stable="3.12", latest="3.13")
 
@@ -443,13 +407,13 @@ def test_update_matrix_json_new_language(
     mocker: MockerFixture, sample_matrix_json: Dict[str, Any]
 ) -> None:
     """Test update_matrix_json adds a new language if it doesn't exist"""
-    mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
+    mock_load = mocker.patch("json2vars_setter.features.matrix_update.load_json_file")
     mock_load.return_value = sample_matrix_json.copy()
 
-    mock_save = mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
+    mock_save = mocker.patch("json2vars_setter.features.matrix_update.save_json_file")
 
     mock_get_fetcher = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
+        "json2vars_setter.features.matrix_update.get_version_fetcher"
     )
     mock_get_fetcher.return_value = MockVersionFetcher(stable="3.0.6", latest="3.1.6")
 
@@ -470,14 +434,14 @@ def test_update_matrix_json_empty_versions(mocker: MockerFixture) -> None:
     # Prepare sample data
     sample_data = {"versions": {"python": ["3.10"]}}
 
-    mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
+    mock_load = mocker.patch("json2vars_setter.features.matrix_update.load_json_file")
     mock_load.return_value = sample_data
 
-    mock_save = mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
+    mock_save = mocker.patch("json2vars_setter.features.matrix_update.save_json_file")
 
     # Create a mock with empty versions
     mock_get_fetcher = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
+        "json2vars_setter.features.matrix_update.get_version_fetcher"
     )
     mock_fetcher = MockVersionFetcher(stable=None, latest=None)
     mock_get_fetcher.return_value = mock_fetcher
@@ -496,14 +460,14 @@ def test_backup_creation_success(mocker: MockerFixture) -> None:
     sample_data = {"versions": {"python": ["3.10"]}}
 
     # Set up mocks
-    mock_load = mocker.patch("json2vars_setter.update_matrix_dynamic.load_json_file")
+    mock_load = mocker.patch("json2vars_setter.features.matrix_update.load_json_file")
     mock_load.return_value = sample_data
 
     # Mock save_json_file
-    mocker.patch("json2vars_setter.update_matrix_dynamic.save_json_file")
+    mocker.patch("json2vars_setter.features.matrix_update.save_json_file")
 
     mock_get_fetcher = mocker.patch(
-        "json2vars_setter.update_matrix_dynamic.get_version_fetcher"
+        "json2vars_setter.features.matrix_update.get_version_fetcher"
     )
     mock_get_fetcher.return_value = MockVersionFetcher(stable="3.11", latest="3.12")
 
@@ -541,7 +505,7 @@ def test_real_backup_creation(temp_json_file: str) -> None:
         with pytest.MonkeyPatch.context() as mp:
             # Patch get_version_fetcher
             mp.setattr(
-                "json2vars_setter.update_matrix_dynamic.get_version_fetcher",
+                "json2vars_setter.features.matrix_update.get_version_fetcher",
                 lambda lang: MockVersionFetcher(stable="3.11", latest="3.12"),
             )
 

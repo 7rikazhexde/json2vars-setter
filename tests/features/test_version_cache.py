@@ -9,10 +9,9 @@ from typing import Any, Dict, Generator, Optional
 import pytest
 from pytest_mock import MockFixture
 
-from json2vars_setter.cache_version_info import (
+from json2vars_setter.features.version_cache import (
     VersionCache,
     generate_version_template,
-    get_version_fetcher,
     main,
     update_versions,
 )
@@ -201,7 +200,7 @@ def test_version_cache_get_version_count(temp_cache_file: str) -> None:
 def test_version_cache_save(mocker: MockFixture) -> None:
     """Test save method"""
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         cache_file = Path(temp_dir) / "cache.json"
@@ -360,43 +359,12 @@ def test_version_cache_merge_versions() -> None:
         assert cache.data["languages"]["python"]["stable"] == "3.10.0"
 
 
-def test_get_version_fetcher(mocker: MockFixture) -> None:
-    """Test get_version_fetcher returns correct fetcher for each language"""
-    # Set up mocks for each fetcher
-    mock_python = mocker.patch(
-        "json2vars_setter.cache_version_info.PythonVersionFetcher"
-    )
-    mock_nodejs = mocker.patch(
-        "json2vars_setter.cache_version_info.NodejsVersionFetcher"
-    )
-    mock_ruby = mocker.patch("json2vars_setter.cache_version_info.RubyVersionFetcher")
-    mock_go = mocker.patch("json2vars_setter.cache_version_info.GoVersionFetcher")
-    mock_rust = mocker.patch("json2vars_setter.cache_version_info.RustVersionFetcher")
-
-    # Set return values
-    mock_python.return_value = mock_python
-    mock_nodejs.return_value = mock_nodejs
-    mock_ruby.return_value = mock_ruby
-    mock_go.return_value = mock_go
-    mock_rust.return_value = mock_rust
-
-    assert get_version_fetcher("python") == mock_python
-    assert get_version_fetcher("nodejs") == mock_nodejs
-    assert get_version_fetcher("ruby") == mock_ruby
-    assert get_version_fetcher("go") == mock_go
-    assert get_version_fetcher("rust") == mock_rust
-
-    # Test unsupported language
-    with pytest.raises(ValueError, match="Unsupported language: invalid"):
-        get_version_fetcher("invalid")
-
-
 def test_update_versions(mocker: MockFixture) -> None:
     """Test update_versions function"""
     # Mock VersionCache
     mock_cache = mocker.MagicMock()
     mocker.patch(
-        "json2vars_setter.cache_version_info.VersionCache", return_value=mock_cache
+        "json2vars_setter.features.version_cache.VersionCache", return_value=mock_cache
     )
 
     # Setup mock merge_versions to return some changes
@@ -414,12 +382,12 @@ def test_update_versions(mocker: MockFixture) -> None:
         ],
     )
     mocker.patch(
-        "json2vars_setter.cache_version_info.get_version_fetcher",
+        "json2vars_setter.features.version_cache.get_version_fetcher",
         return_value=mock_fetcher,
     )
 
     # Mock logger
-    mocker.patch("json2vars_setter.cache_version_info.logger")
+    mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test update_versions for multiple languages
     result = update_versions(
@@ -454,7 +422,7 @@ def test_update_versions(mocker: MockFixture) -> None:
     # Test with exception in fetcher
     mock_fetcher.fetch_versions.side_effect = Exception("Test error")
     mocker.patch(
-        "json2vars_setter.cache_version_info.get_version_fetcher",
+        "json2vars_setter.features.version_cache.get_version_fetcher",
         return_value=mock_fetcher,
     )
 
@@ -464,7 +432,7 @@ def test_update_versions(mocker: MockFixture) -> None:
     # Test with rate limit error
     mock_fetcher.fetch_versions.side_effect = Exception("rate limit exceeded")
     mocker.patch(
-        "json2vars_setter.cache_version_info.get_version_fetcher",
+        "json2vars_setter.features.version_cache.get_version_fetcher",
         return_value=mock_fetcher,
     )
 
@@ -543,10 +511,12 @@ def test_main_function(mocker: MockFixture) -> None:
     args.verbose = False
 
     # Mock update_versions and generate_version_template
-    mock_update = mocker.patch("json2vars_setter.cache_version_info.update_versions")
+    mock_update = mocker.patch(
+        "json2vars_setter.features.version_cache.update_versions"
+    )
     mock_update.return_value = {"cache_data": {"languages": {}}}
     mock_generate = mocker.patch(
-        "json2vars_setter.cache_version_info.generate_version_template"
+        "json2vars_setter.features.version_cache.generate_version_template"
     )
 
     # Test main function
@@ -641,9 +611,11 @@ def test_main_with_force_flag(mocker: MockFixture) -> None:
     mocker.patch.object(Path, "exists", return_value=True)
 
     # Mock update_versions
-    mock_update = mocker.patch("json2vars_setter.cache_version_info.update_versions")
+    mock_update = mocker.patch(
+        "json2vars_setter.features.version_cache.update_versions"
+    )
     mock_update.return_value = {"cache_data": {"languages": {}}}
-    mocker.patch("json2vars_setter.cache_version_info.generate_version_template")
+    mocker.patch("json2vars_setter.features.version_cache.generate_version_template")
 
     main()
 
@@ -699,12 +671,14 @@ def test_main_with_verbose(mocker: MockFixture) -> None:
     args.verbose = True
 
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Mock update_versions
-    mock_update = mocker.patch("json2vars_setter.cache_version_info.update_versions")
+    mock_update = mocker.patch(
+        "json2vars_setter.features.version_cache.update_versions"
+    )
     mock_update.return_value = {"cache_data": {"languages": {}}}
-    mocker.patch("json2vars_setter.cache_version_info.generate_version_template")
+    mocker.patch("json2vars_setter.features.version_cache.generate_version_template")
 
     main()
 
@@ -739,12 +713,14 @@ def test_main_nonexistent_cache(mocker: MockFixture) -> None:
     mocker.patch.object(Path, "exists", return_value=False)
 
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Mock update_versions
-    mock_update = mocker.patch("json2vars_setter.cache_version_info.update_versions")
+    mock_update = mocker.patch(
+        "json2vars_setter.features.version_cache.update_versions"
+    )
     mock_update.return_value = {"cache_data": {"languages": {}}}
-    mocker.patch("json2vars_setter.cache_version_info.generate_version_template")
+    mocker.patch("json2vars_setter.features.version_cache.generate_version_template")
 
     main()
 
@@ -788,7 +764,7 @@ def test_main_integration(mocker: MockFixture) -> None:
     # Mock get_version_fetcher to return our mock fetcher
     mock_fetcher = MockVersionFetcher(stable="3.10.0", latest="3.11.0")
     mocker.patch(
-        "json2vars_setter.cache_version_info.get_version_fetcher",
+        "json2vars_setter.features.version_cache.get_version_fetcher",
         return_value=mock_fetcher,
     )
 
@@ -817,12 +793,12 @@ def test_main_integration(mocker: MockFixture) -> None:
 def test_generate_version_template_with_existing_mock(mocker: MockFixture) -> None:
     """Test the behavior of generate_version_template using mocks"""
     # Mock json.dumps within the module
-    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_dumps = mocker.patch("json2vars_setter.features.version_cache.json.dumps")
     # Mock file opening
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     # Mock json.load for existing file
     mock_load = mocker.patch(
-        "json2vars_setter.cache_version_info.json.load",
+        "json2vars_setter.features.version_cache.json.load",
         return_value={
             "os": ["ubuntu-latest"],
             "versions": {
@@ -835,7 +811,7 @@ def test_generate_version_template_with_existing_mock(mocker: MockFixture) -> No
     # Mock Path.exists to simulate an existing file
     mocker.patch("pathlib.Path.exists", return_value=True)
     # Mock logger for debugging and verification
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data
     data: Dict[str, Any] = {
@@ -947,11 +923,11 @@ def test_merge_versions_edge_cases() -> None:
 def test_generate_template_empty_releases(mocker: MockFixture) -> None:
     """Test template generation from an empty release list"""
     # Mock json.dumps within the module
-    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_dumps = mocker.patch("json2vars_setter.features.version_cache.json.dumps")
     # Mock file opening
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     # Mock logger for debugging
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data with empty releases
     empty_release_data: Dict[str, Any] = {
@@ -979,11 +955,11 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
     """Test template generation from data containing None values"""
     # Case 1: latest=None, stable=None
     # Mock json.dumps within the module
-    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_dumps = mocker.patch("json2vars_setter.features.version_cache.json.dumps")
     # Mock file opening
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     none_values_data: Dict[str, Any] = {
         "languages": {
@@ -1008,9 +984,9 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
 
     # Case 2: latest=None, stable present
     # Reset mocks for next case
-    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_dumps = mocker.patch("json2vars_setter.features.version_cache.json.dumps")
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     none_latest_data: Dict[str, Any] = {
         "languages": {
@@ -1038,9 +1014,9 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
 
     # Case 3: stable=None, latest present
     # Reset mocks for next case
-    mock_dumps = mocker.patch("json2vars_setter.cache_version_info.json.dumps")
+    mock_dumps = mocker.patch("json2vars_setter.features.version_cache.json.dumps")
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     none_stable_data: Dict[str, Any] = {
         "languages": {
@@ -1237,11 +1213,13 @@ def test_main_function_additional_scenarios(mocker: MockFixture) -> None:
     args.verbose = True
 
     # Set up mocks
-    mock_update = mocker.patch("json2vars_setter.cache_version_info.update_versions")
-    mock_generate = mocker.patch(
-        "json2vars_setter.cache_version_info.generate_version_template"
+    mock_update = mocker.patch(
+        "json2vars_setter.features.version_cache.update_versions"
     )
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_generate = mocker.patch(
+        "json2vars_setter.features.version_cache.generate_version_template"
+    )
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Mock Path.exists
     mocker.patch.object(Path, "exists", return_value=True)
@@ -1365,7 +1343,7 @@ def test_generate_version_template_output_count(
     in the output template (lines 543-546).
     """
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Create test data with many versions
     cache_data: Dict[str, Any] = {
@@ -1476,7 +1454,7 @@ def test_generate_version_template_existing_file_error_handling(
     output_file = tmp_path / "output_template.json"
 
     # Prepare mocked logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Call the function
     generate_version_template(
@@ -1502,7 +1480,7 @@ def test_generate_version_template_with_no_existing_file(mocker: MockFixture) ->
     Covers lines 469-474
     """
     # Prepare mocked logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Mock the path for a non-existent template file
     non_existent_file = Path("non_existent_template.json")
@@ -1557,7 +1535,7 @@ def test_generate_version_template_multiline_logging_paths(mocker: MockFixture) 
     Covers lines 527-528
     """
     # Prepare mocked logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Complete existing template data
     existing_data: Dict[str, Any] = {
@@ -1640,7 +1618,7 @@ def test_generate_version_template_keep_existing_no_recent_releases(
     Covers lines 527-528
     """
     # Prepare mocked logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Create existing template data
     existing_data = {
@@ -1903,7 +1881,7 @@ def test_generate_version_template_missing_branches(
     - 505->509: When latest equals stable (duplicate avoidance)
     """
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data setup
     cache_data: Dict[str, Any] = {
@@ -1938,7 +1916,7 @@ def test_generate_version_template_missing_branches(
         json.dump(existing_data, f)
 
     # Call the function
-    from json2vars_setter.cache_version_info import generate_version_template
+    from json2vars_setter.features.version_cache import generate_version_template
 
     generate_version_template(
         cache_data=cache_data,
@@ -1995,7 +1973,7 @@ def test_generate_version_template_empty_existing(
     Additional test to ensure coverage with empty existing_data
     """
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data
     cache_data: Dict[str, Any] = {
@@ -2023,7 +2001,7 @@ def test_generate_version_template_empty_existing(
         json.dump(existing_data, f)
 
     # Call the function
-    from json2vars_setter.cache_version_info import generate_version_template
+    from json2vars_setter.features.version_cache import generate_version_template
 
     generate_version_template(
         cache_data=cache_data,
@@ -2056,7 +2034,7 @@ def test_generate_version_template_uncovered_branches(
     When a version in recent_releases is already in the list (duplicate skipped)
     """
     # Mock logger
-    mock_logger = mocker.patch("json2vars_setter.cache_version_info.logger")
+    mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data setup
     cache_data: Dict[str, Any] = {
@@ -2080,7 +2058,7 @@ def test_generate_version_template_uncovered_branches(
     output_file = tmp_path / "output_template.json"
 
     # Call the function
-    from json2vars_setter.cache_version_info import generate_version_template
+    from json2vars_setter.features.version_cache import generate_version_template
 
     generate_version_template(
         cache_data=cache_data,

@@ -172,7 +172,7 @@ Add the `--verbose` flag to see detailed logs:
 ```yaml
 - name: Debug cache version info
   run: |
-    python ${{ github.action_path }}/json2vars_setter/cache_version_info.py --verbose
+    python ${{ github.action_path }}/json2vars_setter/features/version_cache.py --verbose
 ```
 
 Or use the built-in debug output:
@@ -192,11 +192,11 @@ Or use the built-in debug output:
 You can test the scripts locally before using them in GitHub Actions:
 
 ```bash
-# Test cache_version_info.py
-python path/to/cache_version_info.py --template-only --verbose
+# Test version_cache.py
+python path/to/version_cache.py --template-only --verbose
 
-# Test update_matrix_dynamic.py
-python path/to/update_matrix_dynamic.py --json-file ./matrix.json --all stable --dry-run
+# Test matrix_update.py
+python path/to/matrix_update.py --json-file ./matrix.json --all stable --dry-run
 ```
 
 ### Inspect Generated Files

@@ -1,6 +1,6 @@
 # JSON to Variables
 
-The JSON to Variables Parser (`json_to_github_output.py`) is the core component of the json2vars-setter action. It reads a JSON configuration file and sets its values as output variables in GitHub Actions workflows.
+The JSON to Variables Parser (`github_output.py`) is the core component of the json2vars-setter action. It reads a JSON configuration file and sets its values as output variables in GitHub Actions workflows.
 
 ## Overview
 
@@ -8,7 +8,7 @@ This component serves as the foundation of the entire action, transforming stati
 
 ```mermaid
 graph LR
-    A[JSON File] -->|Read| B[json_to_github_output.py]
+    A[JSON File] -->|Read| B[github_output.py]
     B -->|Parse| C[Extract Values]
     C -->|Format| D[Set GitHub Outputs]
     D -->|Available in| E[Workflow Steps]
@@ -207,7 +207,7 @@ For direct access to specific array elements:
 
 ## Technical Details
 
-The `json_to_github_output.py` script:
+The `github_output.py` script:
 
 1. Accepts a JSON file path as input
 2. Uses Python's `json` module to parse the file

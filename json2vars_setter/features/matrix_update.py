@@ -9,14 +9,10 @@ import json
 import logging
 import os
 import sys
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
-from json2vars_setter.version.core.base import BaseVersionFetcher, VersionInfo
-from json2vars_setter.version.fetchers.go import GoVersionFetcher
-from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
-from json2vars_setter.version.fetchers.python import PythonVersionFetcher
-from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
-from json2vars_setter.version.fetchers.rust import RustVersionFetcher
+from json2vars_setter.version.core.base import VersionInfo
+from json2vars_setter.version.registry import get_version_fetcher
 
 # Set up logging
 logging.basicConfig(
@@ -24,7 +20,7 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
-logger = logging.getLogger("update_matrix_dynamic")
+logger = logging.getLogger("matrix_update")
 
 
 class VersionStrategy:
@@ -38,34 +34,6 @@ class VersionStrategy:
     def is_valid(cls, strategy: str) -> bool:
         """Check if the strategy is valid"""
         return strategy in [cls.STABLE, cls.LATEST, cls.BOTH]
-
-
-def get_version_fetcher(language: str) -> BaseVersionFetcher:
-    """
-    Get the appropriate version fetcher for the language
-
-    Args:
-        language: Programming language name
-
-    Returns:
-        Instantiated version fetcher for the specified language
-
-    Raises:
-        ValueError: If language is not supported
-    """
-    fetcher_classes = {
-        "python": (PythonVersionFetcher, "python", "cpython"),
-        "nodejs": (NodejsVersionFetcher, "nodejs", "node"),
-        "ruby": (RubyVersionFetcher, "ruby", "ruby"),
-        "go": (GoVersionFetcher, "golang", "go"),
-        "rust": (RustVersionFetcher, "rust-lang", "rust"),
-    }
-
-    if language not in fetcher_classes:
-        raise ValueError(f"Unsupported language: {language}")
-
-    fetcher_class, owner, repo = fetcher_classes[language]
-    return fetcher_class()
 
 
 def get_versions_from_strategy(version_info: VersionInfo, strategy: str) -> List[str]:
@@ -242,8 +210,8 @@ def update_matrix_json(
         logger.info(f"  - Set to: {', '.join(info['versions'])}")
 
 
-def main() -> None:
-    """Main function to parse arguments and update JSON file"""
+def build_parser() -> argparse.ArgumentParser:
+    """Build the argument parser for the update-matrix command"""
     parser = argparse.ArgumentParser(
         description="""
 Dynamically update matrix.json with latest or stable versions.
@@ -253,16 +221,16 @@ without changing its structure.
 
 Examples:
   # Update all languages to latest versions with default JSON file
-  python json2vars_setter/update_matrix_dynamic.py --all latest
+  python -m json2vars_setter.features.matrix_update --all latest
 
   # Update specific languages with custom JSON file
-  python json2vars_setter/update_matrix_dynamic.py --json-file custom_matrix.json --python stable --nodejs latest
+  python -m json2vars_setter.features.matrix_update --json-file custom_matrix.json --python stable --nodejs latest
 
   # Dry run with all languages and custom JSON file
-  python json2vars_setter/update_matrix_dynamic.py --json-file ./matrix.json --all both --dry-run
+  python -m json2vars_setter.features.matrix_update --json-file ./matrix.json --all both --dry-run
 
   # Verbose output with specific languages and default JSON file
-  python json2vars_setter/update_matrix_dynamic.py --ruby stable --go latest -v
+  python -m json2vars_setter.features.matrix_update --ruby stable --go latest -v
         """,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -308,7 +276,13 @@ Examples:
         "--verbose", "-v", action="store_true", help="Enable verbose logging"
     )
 
-    args = parser.parse_args()
+    return parser
+
+
+def main(argv: Optional[List[str]] = None) -> None:
+    """Parse arguments and update the matrix JSON file"""
+    parser = build_parser()
+    args = parser.parse_args(argv)
 
     # Set log level based on verbosity
     if args.verbose:
