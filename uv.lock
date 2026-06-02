@@ -406,7 +406,7 @@ wheels = [
 
 [[package]]
 name = "json2vars-setter"
-version = "1.0.5"
+version = "1.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "requests" },
