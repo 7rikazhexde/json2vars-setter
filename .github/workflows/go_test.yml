@@ -23,7 +23,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.0.2
+        uses: 7rikazhexde/json2vars-setter@v1.0.4
         with:
           json-file: examples/go/go_project_matrix.json
 
@@ -138,9 +138,9 @@ jobs:
         id: go_test
         working-directory: ./examples/go
         shell: bash
-        run: |
-          output="$(go test -v ./...)"
-          echo "${output}"
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: go test -v ./...
 
   update_badge:
     needs: run_tests
