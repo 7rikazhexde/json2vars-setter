@@ -4,7 +4,7 @@ This is a Ruby implementation example for parsing JSON configuration files in Gi
 
 ## Requirements
 
-- Ruby >= 3.0.0 (managed with rbenv)
+- Ruby >= 3.3.0 (managed with rbenv)
 - Bundler
 
 ## Project Structure
@@ -104,14 +104,10 @@ Please check [Ruby Releases](https://www.ruby-lang.org/en/downloads/releases/) a
     ],
     "versions": {
         "ruby": [
-            "3.0.6",
-            "3.1.6",
-            "3.2.6",
             "3.3.6",
+            "3.3.7",
             "3.4.0",
             "3.4.1",
-            "3.3.7",
-            "3.2.7",
             "3.4.2"
         ]
     },
