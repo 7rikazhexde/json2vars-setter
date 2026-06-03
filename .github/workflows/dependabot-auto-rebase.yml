@@ -1,0 +1,100 @@
+name: Auto-rebase Dependabot PRs
+
+# Why this exists:
+# When one pull request is merged into main, every other open PR falls behind
+# main. For Dependabot PRs this usually means a conflict on a lockfile
+# (package-lock.json / Gemfile.lock / go.sum / Cargo.lock / uv.lock), so the
+# remaining PRs can no longer be merged without a manual rebase. This workflow
+# asks Dependabot to rebase each of its still-open PRs automatically whenever
+# main advances, so you only ever have to click "Merge" - never rebase by hand.
+#
+# Why a GitHub App token (and NOT the built-in GITHUB_TOKEN):
+# Comments posted with GITHUB_TOKEN are attributed to github-actions[bot], and
+# GitHub deliberately does NOT let that token trigger Dependabot - so a
+# "@dependabot rebase" comment made with GITHUB_TOKEN is silently ignored.
+# A GitHub App installation token is a distinct identity that Dependabot does
+# act on, while remaining the safest available credential:
+#   - Minted fresh for each run by actions/create-github-app-token and revoked
+#     automatically when the job ends (short-lived, no standing secret value).
+#   - Scoped to this single repository and to exactly one permission
+#     (Pull requests: write) - far narrower and safer than a personal access
+#     token, which is long-lived and tied to a human account.
+# The App token can ONLY comment on PRs; it has no contents/write access, so it
+# cannot push to any branch or merge anything. The rebase itself is performed by
+# Dependabot using its own credentials, so manifests AND lockfiles are
+# regenerated correctly. Merging stays 100% manual.
+#
+# One-time setup required (see also docs):
+#   1. Create a GitHub App (Settings > Developer settings > GitHub Apps).
+#      Repository permissions: Pull requests = Read and write. Nothing else.
+#   2. Install the App on the 7rikazhexde/json2vars-setter repository only.
+#   3. Add two repository secrets:
+#        DEPENDABOT_REBASE_APP_ID       = the App's "App ID"
+#        DEPENDABOT_REBASE_PRIVATE_KEY  = the App's generated private key (.pem)
+
+on:
+  push:
+    branches:
+      - main
+
+# If several commits land on main in quick succession, rebase once for the
+# latest state instead of stacking duplicate requests.
+concurrency:
+  group: dependabot-auto-rebase
+  cancel-in-progress: true
+
+# No top-level permissions are needed: the job acts solely through the
+# short-lived GitHub App token minted below, not through GITHUB_TOKEN.
+permissions: {}
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    steps:
+      # Allow this workflow to be merged before the App credentials are added:
+      # if they are missing, skip quietly instead of failing on every push.
+      - name: Check that App credentials are configured
+        id: check
+        env:
+          APP_ID: ${{ secrets.DEPENDABOT_REBASE_APP_ID }}
+        run: |
+          if [ -z "${APP_ID}" ]; then
+            echo "DEPENDABOT_REBASE_APP_ID is not set; skipping (see setup notes)."
+            echo "configured=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "configured=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Mint a short-lived GitHub App token
+        id: app-token
+        if: steps.check.outputs.configured == 'true'
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.DEPENDABOT_REBASE_APP_ID }}
+          private-key: ${{ secrets.DEPENDABOT_REBASE_PRIVATE_KEY }}
+
+      - name: Ask Dependabot to rebase its open PRs
+        if: steps.check.outputs.configured == 'true'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          # Collect every open PR opened by Dependabot. Filtering on the author
+          # login (rather than --author) keeps this robust regardless of how the
+          # bot account is referenced.
+          mapfile -t prs < <(
+            gh pr list \
+              --state open \
+              --json number,author \
+              --jq '.[] | select(.author.login == "dependabot[bot]") | .number'
+          )
+
+          if [ "${#prs[@]}" -eq 0 ]; then
+            echo "No open Dependabot PRs to rebase."
+            exit 0
+          fi
+
+          for pr in "${prs[@]}"; do
+            echo "Requesting rebase for PR #${pr}"
+            gh pr comment "${pr}" --body "@dependabot rebase"
+          done
