@@ -1,0 +1,67 @@
+name: semantic-release
+
+# Automated, gitmoji-driven releases (replaces update-version-and-release.yml).
+#
+# semantic-release-gitmoji reads the gitmoji in commit messages since the last
+# tag to decide the next version (:boom: -> major, :sparkles: -> minor, fixes
+# like :bug:/:lock:/:wrench: -> patch). It then, via the steps below:
+#   - bumps the version in pyproject.toml (+ re-locks uv.lock),
+#   - syncs every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference to the
+#     new version (.github/scripts/sync-version-refs.sh; see Versioning Rule),
+#   - updates CHANGELOG.md,
+#   - commits those back to main, and
+#   - creates the vX.Y.Z tag + GitHub Release.
+#
+# Trigger is manual (workflow_dispatch) to keep release timing under control;
+# switch to `on: push: branches: [main]` for fully continuous releases.
+# Uses PAT_FOR_PUSHES so the created tag can trigger downstream workflows
+# (a GITHUB_TOKEN-created tag does not trigger other workflows).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: semantic-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_FOR_PUSHES }}
+          persist-credentials: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          enable-cache: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 20
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_FOR_PUSHES }}
+        run: |
+          npx --yes \
+            -p semantic-release@25.0.3 \
+            -p semantic-release-gitmoji@1.6.9 \
+            -p @semantic-release/exec@7.1.0 \
+            -p @semantic-release/git@10.0.1 \
+            -p @semantic-release/changelog@6.0.3 \
+            semantic-release
