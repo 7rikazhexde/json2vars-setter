@@ -20,6 +20,25 @@ repos:
       # yaml syntax check
       - id: check-yaml
 
+  # https://github.com/abravalheri/validate-pyproject
+  # Validate pyproject.toml against the PEP 517/621 schema
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: v0.25
+    hooks:
+      - id: validate-pyproject
+
+  # https://github.com/crate-ci/typos
+  # Source-code spell checker (config in pyproject.toml [tool.typos])
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.47.1
+    hooks:
+      - id: typos
+
+  # NOTE: gitleaks secret scanning runs in CI only (.github/workflows/modern-quality.yml).
+  # It is intentionally NOT a pre-commit hook: the golang/OpenSSL-linked gitleaks
+  # binary fails to run on this Windows dev environment, and with fail_fast: true a
+  # broken hook would block every local commit.
+
   # https://github.com/shellcheck-py/shellcheck-py?tab=readme-ov-file#usage
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1

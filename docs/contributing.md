@@ -115,7 +115,7 @@ Before starting any work, please check existing issues or create a new one to di
     Branches must follow the format: `<type>-<short-description>`.  
     Use the following prefixes based on the purpose of the branch:
 
-    - `feature-<description>`: For implementing new features (e.g., feature-newlang-supprt).
+    - `feature-<description>`: For implementing new features (e.g., feature-newlang-support).
     - `bugfix-<description>`: For fixing bugs (e.g., bugfix-fetch-python-version-error).
     - `docs-<description>`: For documentation updates (e.g., docs-update-readme).
     - `refactor-<description>`: For code refactoring without functional changes (e.g., refactor-cleanup-utils).
@@ -220,7 +220,15 @@ Before starting any work, please check existing issues or create a new one to di
       - [markdownlint](https://github.com/DavidAnson/markdownlint) for Markdown files
       - [actionlint](https://github.com/rhysd/actionlint) for GitHub Actions workflows
       - [shellcheck](https://github.com/shellcheck-py/shellcheck-py) for shell script checking
+      - [validate-pyproject](https://github.com/abravalheri/validate-pyproject) for `pyproject.toml` schema validation
+      - [typos](https://github.com/crate-ci/typos) for source-code spell checking (config in `[tool.typos]`)
 - You can run all linters at once using: `uv run pre-commit run --all-files`
+
+**Modern Quality preview (CI, advisory)**
+
+- The [`modern-quality.yml`](https://github.com/7rikazhexde/json2vars-setter/blob/main/.github/workflows/modern-quality.yml) workflow runs an extra, **non-blocking** quality/security suite on pull requests and on `main` (every analysis job is `continue-on-error`; findings appear in the run summary). pre-commit and the test workflows remain the required checks.
+- Jobs: `validate-pyproject`, `typos`, [`zizmor`](https://github.com/woodruffw/zizmor) (GitHub Actions security audit), [`ty`](https://github.com/astral-sh/ty) (Astral fast type checker — mypy stays canonical), [`pip-audit`](https://github.com/pypa/pip-audit) (dependency CVE scan), and [`gitleaks`](https://github.com/gitleaks/gitleaks) (secret scan; CI-only).
+- All `uses:` actions in `.github/workflows/**` and `action.yml` are pinned to commit SHAs (with the version as a trailing comment) for supply-chain hardening. The example `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` references stay as version tags so usage examples track the released version.
 
 **Testing** (required)
 
