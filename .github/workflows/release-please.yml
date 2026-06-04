@@ -1,0 +1,89 @@
+name: release-please
+
+# Automated releases via release-please (replaces update-version-and-release.yml).
+#
+# Flow:
+#   1. Push Conventional Commits (feat:/fix:/...) to main.
+#   2. release-please maintains a "release PR" that bumps the version in
+#      pyproject.toml and updates CHANGELOG.md.
+#   3. The "Sync action version references" step below commits the matching
+#      `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` updates (README/docs/examples)
+#      and the regenerated uv.lock INTO the same release PR, so usage examples
+#      never lag behind the tag (see the CLAUDE.md Versioning Rule).
+#   4. Merging the release PR (manually) creates the vX.Y.Z tag + GitHub Release.
+#
+# Uses PAT_FOR_PUSHES so the created tag can trigger downstream workflows
+# (a GITHUB_TOKEN-created tag does not trigger other workflows).
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_FOR_PUSHES }}
+
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          token: ${{ secrets.PAT_FOR_PUSHES }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Install uv
+        if: ${{ steps.release.outputs.pr }}
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          enable-cache: false
+
+      - name: Sync action version references into the release PR
+        # Keep every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference (README,
+        # docs, example workflows) pinned to the version being released, and keep
+        # uv.lock in sync with the bumped pyproject.toml. Runs every time the
+        # release PR is (re)created, so it self-heals after release-please force-pushes.
+        if: ${{ steps.release.outputs.pr }}
+        env:
+          PR_JSON: ${{ steps.release.outputs.pr }}
+        run: |
+          branch="$(echo "$PR_JSON" | jq -r '.headBranchName')"
+          git fetch origin "$branch"
+          git checkout "$branch"
+          new_version="$(jq -r '.["."]' .release-please-manifest.json)"
+          echo "Release PR branch: ${branch} | new version: ${new_version}"
+
+          # Keep uv.lock's project version aligned with the bumped pyproject.toml
+          uv lock
+
+          # Pin usage examples to the version being released
+          mapfile -t files < <(grep -rlE "7rikazhexde/json2vars-setter@v[0-9]+\.[0-9]+\.[0-9]+" --include="*.md" --include="*.yml" .)
+          if [ "${#files[@]}" -gt 0 ]; then
+            sed -E -i "s#(7rikazhexde/json2vars-setter@v)[0-9]+\.[0-9]+\.[0-9]+#\1${new_version}#g" "${files[@]}"
+            printf 'Synced action version reference in:\n%s\n' "$(printf '  %s\n' "${files[@]}")"
+          else
+            echo "No action version references found to sync."
+          fi
+
+          if git diff --quiet; then
+            echo "Release PR already in sync; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: sync uv.lock and action version references to v${new_version}"
+          git push origin "HEAD:${branch}"

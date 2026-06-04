@@ -125,25 +125,26 @@ Before starting any work, please check existing issues or create a new one to di
     - Follow my [coding guidelines](#coding-guidelines)
     - Keep changes focused on a single issue/feature
 
-3. **Commit your changes** using [gitmoji](https://gitmoji.dev/):
+3. **Commit your changes** using [Conventional Commits](https://www.conventionalcommits.org/):
 
     ```bash
-    git commit -m "✨ Add new feature"
-    git commit -m "🐛 Fix bug in function X"
-    git commit -m "📝 Update documentation"
+    git commit -m "feat: add new feature"
+    git commit -m "fix: fix bug in function X"
+    git commit -m "docs: update documentation"
     ```
 
-    Recommended gitmoji conventions:
+    Releases are automated with [release-please](https://github.com/googleapis/release-please), which parses these commit types to compute the next version and the changelog, so the prefix matters:
 
-    - ✨ (`:sparkles:`) - New feature
-    - 🐛 (`:bug:`) - Bug fix
-    - 📝 (`:memo:`) - Documentation updates
-    - ♻️ (`:recycle:`) - Code refactoring
-    - 🚀 (`:rocket:`) - Performance improvements
-    - 🎨 (`:art:`) - Code style/structure improvements
-    - 🧪 (`:test_tube:`) - Add or update tests
+    - `feat:` - New feature (bumps the **minor** version)
+    - `fix:` - Bug fix (bumps the **patch** version)
+    - `feat!:` / `fix!:` or a `BREAKING CHANGE:` footer - Breaking change (bumps the **major** version)
+    - `docs:` - Documentation updates
+    - `refactor:` - Code refactoring
+    - `perf:` - Performance improvements
+    - `test:` - Add or update tests
+    - `chore:` / `ci:` / `build:` - Tooling, CI, and build changes
 
-    Write clear commit messages that explain what changes were made and why.
+    A gitmoji may optionally follow the type (e.g. `feat: ✨ add new feature`). Write clear commit messages that explain what changes were made and why.
 
 ### Testing Changes
 
