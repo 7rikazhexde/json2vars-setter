@@ -1417,7 +1417,7 @@
 Branches must follow the format: <code>&lt;type&gt;-&lt;short-description&gt;</code>.<br />
 Use the following prefixes based on the purpose of the branch:</p>
 <ul>
-<li><code>feature-&lt;description&gt;</code>: For implementing new features (e.g., feature-newlang-supprt).</li>
+<li><code>feature-&lt;description&gt;</code>: For implementing new features (e.g., feature-newlang-support).</li>
 <li><code>bugfix-&lt;description&gt;</code>: For fixing bugs (e.g., bugfix-fetch-python-version-error).</li>
 <li><code>docs-&lt;description&gt;</code>: For documentation updates (e.g., docs-update-readme).</li>
 <li><code>refactor-&lt;description&gt;</code>: For code refactoring without functional changes (e.g., refactor-cleanup-utils).</li>
@@ -1538,9 +1538,17 @@ Use the following prefixes based on the purpose of the branch:</p>
 <li><a href="https://github.com/DavidAnson/markdownlint">markdownlint</a> for Markdown files</li>
 <li><a href="https://github.com/rhysd/actionlint">actionlint</a> for GitHub Actions workflows</li>
 <li><a href="https://github.com/shellcheck-py/shellcheck-py">shellcheck</a> for shell script checking</li>
+<li><a href="https://github.com/abravalheri/validate-pyproject">validate-pyproject</a> for <code>pyproject.toml</code> schema validation</li>
+<li><a href="https://github.com/crate-ci/typos">typos</a> for source-code spell checking (config in <code>[tool.typos]</code>)</li>
 </ul>
 </li>
 <li>You can run all linters at once using: <code>uv run pre-commit run --all-files</code></li>
+</ul>
+<p><strong>Modern Quality preview (CI, advisory)</strong></p>
+<ul>
+<li>The <a href="https://github.com/7rikazhexde/json2vars-setter/blob/main/.github/workflows/modern-quality.yml"><code>modern-quality.yml</code></a> workflow runs an extra, <strong>non-blocking</strong> quality/security suite on pull requests and on <code>main</code> (every analysis job is <code>continue-on-error</code>; findings appear in the run summary). pre-commit and the test workflows remain the required checks.</li>
+<li>Jobs: <code>validate-pyproject</code>, <code>typos</code>, <a href="https://github.com/woodruffw/zizmor"><code>zizmor</code></a> (GitHub Actions security audit), <a href="https://github.com/astral-sh/ty"><code>ty</code></a> (Astral fast type checker — mypy stays canonical), <a href="https://github.com/pypa/pip-audit"><code>pip-audit</code></a> (dependency CVE scan), and <a href="https://github.com/gitleaks/gitleaks"><code>gitleaks</code></a> (secret scan; CI-only).</li>
+<li>All <code>uses:</code> actions in <code>.github/workflows/**</code> and <code>action.yml</code> are pinned to commit SHAs (with the version as a trailing comment) for supply-chain hardening. The example <code>uses: 7rikazhexde/json2vars-setter@vX.Y.Z</code> references stay as version tags so usage examples track the released version.</li>
 </ul>
 <p><strong>Testing</strong> (required)</p>
 <ul>
