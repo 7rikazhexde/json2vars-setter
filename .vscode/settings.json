@@ -112,6 +112,6 @@
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/dependabot_prch.yml",
         ".github/workflows/prch_test_matrix_json.yml",
-        ".github/workflows/update-version-and-release.yml"
+        ".github/workflows/release-please.yml"
     ]
 }

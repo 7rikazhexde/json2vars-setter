@@ -89,7 +89,7 @@ A pluggable architecture for fetching language versions from GitHub:
 
 ## Code Conventions
 
-- **Commit messages**: Follow [gitmoji](https://gitmoji.dev/) conventions
+- **Commit messages**: Follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `refactor:`, `chore:`, `test:`, …; use `feat!:` or a `BREAKING CHANGE:` footer for breaking changes). release-please parses these to compute the next version and the changelog, so the type prefix matters. A gitmoji may optionally follow the type (e.g. `feat: :sparkles: add X`).
 - **Branch naming**: Use prefixes: `feature-`, `bugfix-`, `docs-`, `refactor-`
 - **Python version**: 3.10+ (target 3.12 for mypy)
 - **Linting**: Ruff with E, F, I rules (E402 and E501 ignored)
@@ -99,7 +99,11 @@ A pluggable architecture for fetching language versions from GitHub:
 
 ## Versioning Rule
 
-When the action version is bumped, **all usage examples must be pinned to the new version**. Every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference across `README.md`, `docs/**`, and the example workflows in `.github/workflows/**` must point to the version being released — usage examples must never lag behind the latest tag. The release workflow (`.github/workflows/update-version-and-release.yml`) automates this via its "Sync action version references" step; keep that step in sync if reference locations change, and apply the same rule for any manual version bump.
+When the action version is bumped, **all usage examples must be pinned to the new version**. Every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference across `README.md`, `docs/**`, and the example workflows in `.github/workflows/**` must point to the version being released — usage examples must never lag behind the latest tag. Releases are automated by **release-please** (`.github/workflows/release-please.yml`): its "Sync action version references into the release PR" step commits the matching `uses:` updates (and the regenerated `uv.lock`) **into the release PR**, so the references are correct at tag time. Keep that step in sync if reference locations change, and apply the same rule for any manual version bump.
+
+### Releasing (release-please)
+
+Merge Conventional Commits into `main`; release-please maintains a **release PR** that bumps `pyproject.toml`, updates `CHANGELOG.md`, and (via the sync step) `uv.lock` + usage examples. **Merging that release PR** (manually) creates the `vX.Y.Z` tag and the GitHub Release. The workflow uses `PAT_FOR_PUSHES` so the new tag can trigger downstream workflows.
 
 ## Key File Locations
 
