@@ -40,9 +40,24 @@ uv run mypy --config-file=pyproject.toml
 # Pre-commit hooks (runs all checks)
 uv run pre-commit run --all-files
 
+# Validate pyproject.toml schema / spell check (also run by pre-commit)
+uvx validate-pyproject pyproject.toml
+uvx typos            # config in [tool.typos] (excludes via files.extend-exclude)
+
 # CLI usage help
 uv run json2vars --help
 ```
+
+### Modern quality preview (`.github/workflows/modern-quality.yml`)
+
+A non-blocking CI suite (every analysis job is `continue-on-error`, results land
+in the run summary): `validate-pyproject`, `typos`, `zizmor` (Actions security
+audit), `ty` (Astral type checker — mypy stays canonical), `pip-audit` (dependency
+CVEs), and `gitleaks` (secret scan, CI-only — no `GITLEAKS_LICENSE` needed for this
+personal-account repo). pre-commit + the test workflows remain the required checks.
+All `uses:` actions in `.github/workflows/**` and `action.yml` are pinned to commit
+SHAs (with the version tag as a trailing comment) — except the self-reference
+`uses: 7rikazhexde/json2vars-setter@vX.Y.Z`, which the Versioning Rule keeps as a tag.
 
 ## Architecture
 
