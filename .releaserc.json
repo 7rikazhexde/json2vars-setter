@@ -1,0 +1,59 @@
+{
+  "branches": ["main"],
+  "tagFormat": "v${version}",
+  "plugins": [
+    [
+      "semantic-release-gitmoji",
+      {
+        "releaseRules": {
+          "major": [":boom:"],
+          "minor": [":sparkles:"],
+          "patch": [
+            ":bug:",
+            ":ambulance:",
+            ":lock:",
+            ":zap:",
+            ":rocket:",
+            ":wrench:",
+            ":recycle:",
+            ":fire:",
+            ":arrow_up:",
+            ":arrow_down:",
+            ":pushpin:",
+            ":pencil2:",
+            ":globe_with_meridians:",
+            ":alien:",
+            ":card_file_box:"
+          ]
+        }
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "uv version --no-sync ${nextRelease.version} && bash .github/scripts/sync-version-refs.sh ${nextRelease.version} && uv lock"
+      }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "pyproject.toml",
+          "uv.lock",
+          "CHANGELOG.md",
+          "README.md",
+          "docs/**/*.md",
+          ".github/workflows/*.yml"
+        ],
+        "message": ":bookmark: chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}

@@ -145,6 +145,17 @@ Before starting any work, please check existing issues or create a new one to di
 
     Write clear commit messages that explain what changes were made and why.
 
+    !!! note "Gitmoji drives the release version"
+
+        Releases are automated with [semantic-release-gitmoji](https://github.com/momocow/semantic-release-gitmoji), so the gitmoji you choose determines the next version:
+
+        - 💥 (`:boom:`) → **major** (breaking change)
+        - ✨ (`:sparkles:`) → **minor** (new feature)
+        - 🐛 `:bug:`, 🚑 `:ambulance:`, 🔒 `:lock:`, ⚡ `:zap:`, 🔧 `:wrench:`, ♻️ `:recycle:`, ⬆️ `:arrow_up:`, … → **patch**
+        - Other gitmoji (e.g. 📝 `:memo:`, 🎨 `:art:`, 🧪 `:white_check_mark:`) do **not** trigger a release.
+
+        The full mapping lives in `releaseRules` in `.releaserc.json`.
+
 ### Testing Changes
 
 !!! note "About the Testing Policy"
@@ -281,16 +292,17 @@ When working on my core components, consider the following guidelines:
 
 ## Release Process
 
-Version updates and releases are managed through an automated workflow that is only available to repository administrators (currently only me). The process involves:
+Releases are automated with [semantic-release-gitmoji](https://github.com/momocow/semantic-release-gitmoji) via the `semantic-release.yml` workflow (manually triggered by a repository administrator). The process involves:
 
 1. **Version bumping**
 
-     - Handled by the automated workflow that updates the version in relevant files
+     - The next version is derived automatically from the gitmoji of the commits since the last release (see "Gitmoji drives the release version" above)
+     - `pyproject.toml` and `uv.lock` are updated, and every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` usage example is synced to the new version
 
 2. **Creating a release**
 
-     - The workflow automatically creates a tag and a GitHub release
-     - Tags follow the format `json2vars-setter-vX.Y.Z` (e.g., `json2vars-setter-v0.2.5`)
+     - `CHANGELOG.md` is updated and the version-bump changes are committed back to `main`
+     - A tag (format `vX.Y.Z`, e.g. `v1.3.0`) and a GitHub release are created automatically
 
 3. **Documentation deployment**
 
