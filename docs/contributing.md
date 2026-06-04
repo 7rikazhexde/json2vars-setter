@@ -115,7 +115,7 @@ Before starting any work, please check existing issues or create a new one to di
     Branches must follow the format: `<type>-<short-description>`.  
     Use the following prefixes based on the purpose of the branch:
 
-    - `feature-<description>`: For implementing new features (e.g., feature-newlang-supprt).
+    - `feature-<description>`: For implementing new features (e.g., feature-newlang-support).
     - `bugfix-<description>`: For fixing bugs (e.g., bugfix-fetch-python-version-error).
     - `docs-<description>`: For documentation updates (e.g., docs-update-readme).
     - `refactor-<description>`: For code refactoring without functional changes (e.g., refactor-cleanup-utils).
