@@ -1449,6 +1449,17 @@ Use the following prefixes based on the purpose of the branch:</p>
 <li>🧪 (<code>:test_tube:</code>) - Add or update tests</li>
 </ul>
 <p>Write clear commit messages that explain what changes were made and why.</p>
+<div class="admonition note">
+<p class="admonition-title">Gitmoji drives the release version</p>
+<p>Releases are automated with <a href="https://github.com/momocow/semantic-release-gitmoji">semantic-release-gitmoji</a>, so the gitmoji you choose determines the next version:</p>
+<ul>
+<li>💥 (<code>:boom:</code>) → <strong>major</strong> (breaking change)</li>
+<li>✨ (<code>:sparkles:</code>) → <strong>minor</strong> (new feature)</li>
+<li>🐛 <code>:bug:</code>, 🚑 <code>:ambulance:</code>, 🔒 <code>:lock:</code>, ⚡ <code>:zap:</code>, 🔧 <code>:wrench:</code>, ♻️ <code>:recycle:</code>, ⬆️ <code>:arrow_up:</code>, … → <strong>patch</strong></li>
+<li>Other gitmoji (e.g. 📝 <code>:memo:</code>, 🎨 <code>:art:</code>, 🧪 <code>:white_check_mark:</code>) do <strong>not</strong> trigger a release.</li>
+</ul>
+<p>The full mapping lives in <code>releaseRules</code> in <code>.releaserc.json</code>.</p>
+</div>
 </li>
 </ol>
 <h3 id="testing-changes">Testing Changes</h3>
@@ -1597,19 +1608,20 @@ Use the following prefixes based on the purpose of the branch:</p>
 <li>Maintain backward compatibility with existing cache formats</li>
 </ul>
 <h2 id="release-process">Release Process</h2>
-<p>Version updates and releases are managed through an automated workflow that is only available to repository administrators (currently only me). The process involves:</p>
+<p>Releases are automated with <a href="https://github.com/momocow/semantic-release-gitmoji">semantic-release-gitmoji</a> via the <code>semantic-release.yml</code> workflow (manually triggered by a repository administrator). The process involves:</p>
 <ol>
 <li>
 <p><strong>Version bumping</strong></p>
 <ul>
-<li>Handled by the automated workflow that updates the version in relevant files</li>
+<li>The next version is derived automatically from the gitmoji of the commits since the last release (see "Gitmoji drives the release version" above)</li>
+<li><code>pyproject.toml</code> and <code>uv.lock</code> are updated, and every <code>uses: 7rikazhexde/json2vars-setter@vX.Y.Z</code> usage example is synced to the new version</li>
 </ul>
 </li>
 <li>
 <p><strong>Creating a release</strong></p>
 <ul>
-<li>The workflow automatically creates a tag and a GitHub release</li>
-<li>Tags follow the format <code>json2vars-setter-vX.Y.Z</code> (e.g., <code>json2vars-setter-v0.2.5</code>)</li>
+<li><code>CHANGELOG.md</code> is updated and the version-bump changes are committed back to <code>main</code></li>
+<li>A tag (format <code>vX.Y.Z</code>, e.g. <code>v1.3.0</code>) and a GitHub release are created automatically</li>
 </ul>
 </li>
 <li>
