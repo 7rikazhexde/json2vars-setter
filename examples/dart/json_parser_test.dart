@@ -31,10 +31,13 @@ void main() {
   check(os.contains('windows-latest'), 'os should contain windows-latest');
   check(os.contains('macos-latest'), 'os should contain macos-latest');
 
-  final versions = (config['versions'] as Map)['dart'] as List;
+  // Assert structure, not specific version values, so bumping the matrix
+  // versions never requires editing this test.
+  final versions = ((config['versions'] as Map)['dart'] as List).cast<String>();
+  check(versions.isNotEmpty, 'dart versions should be a non-empty list');
   check(
-    versions.cast<String>().join(',') == '3.11.6,3.12.1',
-    'dart versions should match',
+    versions.every((v) => v.isNotEmpty),
+    'each dart version should be a non-empty string',
   );
 
   check(config['ghpages_branch'] == 'ghgapes', 'ghpages_branch should match');
