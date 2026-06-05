@@ -16,7 +16,7 @@
         <link rel="prev" href="../../examples/troubleshooting/">
       
       
-        <link rel="next" href="../../contributing/">
+        <link rel="next" href="../version-sources/">
       
       
         
@@ -652,6 +652,8 @@
       
         
       
+        
+      
     
     
     
@@ -942,6 +944,33 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../version-sources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  Version Sources
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -1322,6 +1351,13 @@
 <td>Same valid values as <code>update-strategy</code></td>
 </tr>
 <tr>
+<td><code>java-strategy</code></td>
+<td>Update strategy for Java versions</td>
+<td style="text-align: center;">✗</td>
+<td style="text-align: center;">-</td>
+<td>Same valid values as <code>update-strategy</code></td>
+</tr>
+<tr>
 <td><code>dry-run</code></td>
 <td>Run in dry-run mode without updating the JSON file</td>
 <td style="text-align: center;">✗</td>
@@ -1479,6 +1515,11 @@
 <td><code>["8.0.100", "9.0.100"]</code></td>
 </tr>
 <tr>
+<td><code>versions_java</code></td>
+<td>List of Java versions</td>
+<td><code>["21", "17", "11"]</code></td>
+</tr>
+<tr>
 <td><code>ghpages_branch</code></td>
 <td>GitHub Pages branch name</td>
 <td><code>"gh-pages"</code></td>
@@ -1530,7 +1571,7 @@
 <span class="normal"><a href="#__codelineno-0-7">7</a></span>
 <span class="normal"><a href="#__codelineno-0-8">8</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set variables with dynamic update</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json2vars</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.4.0</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.5.0</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="w">    </span><span class="nt">json-file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.github/json2vars-setter/sample/matrix.json</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w">    </span><span class="nt">update-matrix</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span>
@@ -1548,7 +1589,7 @@
 <span class="normal"><a href="#__codelineno-1-8">8</a></span>
 <span class="normal"><a href="#__codelineno-1-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set variables with caching</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json2vars</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.4.0</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.5.0</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="nt">json-file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.github/json2vars-setter/sample/matrix.json</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w">    </span><span class="nt">use-cache</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span>
@@ -1563,7 +1604,7 @@
 <span class="normal"><a href="#__codelineno-2-4">4</a></span>
 <span class="normal"><a href="#__codelineno-2-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set variables from static JSON</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json2vars</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.4.0</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.5.0</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
 <a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="nt">json-file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.github/json2vars-setter/sample/matrix.json</span>
 </code></pre></div></td></tr></table></div>
@@ -1698,13 +1739,13 @@
         
         
           
-          <a href="../../contributing/" class="md-footer__link md-footer__link--next" aria-label="Next: Contributing">
+          <a href="../version-sources/" class="md-footer__link md-footer__link--next" aria-label="Next: Version Sources">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Contributing
+                Version Sources
               </div>
             </div>
             <div class="md-footer__button md-icon">
