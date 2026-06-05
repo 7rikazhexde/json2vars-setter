@@ -40,6 +40,7 @@ The dynamic-update strategies map onto these fields:
 | .NET (C#) | `dotnet/sdk` tags | newest SDK | previous **major** | `actions/setup-dotnet` |
 | Java | **Adoptium API** | newest **feature** | newest **LTS** | `actions/setup-java` |
 | Deno | `denoland/deno` tags | newest stable | previous minor | `denoland/setup-deno` |
+| Bun | `oven-sh/bun` tags | newest stable | previous minor | `oven-sh/setup-bun` |
 
 ## Per-language details
 
@@ -136,6 +137,15 @@ The dynamic-update strategies map onto these fields:
 - **Characteristics:** the `v` prefix is stripped; `stable` is the previous minor of
   `latest`. Example matrices use the channel form (`"v1.x"`, `"v2.x"`) that
   `denoland/setup-deno` accepts.
+
+### Bun — `oven-sh/bun`
+
+- **Source:** tags of the official Bun repository (`bun-vX.Y.Z`).
+- **Why:** Bun's release tags are a clean, direct fit for the GitHub-tags fetcher.
+- **Characteristics:** only tags matching `bun-vX.Y.Z` are kept (`canary` and the legacy
+  `v0.x` tags are excluded); the `bun-v` prefix is stripped; `stable` is the previous
+  minor of `latest`. Example matrices use the form (`"1.2.x"`, `"1.3.x"`) that
+  `oven-sh/setup-bun` accepts.
 
 ## Adding another language
 

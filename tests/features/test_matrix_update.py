@@ -305,6 +305,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "dotnet": "stable",
             "java": "stable",
             "deno": "stable",
+            "bun": "stable",
         },
         False,
     )
@@ -326,6 +327,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "both",
             "--deno",
             "latest",
+            "--bun",
+            "stable",
             "--dry-run",
         ],
     )
@@ -340,6 +343,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "dotnet": "latest",
             "java": "both",
             "deno": "latest",
+            "bun": "stable",
         },
         True,  # dry_run=True
     )

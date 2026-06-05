@@ -285,6 +285,11 @@ Examples:
         help="Strategy for Deno versions",
     )
     parser.add_argument(
+        "--bun",
+        choices=["stable", "latest", "both"],
+        help="Strategy for Bun versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -321,6 +326,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.dotnet = args.all
         args.java = args.all
         args.deno = args.all
+        args.bun = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -342,6 +348,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["java"] = args.java
     if args.deno:
         language_strategies["deno"] = args.deno
+    if args.bun:
+        language_strategies["bun"] = args.bun
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

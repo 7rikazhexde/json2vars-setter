@@ -50,6 +50,9 @@ inputs:
   deno-strategy:
     description: 'Update strategy for Deno versions (stable, latest, or both)'
     required: false  # Optional
+  bun-strategy:
+    description: 'Update strategy for Bun versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -150,6 +153,9 @@ outputs:
   versions_deno:
     description: 'List of Deno versions'
     value: ${{ steps.set_outputs.outputs.versions_deno }}
+  versions_bun:
+    description: 'List of Bun versions'
+    value: ${{ steps.set_outputs.outputs.versions_bun }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -225,6 +231,9 @@ runs:
           fi
           if [[ -n "${{ inputs.deno-strategy }}" ]]; then
             ARGS+=("--deno" "${{ inputs.deno-strategy }}")
+          fi
+          if [[ -n "${{ inputs.bun-strategy }}" ]]; then
+            ARGS+=("--bun" "${{ inputs.bun-strategy }}")
           fi
         fi
 
@@ -348,4 +357,5 @@ runs:
         echo ".NET Versions: ${{ steps.set_outputs.outputs.versions_dotnet }}"
         echo "Java Versions: ${{ steps.set_outputs.outputs.versions_java }}"
         echo "Deno Versions: ${{ steps.set_outputs.outputs.versions_deno }}"
+        echo "Bun Versions: ${{ steps.set_outputs.outputs.versions_bun }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"
