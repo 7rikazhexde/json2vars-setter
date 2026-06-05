@@ -122,10 +122,17 @@ or the addition is incomplete:
    the new workflow. Also update any "supported languages" prose (README intro,
    `docs/features/dynamic-update.md`, `docs/reference/options.md`, this file's
    Project Overview + fetcher list).
-9. **Release ordering caveat** — the new `<lang>_test.yml` references the action by its
-   published tag (`@vX.Y.Z`), so `versions_<lang>` is only available **after** the
-   release that includes the new language. The workflow stays red between merge and the
-   next release; the release's `sync-version-refs.sh` bumps the tag and it goes green.
+9. **Release ordering (two-phase action reference)** — a new language's
+   `versions_<lang>` output does not exist in the published tag until the release that
+   adds it, so a tag ref (`@vX.Y.Z`) in `<lang>_test.yml` would fail on the introducing
+   PR. Handle this in two phases:
+   - **In the introducing PR:** point `<lang>_test.yml` at the in-repo action with
+     `uses: ./` so the workflow tests the PR's own code and is green from the start.
+   - **After the release that adds the language:** switch it to the pinned tag
+     `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` to match every other `*_test.yml` and
+     the Versioning Rule. From then on `sync-version-refs.sh` keeps it pinned to the
+     latest release. **This swap is a required follow-up** — track it so the example
+     workflow does not stay on `./`.
 
 ## Code Conventions
 
