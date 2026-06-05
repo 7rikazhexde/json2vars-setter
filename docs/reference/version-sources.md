@@ -15,7 +15,8 @@ GitHub REST API, filters them to stable releases, and derives:
 - **`recent_releases`** — the most recent stable releases (used by the cache feature)
 
 A language whose versions are not cleanly expressed as a single repo's tags (currently
-**Java**) overrides `fetch_versions` and queries an official API instead.
+**Java**, **Dart**, and **Swift**) overrides `fetch_versions` and queries an official
+API instead.
 
 The dynamic-update strategies map onto these fields:
 
@@ -26,6 +27,17 @@ The dynamic-update strategies map onto these fields:
 > The **example matrices** under `examples/<lang>/` are hand-curated to the version
 > format the language's `setup-*` action expects, which may differ from the raw
 > fetcher output (e.g. major-only vs full `X.Y.Z`).
+
+## What the example projects are for
+
+Each `examples/<lang>/` project is a small, self-contained example that the matching
+`<lang>_test.yml` workflow runs across the matrix — demonstrating json2vars-setter
+driving the language's `setup-*` action end to end.
+
+They are examples only: their exact contents are illustrative and may change. In
+particular they are **not** a check that a specific version is installable — that is the
+`setup-*` action's responsibility, and its supported-version list can lag the upstream
+source the fetcher reads (see the Swift caveat below).
 
 ## Summary
 
@@ -44,6 +56,7 @@ The dynamic-update strategies map onto these fields:
 | Zig | `ziglang/zig` tags | newest stable | previous minor | `mlugg/setup-zig` |
 | Elixir | `elixir-lang/elixir` tags | newest stable | previous minor | `erlef/setup-beam` |
 | Dart | **Dart release archive** | newest stable | previous minor | `dart-lang/setup-dart` |
+| Swift | **swift.org install API** | newest stable | previous minor | `swift-actions/setup-swift` |
 
 ## Per-language details
 
@@ -181,6 +194,22 @@ The dynamic-update strategies map onto these fields:
   **numerically** (the listing is lexicographic, so `3.9.x` sorts after `3.12.x`);
   `latest` is the newest version and `stable` is the previous minor. Example matrices
   use the form (`"3.11.6"`, `"3.12.1"`) that `dart-lang/setup-dart` accepts.
+
+### Swift — swift.org install API
+
+- **Source:** the official swift.org install API
+  (`https://www.swift.org/api/v1/install/releases.json`).
+- **Why:** the `apple/swift` GitHub tags are dominated by `DEVELOPMENT-SNAPSHOT`
+  tags and the `swift-X.Y.Z-RELEASE` tags do not appear within the first pages of
+  the tags listing, so — like Java and Dart — Swift uses a dedicated source.
+- **Characteristics:** release `name`s matching `X.Y[.Z]` are kept and sorted
+  **numerically**; `latest` is the newest and `stable` is the previous minor. Example
+  matrices use the form (`"6.1.3"`, `"6.2.1"`) that `swift-actions/setup-swift`
+  accepts, and target `ubuntu`/`macos` (Swift's first-class CI platforms).
+- **Caveat:** `swift-actions/setup-swift` installs from its own bundled list of known
+  Swift versions, which can lag behind the newest swift.org release. When using the
+  dynamic update, pin to versions the action supports if the very latest is not yet
+  available there.
 
 ## Adding another language
 

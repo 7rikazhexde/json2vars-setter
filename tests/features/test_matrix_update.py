@@ -309,6 +309,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "zig": "stable",
             "elixir": "stable",
             "dart": "stable",
+            "swift": "stable",
         },
         False,
     )
@@ -338,6 +339,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "both",
             "--dart",
             "latest",
+            "--swift",
+            "stable",
             "--dry-run",
         ],
     )
@@ -356,6 +359,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "zig": "latest",
             "elixir": "both",
             "dart": "latest",
+            "swift": "stable",
         },
         True,  # dry_run=True
     )

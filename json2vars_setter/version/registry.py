@@ -20,6 +20,7 @@ from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher
+from json2vars_setter.version.fetchers.swift import SwiftVersionFetcher
 from json2vars_setter.version.fetchers.zig import ZigVersionFetcher
 
 # Supported languages mapped to their fetcher factories (each concrete fetcher
@@ -38,6 +39,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "zig": ZigVersionFetcher,
     "elixir": ElixirVersionFetcher,
     "dart": DartVersionFetcher,
+    "swift": SwiftVersionFetcher,
 }
 
 

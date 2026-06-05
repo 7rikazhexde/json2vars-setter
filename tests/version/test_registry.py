@@ -14,6 +14,7 @@ from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher
+from json2vars_setter.version.fetchers.swift import SwiftVersionFetcher
 from json2vars_setter.version.fetchers.zig import ZigVersionFetcher
 from json2vars_setter.version.registry import get_version_fetcher
 
@@ -33,6 +34,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("zig"), ZigVersionFetcher)
     assert isinstance(get_version_fetcher("elixir"), ElixirVersionFetcher)
     assert isinstance(get_version_fetcher("dart"), DartVersionFetcher)
+    assert isinstance(get_version_fetcher("swift"), SwiftVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:
