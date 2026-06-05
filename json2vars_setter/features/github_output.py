@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 
 def set_github_output(outputs: Dict[str, str], debug: bool) -> None:
@@ -30,7 +30,7 @@ def set_github_output(outputs: Dict[str, str], debug: bool) -> None:
         print(f"Debug: Written to GITHUB_OUTPUT -> {outputs}")
 
 
-def parse_json(data: Any, prefix: str = "", debug: bool = False) -> Dict[str, str]:
+def parse_json(data: object, prefix: str = "", debug: bool = False) -> Dict[str, str]:
     """
     Recursively parse JSON data and collect GitHub Actions outputs.
 

@@ -2,7 +2,7 @@ import json
 import os
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, Generator, Optional
+from typing import Generator, Optional
 
 import pytest
 from pytest_mock import MockerFixture
@@ -15,17 +15,14 @@ from json2vars_setter.features.matrix_update import (
     save_json_file,
     update_matrix_json,
 )
-from json2vars_setter.version.core.base import (
-    BaseVersionFetcher,
-    ReleaseInfo,
-    VersionInfo,
-)
+from json2vars_setter.version.core.base import BaseVersionFetcher
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo, VersionInfo
 
 # ---- Fixtures and Mocks ----
 
 
 @pytest.fixture
-def sample_matrix_json() -> Dict[str, Any]:
+def sample_matrix_json() -> JsonObject:
     """Sample matrix.json data for testing"""
     return {
         "os": ["ubuntu-latest", "windows-latest", "macos-latest"],
@@ -35,7 +32,7 @@ def sample_matrix_json() -> Dict[str, Any]:
 
 
 @pytest.fixture
-def temp_json_file(sample_matrix_json: Dict[str, Any]) -> Generator[str, None, None]:
+def temp_json_file(sample_matrix_json: JsonObject) -> Generator[str, None, None]:
     """Create a temporary JSON file with sample data"""
     fd, path = tempfile.mkstemp(suffix=".json")
     with os.fdopen(fd, "w") as f:
@@ -49,7 +46,7 @@ class MockVersionFetcher(BaseVersionFetcher):
 
     def __init__(
         self, stable: Optional[str] = "2.0.0", latest: Optional[str] = "2.1.0"
-    ):
+    ) -> None:
         # Call the parent class constructor with dummy values
         super().__init__(github_owner="mock-owner", github_repo="mock-repo")
         self.mock_stable = stable
@@ -66,14 +63,14 @@ class MockVersionFetcher(BaseVersionFetcher):
             },
         )
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """Mock implementation of abstract method"""
         return True
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """Mock implementation of abstract method"""
         # Return stable ReleaseInfo from tag
-        return ReleaseInfo(version=tag.get("name", "1.0.0"), prerelease=False)
+        return ReleaseInfo(version=str(tag.get("name", "1.0.0")), prerelease=False)
 
 
 # ---- Test Functions ----
@@ -123,9 +120,7 @@ def test_get_versions_from_strategy() -> None:
         get_versions_from_strategy(version_info, "invalid")
 
 
-def test_load_json_file(
-    temp_json_file: str, sample_matrix_json: Dict[str, Any]
-) -> None:
+def test_load_json_file(temp_json_file: str, sample_matrix_json: JsonObject) -> None:
     """Test load_json_file loads JSON correctly"""
     data = load_json_file(temp_json_file)
     assert data == sample_matrix_json
@@ -150,7 +145,7 @@ def test_save_json_file_io_error(mocker: MockerFixture, tmp_path: Path) -> None:
     # Set up mocks
     mock_logger = mocker.patch("json2vars_setter.features.matrix_update.logger")
     mock_exit = mocker.patch("sys.exit")
-    test_data = {"test": "value"}
+    test_data: JsonObject = {"test": "value"}
 
     # Temporary file path for testing
     test_file = tmp_path / "test_file.json"
@@ -171,7 +166,7 @@ def test_save_json_file_type_error(mocker: MockerFixture, tmp_path: Path) -> Non
     # Set up mocks
     mock_logger = mocker.patch("json2vars_setter.features.matrix_update.logger")
     mock_exit = mocker.patch("sys.exit")
-    test_data: Dict[str, Any] = {"test": "value"}
+    test_data: JsonObject = {"test": "value"}
 
     # Temporary file path for testing
     test_file = tmp_path / "test_file.json"
@@ -211,7 +206,7 @@ def test_save_json_file_content_already_ends_with_newline(
     mock_logger = mocker.patch("json2vars_setter.features.matrix_update.logger")
 
     # Test data
-    test_data = {"test": "value"}
+    test_data: JsonObject = {"test": "value"}
 
     # Call the function
     save_json_file(str(tmp_path / "output.json"), test_data)
@@ -225,7 +220,7 @@ def test_save_json_file_content_already_ends_with_newline(
 
 
 def test_update_matrix_json(
-    mocker: MockerFixture, sample_matrix_json: Dict[str, Any]
+    mocker: MockerFixture, sample_matrix_json: JsonObject
 ) -> None:
     """Test update_matrix_json updates the JSON correctly"""
     # Set up mocks
@@ -404,7 +399,7 @@ def test_update_matrix_json_missing_versions_key(mocker: MockerFixture) -> None:
 
 
 def test_update_matrix_json_new_language(
-    mocker: MockerFixture, sample_matrix_json: Dict[str, Any]
+    mocker: MockerFixture, sample_matrix_json: JsonObject
 ) -> None:
     """Test update_matrix_json adds a new language if it doesn't exist"""
     mock_load = mocker.patch("json2vars_setter.features.matrix_update.load_json_file")

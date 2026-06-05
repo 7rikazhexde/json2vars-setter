@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import List, cast
 
 import pytest
 import pytest_mock
@@ -6,7 +6,7 @@ import requests
 from _pytest.capture import CaptureFixture
 
 from json2vars_setter.version.core.exceptions import ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.go import GoVersionFetcher, check_api
 
 
@@ -26,12 +26,12 @@ def test_init(go_fetcher: GoVersionFetcher) -> None:
 
 def test_is_stable_tag(go_fetcher: GoVersionFetcher) -> None:
     """Test _is_stable_tag method with various tag scenarios."""
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "go1.22.1"},
         {"name": "go1.21.0"},
         {"name": "go1.20.3"},
     ]
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "go1.22.1-rc1"},
         {"name": "go1.21.0-alpha.1"},
         {"name": "go1.20.3-beta.2"},
@@ -51,7 +51,7 @@ def test_is_stable_tag(go_fetcher: GoVersionFetcher) -> None:
 
 def test_parse_version_from_tag(go_fetcher: GoVersionFetcher) -> None:
     """Test _parse_version_from_tag method."""
-    valid_tag: Dict[str, Any] = {
+    valid_tag: JsonObject = {
         "name": "go1.22.1",
         "commit": {"sha": "abc123"},
         "tarball_url": "https://example.com/tarball",
@@ -62,7 +62,7 @@ def test_parse_version_from_tag(go_fetcher: GoVersionFetcher) -> None:
     assert release_info.prerelease is False
     assert release_info.release_date is None
     assert release_info.additional_info["tag_name"] == "go1.22.1"
-    assert release_info.additional_info["commit"]["sha"] == "abc123"
+    assert cast(JsonObject, release_info.additional_info["commit"])["sha"] == "abc123"
     assert release_info.additional_info["tarball_url"] == "https://example.com/tarball"
     assert release_info.additional_info["zipball_url"] == "https://example.com/zipball"
 

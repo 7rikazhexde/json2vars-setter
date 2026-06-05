@@ -1,11 +1,12 @@
 import os
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple, cast
 
 import requests
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.exceptions import ParseError
 from json2vars_setter.version.core.utils import (
+    JsonObject,
     ReleaseInfo,
     check_github_api,
     setup_logging,
@@ -19,7 +20,7 @@ class RustVersionFetcher(BaseVersionFetcher):
         """Initialize with Rust's GitHub repository information"""
         super().__init__("rust-lang", "rust")
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """
         Check if a tag represents a stable Rust release
 
@@ -29,7 +30,7 @@ class RustVersionFetcher(BaseVersionFetcher):
         Returns:
             True if the tag represents a stable release, False otherwise
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
 
         # Rust uses format "1.xx.y" for stable releases
         return (
@@ -41,7 +42,7 @@ class RustVersionFetcher(BaseVersionFetcher):
             )
         )
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """
         Parse version information from a Rust tag
 
@@ -54,7 +55,7 @@ class RustVersionFetcher(BaseVersionFetcher):
         Raises:
             ParseError: If required version information cannot be parsed
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         if not name:
             raise ParseError("No tag name found")
 
@@ -70,13 +71,13 @@ class RustVersionFetcher(BaseVersionFetcher):
             prerelease=prerelease,
             additional_info={
                 "tag_name": name,
-                "commit": {"sha": tag.get("commit", {}).get("sha")},
+                "commit": {"sha": cast(JsonObject, tag.get("commit", {})).get("sha")},
                 "tarball_url": tag.get("tarball_url"),
                 "zipball_url": tag.get("zipball_url"),
             },
         )
 
-    def _get_additional_info(self) -> Dict[str, Any]:
+    def _get_additional_info(self) -> JsonObject:
         """
         Get additional Rust specific information (channel availability)
 
@@ -86,7 +87,7 @@ class RustVersionFetcher(BaseVersionFetcher):
         channel_info = self._fetch_rust_channel_info()
         return {"channel_info": channel_info}
 
-    def _fetch_rust_channel_info(self) -> Dict[str, Any]:
+    def _fetch_rust_channel_info(self) -> JsonObject:
         """
         Fetch Rust channel information from static.rust-lang.org
 
@@ -139,9 +140,9 @@ class RustVersionFetcher(BaseVersionFetcher):
         return latest, stable
 
 
-def rust_filter_func(tag: Dict[str, Any]) -> bool:
+def rust_filter_func(tag: JsonObject) -> bool:
     """Filter function for Rust tags in API checker"""
-    name = tag.get("name", "")
+    name = str(tag.get("name", ""))
     return (
         name.startswith("1.")
         and len(name.split(".")) == 3

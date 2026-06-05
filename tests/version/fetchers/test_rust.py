@@ -1,11 +1,11 @@
-from typing import Any, Dict, List
+from typing import List, cast
 
 import pytest
 import pytest_mock
 import requests
 
 from json2vars_setter.version.core.exceptions import ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher, rust_filter_func
 
 
@@ -25,12 +25,12 @@ def test_init(rust_fetcher: RustVersionFetcher) -> None:
 
 def test_is_stable_tag(rust_fetcher: RustVersionFetcher) -> None:
     """Test _is_stable_tag method with various tag scenarios."""
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "1.75.0"},
         {"name": "1.74.1"},
         {"name": "1.73.0"},
     ]
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "1.75.0-beta.1"},
         {"name": "1.74.1-alpha.2"},
         {"name": "1.73.0-rc.1"},
@@ -49,7 +49,7 @@ def test_is_stable_tag(rust_fetcher: RustVersionFetcher) -> None:
 
 def test_parse_version_from_tag(rust_fetcher: RustVersionFetcher) -> None:
     """Test _parse_version_from_tag method."""
-    valid_tag: Dict[str, Any] = {
+    valid_tag: JsonObject = {
         "name": "1.75.0",
         "commit": {"sha": "abc123"},
         "tarball_url": "https://example.com/tarball",
@@ -60,7 +60,7 @@ def test_parse_version_from_tag(rust_fetcher: RustVersionFetcher) -> None:
     assert release_info.prerelease is False
     assert release_info.release_date is None
     assert release_info.additional_info["tag_name"] == "1.75.0"
-    assert release_info.additional_info["commit"]["sha"] == "abc123"
+    assert cast(JsonObject, release_info.additional_info["commit"])["sha"] == "abc123"
     assert release_info.additional_info["tarball_url"] == "https://example.com/tarball"
     assert release_info.additional_info["zipball_url"] == "https://example.com/zipball"
 
@@ -77,7 +77,7 @@ def test_get_additional_info_success(
         "_fetch_rust_channel_info",
         return_value={"stable_channel_available": True},
     )
-    info: Dict[str, Any] = rust_fetcher._get_additional_info()
+    info: JsonObject = rust_fetcher._get_additional_info()
     assert info == {"channel_info": {"stable_channel_available": True}}
 
 
@@ -89,7 +89,7 @@ def test_fetch_rust_channel_info_success(
     mock_response.raise_for_status.return_value = None  # Successful request
     mocker.patch.object(rust_fetcher.session, "get", return_value=mock_response)
 
-    channel_info: Dict[str, Any] = rust_fetcher._fetch_rust_channel_info()
+    channel_info: JsonObject = rust_fetcher._fetch_rust_channel_info()
     assert channel_info == {"stable_channel_available": True}
 
 
@@ -103,7 +103,7 @@ def test_fetch_rust_channel_info_failure(
         side_effect=requests.exceptions.RequestException("API Error"),
     )
 
-    channel_info: Dict[str, Any] = rust_fetcher._fetch_rust_channel_info()
+    channel_info: JsonObject = rust_fetcher._fetch_rust_channel_info()
     assert channel_info == {"stable_channel_available": False}
     (
         rust_fetcher.logger.warning.assert_called_once_with(  # type: ignore[attr-defined]
@@ -138,11 +138,11 @@ def test_get_stability_criteria_no_releases(rust_fetcher: RustVersionFetcher) ->
 
 def test_rust_filter_func() -> None:
     """Test rust_filter_func with various tag scenarios."""
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "1.75.0"},
         {"name": "1.74.1"},
     ]
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "1.75.0-beta.1"},
         {"name": "1.74.1-alpha.2"},
         {"name": "1.73.0-rc.1"},

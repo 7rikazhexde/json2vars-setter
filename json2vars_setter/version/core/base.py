@@ -1,18 +1,23 @@
 import logging
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import requests
 
 from json2vars_setter.version.core.exceptions import GitHubAPIError, ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo, VersionInfo, get_utc_now
+from json2vars_setter.version.core.utils import (
+    JsonObject,
+    ReleaseInfo,
+    VersionInfo,
+    get_utc_now,
+)
 
 
 class BaseVersionFetcher(ABC):
     """Base class for version fetchers that use GitHub tags"""
 
-    def __init__(self, github_owner: str, github_repo: str):
+    def __init__(self, github_owner: str, github_repo: str) -> None:
         """
         Initialize the fetcher with GitHub repository information
 
@@ -41,7 +46,7 @@ class BaseVersionFetcher(ABC):
                 {"Authorization": "token {}".format(self.github_token)}
             )
 
-    def _get_github_tags(self, count: Optional[int] = None) -> List[Dict[str, Any]]:
+    def _get_github_tags(self, count: Optional[int] = None) -> List[JsonObject]:
         """
         Fetch tags from GitHub API with pagination to ensure enough stable versions
 
@@ -54,7 +59,7 @@ class BaseVersionFetcher(ABC):
         Raises:
             GitHubAPIError: If there's an error accessing the GitHub API
         """
-        stable_tags: List[Dict[str, Any]] = []
+        stable_tags: List[JsonObject] = []
         page = 1
         per_page = 100  # Get more tags at once
         max_pages = 5  # Safety limit for pagination
@@ -109,17 +114,17 @@ class BaseVersionFetcher(ABC):
                         "Please set GITHUB_TOKEN environment variable "
                         "or wait for rate limit reset."
                     )
-                    raise GitHubAPIError(message)
+                    raise GitHubAPIError(message) from error
                 raise GitHubAPIError(
                     "Failed to fetch GitHub tags: {}".format(str(error))
-                )
+                ) from error
 
         result = stable_tags[:target_count] if target_count else stable_tags
         self.logger.debug("Returning %d stable tags", len(result))
         return result
 
     @abstractmethod
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """
         Check if a tag represents a stable release
 
@@ -132,7 +137,7 @@ class BaseVersionFetcher(ABC):
         pass
 
     @abstractmethod
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """
         Parse version information from a tag object
 
@@ -144,7 +149,7 @@ class BaseVersionFetcher(ABC):
         """
         pass
 
-    def _get_additional_info(self) -> Dict[str, Any]:
+    def _get_additional_info(self) -> JsonObject:
         """
         Get additional information specific to the language
 

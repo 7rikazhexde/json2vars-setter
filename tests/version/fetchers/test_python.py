@@ -1,10 +1,10 @@
-from typing import Any, Dict, List
+from typing import List, cast
 
 import pytest
 import pytest_mock
 
 from json2vars_setter.version.core.exceptions import ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.python import (
     PythonVersionFetcher,
     python_filter_func,
@@ -20,14 +20,14 @@ def python_fetcher() -> PythonVersionFetcher:
 def test_is_stable_tag(python_fetcher: PythonVersionFetcher) -> None:
     """Test _is_stable_tag method with various tag scenarios"""
     # Stable version tags
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "v3.9.0"},
         {"name": "v3.10.5"},
         {"name": "v4.0.0"},
     ]
 
     # Unstable version tags
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "v3.9.0rc1"},
         {"name": "v3.10.5b2"},
         {"name": "v4.0.0a1"},
@@ -47,7 +47,7 @@ def test_is_stable_tag(python_fetcher: PythonVersionFetcher) -> None:
 def test_parse_version_from_tag(python_fetcher: PythonVersionFetcher) -> None:
     """Test _parse_version_from_tag method"""
     # Valid tag
-    valid_tag: Dict[str, Any] = {
+    valid_tag: JsonObject = {
         "name": "v3.9.2",
         "commit": {"sha": "abc123"},
         "tarball_url": "https://example.com/tarball",
@@ -59,7 +59,7 @@ def test_parse_version_from_tag(python_fetcher: PythonVersionFetcher) -> None:
     assert release_info.version == "3.9.2"
     assert release_info.prerelease is False
     assert release_info.additional_info["tag_name"] == "v3.9.2"
-    assert release_info.additional_info["commit"]["sha"] == "abc123"
+    assert cast(JsonObject, release_info.additional_info["commit"])["sha"] == "abc123"
     assert release_info.additional_info["tarball_url"] == "https://example.com/tarball"
     assert release_info.additional_info["zipball_url"] == "https://example.com/zipball"
 
@@ -98,14 +98,14 @@ def test_get_stability_criteria(python_fetcher: PythonVersionFetcher) -> None:
 def test_python_filter_func() -> None:
     """Test python_filter_func with various tag names"""
     # Stable tags
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "v3.9.0"},
         {"name": "v4.0.1"},
         {"name": "v3.10.5"},
     ]
 
     # Unstable tags
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "v3.9.0rc1"},
         {"name": "v3.10.5b2"},
         {"name": "v4.0.0a1"},
@@ -133,7 +133,7 @@ def test_fetch_versions_integration(
     Note: This is an integration-style test that mocks the GitHub API calls
     """
     # Prepare mock tags
-    mock_tags: List[Dict[str, Any]] = [
+    mock_tags: List[JsonObject] = [
         {
             "name": "v3.12.0",
             "commit": {"sha": "abc123"},

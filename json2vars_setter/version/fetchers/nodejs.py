@@ -1,11 +1,12 @@
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, cast
 
 import requests
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.exceptions import ParseError
 from json2vars_setter.version.core.utils import (
+    JsonObject,
     ReleaseInfo,
     check_github_api,
     setup_logging,
@@ -19,7 +20,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
         """Initialize with Node.js GitHub repository information"""
         super().__init__("nodejs", "node")
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """
         Check if a tag represents a stable Node.js release
 
@@ -29,7 +30,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
         Returns:
             True if the tag represents a stable release, False otherwise
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
 
         # Node.js uses format "vX.Y.Z" for stable releases
         return (
@@ -49,7 +50,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             )
         )
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """
         Parse version information from a Node.js tag
 
@@ -62,7 +63,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
         Raises:
             ParseError: If required version information cannot be parsed
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         if not name:
             raise ParseError("No tag name found")
 
@@ -81,14 +82,14 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             prerelease=prerelease,
             additional_info={
                 "tag_name": name,
-                "commit": {"sha": tag.get("commit", {}).get("sha")},
+                "commit": {"sha": cast(JsonObject, tag.get("commit", {})).get("sha")},
                 "is_lts": is_lts,
                 "tarball_url": tag.get("tarball_url"),
                 "zipball_url": tag.get("zipball_url"),
             },
         )
 
-    def _get_additional_info(self) -> Dict[str, Any]:
+    def _get_additional_info(self) -> JsonObject:
         """
         Get additional Node.js specific information (LTS status)
 
@@ -214,7 +215,7 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             self.logger.warning(f"Failed to fetch LTS versions: {e}")
             return []
 
-    def _get_specific_tag(self, tag_name: str) -> Optional[Dict[str, Any]]:
+    def _get_specific_tag(self, tag_name: str) -> Optional[JsonObject]:
         """
         Fetch a specific tag directly
 
@@ -280,13 +281,13 @@ class NodejsVersionFetcher(BaseVersionFetcher):
             self.logger.info(f"Retrieved {len(lts_info)} LTS versions from Node.js API")
             return lts_info
         except Exception as e:
-            self.logger.warning(f"Failed to fetch LTS information: {str(e)}")
+            self.logger.warning(f"Failed to fetch LTS information: {e!s}")
             return {}
 
 
-def nodejs_filter_func(tag: Dict[str, Any]) -> bool:
+def nodejs_filter_func(tag: JsonObject) -> bool:
     """Filter function for Node.js tags in API checker"""
-    name = tag.get("name", "")
+    name = str(tag.get("name", ""))
     return (
         name.startswith("v")
         and len(name.split(".")) == 3
@@ -357,7 +358,7 @@ if __name__ == "__main__":
                     if lts_count >= args.count:
                         break
         except Exception as e:
-            print(f"Error fetching LTS info: {str(e)}")
+            print(f"Error fetching LTS info: {e!s}")
 
     # Display header in verbose mode
     if args.verbose > 0:
