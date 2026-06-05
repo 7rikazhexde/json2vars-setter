@@ -138,6 +138,13 @@ or the addition is incomplete:
 
 - **Commit messages**: Follow [gitmoji](https://gitmoji.dev/) conventions. Releases are automated by **semantic-release-gitmoji**, which reads the gitmoji to pick the next version: `:boom:` → major, `:sparkles:` → minor, and fixes/maintenance (`:bug:`, `:lock:`, `:ambulance:`, `:zap:`, `:wrench:`, `:recycle:`, `:arrow_up:`, …) → patch. Other gitmoji (e.g. `:memo:`, `:art:`, `:white_check_mark:`) don't trigger a release. The full mapping is the `releaseRules` in `.releaserc.json`.
 - **Branch naming**: Use prefixes: `feature-`, `bugfix-`, `docs-`, `refactor-`
+- **GitHub Actions selection**: Prefer **official** actions (the `actions/*` org, or the
+  language's first-party action such as `ruby/setup-ruby`, `actions/setup-dotnet`,
+  `actions/setup-java`). When no official action exists, use a widely-adopted,
+  actively-maintained third-party action (highest usage / trending), e.g.
+  `shivammathur/setup-php` for PHP. Pin every `uses:` to a commit SHA with the version
+  tag as a trailing comment (except the `7rikazhexde/json2vars-setter@vX.Y.Z`
+  self-reference, which the Versioning Rule keeps as a tag).
 - **Python version**: 3.10+ (target 3.12 for mypy)
 - **Linting**: Ruff with E, F, I rules (E402 and E501 ignored)
 - **Type checking**: mypy with strict settings (`disallow_untyped_defs`, `warn_return_any`)
