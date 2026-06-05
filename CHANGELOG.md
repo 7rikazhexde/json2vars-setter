@@ -1,3 +1,9 @@
+# [v1.4.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.3.0...v1.4.0) (2026-06-05)
+
+## ✨ New Features
+- [`62770c2`](https://github.com/7rikazhexde/json2vars-setter/commit/62770c2)  Add PHP version support (Issues: [`#504`](https://github.com/7rikazhexde/json2vars-setter/issues/504))
+- [`0ce50c7`](https://github.com/7rikazhexde/json2vars-setter/commit/0ce50c7)  Add PHP example project, test workflow, and status badge
+
 # [v1.3.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.2.0...v1.3.0) (2026-06-05)
 
 ## ✨ New Features
