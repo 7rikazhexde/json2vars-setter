@@ -1,0 +1,15 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "java": [
+            "11",
+            "17",
+            "21"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}
