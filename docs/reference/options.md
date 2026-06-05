@@ -21,6 +21,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `ruby-strategy` | Update strategy for Ruby versions | ✗ | - | Same valid values as `update-strategy` |
 | `go-strategy` | Update strategy for Go versions | ✗ | - | Same valid values as `update-strategy` |
 | `rust-strategy` | Update strategy for Rust versions | ✗ | - | Same valid values as `update-strategy` |
+| `php-strategy` | Update strategy for PHP versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -50,6 +51,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_nodejs` | List of Node.js versions | `["16", "18", "20"]` |
 | `versions_go` | List of Go versions | `["1.19", "1.20", "1.21"]` |
 | `versions_rust` | List of Rust versions | `["1.70.0", "1.71.0", "stable"]` |
+| `versions_php` | List of PHP versions | `["8.2.0", "8.3.0", "8.4.0"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes

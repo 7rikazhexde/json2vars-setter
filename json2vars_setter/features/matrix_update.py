@@ -265,6 +265,11 @@ Examples:
         help="Strategy for Rust versions",
     )
     parser.add_argument(
+        "--php",
+        choices=["stable", "latest", "both"],
+        help="Strategy for PHP versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -297,6 +302,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.ruby = args.all
         args.go = args.all
         args.rust = args.all
+        args.php = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -310,6 +316,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["go"] = args.go
     if args.rust:
         language_strategies["rust"] = args.rust
+    if args.php:
+        language_strategies["php"] = args.php
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

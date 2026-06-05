@@ -10,6 +10,7 @@ from typing import Callable, Dict
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
+from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher
@@ -22,6 +23,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "ruby": RubyVersionFetcher,
     "go": GoVersionFetcher,
     "rust": RustVersionFetcher,
+    "php": PhpVersionFetcher,
 }
 
 

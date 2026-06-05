@@ -301,6 +301,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "ruby": "stable",
             "go": "stable",
             "rust": "stable",
+            "php": "stable",
         },
         False,
     )
@@ -314,6 +315,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "latest",
             "--nodejs",
             "both",
+            "--php",
+            "stable",
             "--dry-run",
         ],
     )
@@ -321,7 +324,7 @@ def test_main_function(mocker: MockerFixture) -> None:
     main()
     mock_update.assert_called_with(
         os.path.join(".github", "json2vars-setter", "matrix.json"),  # Default path
-        {"python": "latest", "nodejs": "both"},
+        {"python": "latest", "nodejs": "both", "php": "stable"},
         True,  # dry_run=True
     )
 
