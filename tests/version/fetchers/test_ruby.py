@@ -1,10 +1,10 @@
-from typing import Any, Dict, List
+from typing import List, cast
 
 import pytest
 import pytest_mock
 
 from json2vars_setter.version.core.exceptions import ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher, ruby_filter_func
 
 
@@ -17,14 +17,14 @@ def ruby_fetcher() -> RubyVersionFetcher:
 def test_is_stable_tag(ruby_fetcher: RubyVersionFetcher) -> None:
     """Test _is_stable_tag method with various tag scenarios"""
     # Stable version tags
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "v3_9_0"},
         {"name": "v3_10_5"},
         {"name": "v4_0_0"},
     ]
 
     # Unstable version tags
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "v3_9_0rc1"},
         {"name": "v3_10_5b2"},
         {"name": "v4_0_0a1"},
@@ -47,7 +47,7 @@ def test_is_stable_tag(ruby_fetcher: RubyVersionFetcher) -> None:
 def test_parse_version_from_tag(ruby_fetcher: RubyVersionFetcher) -> None:
     """Test _parse_version_from_tag method"""
     # Valid tag
-    valid_tag: Dict[str, Any] = {
+    valid_tag: JsonObject = {
         "name": "v3_9_2",
         "commit": {"sha": "abc123"},
         "tarball_url": "https://example.com/tarball",
@@ -59,7 +59,7 @@ def test_parse_version_from_tag(ruby_fetcher: RubyVersionFetcher) -> None:
     assert release_info.version == "3.9.2"
     assert release_info.prerelease is False
     assert release_info.additional_info["tag_name"] == "v3_9_2"
-    assert release_info.additional_info["commit"]["sha"] == "abc123"
+    assert cast(JsonObject, release_info.additional_info["commit"])["sha"] == "abc123"
     assert release_info.additional_info["tarball_url"] == "https://example.com/tarball"
     assert release_info.additional_info["zipball_url"] == "https://example.com/zipball"
 
@@ -98,14 +98,14 @@ def test_get_stability_criteria(ruby_fetcher: RubyVersionFetcher) -> None:
 def test_ruby_filter_func() -> None:
     """Test ruby_filter_func with various tag names"""
     # Stable tags
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "v3_9_0"},
         {"name": "v4_0_1"},
         {"name": "v3_10_5"},
     ]
 
     # Unstable tags
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "v3_9_0rc1"},
         {"name": "v3_10_5b2"},
         {"name": "v4_0_0a1"},
@@ -134,7 +134,7 @@ def test_fetch_versions_integration(
     Test fetch_versions method with mocked API calls
     """
     # Prepare mock tags
-    mock_tags: List[Dict[str, Any]] = [
+    mock_tags: List[JsonObject] = [
         {
             "name": "v3_12_0",
             "commit": {"sha": "abc123"},

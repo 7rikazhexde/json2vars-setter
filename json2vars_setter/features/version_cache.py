@@ -11,10 +11,13 @@ import sys
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, DefaultDict, Dict, List, Optional, Set, Tuple
+from typing import DefaultDict, Dict, List, Optional, Set, Tuple, cast
 
-from json2vars_setter.version.core.base import VersionInfo
-from json2vars_setter.version.core.utils import get_utc_now
+from json2vars_setter.version.core.utils import (
+    JsonObject,
+    VersionInfo,
+    get_utc_now,
+)
 from json2vars_setter.version.registry import get_version_fetcher
 
 # Set up logging
@@ -46,13 +49,13 @@ class VersionCache:
             cache_file: Path to the cache file
         """
         self.cache_file = cache_file
-        self.data: Dict[str, Any] = self._load_cache()
+        self.data: JsonObject = self._load_cache()
         self.version_count: int = self._get_version_count()
         self.new_versions_found: DefaultDict[str, int] = defaultdict(
             int
         )  # Number of newly found versions
 
-    def _load_cache(self) -> Dict[str, Any]:
+    def _load_cache(self) -> JsonObject:
         """
         Load the cache file if it exists
 
@@ -62,7 +65,7 @@ class VersionCache:
         if self.cache_file.exists():
             try:
                 with open(self.cache_file, "r") as f:
-                    data: Dict[str, Any] = json.load(f)
+                    data: JsonObject = json.load(f)
                 return data
             except (json.JSONDecodeError, IOError) as e:
                 logger.warning(f"Could not load cache file: {e}")
@@ -76,11 +79,25 @@ class VersionCache:
             "languages": {},
         }
 
+    def _languages(self) -> Dict[str, JsonObject]:
+        """Return the (mutable) per-language section of the cache."""
+        languages = self.data.setdefault("languages", {})
+        return cast(Dict[str, JsonObject], languages)
+
+    def _metadata(self) -> JsonObject:
+        """Return the (mutable) metadata section of the cache."""
+        metadata = self.data.setdefault("metadata", {})
+        return cast(JsonObject, metadata)
+
+    def _lang(self, language: str) -> JsonObject:
+        """Return the (mutable) cache entry for a single language."""
+        return self._languages().setdefault(language, {})
+
     def _get_version_count(self) -> int:
         """Get the number of versions obtained"""
-        if "metadata" in self.data and "version_count" in self.data["metadata"]:
-            version_count: int = self.data["metadata"]["version_count"]
-            return version_count
+        metadata = self.data.get("metadata")
+        if isinstance(metadata, dict) and "version_count" in metadata:
+            return cast(int, metadata["version_count"])
         return 0
 
     def save(self) -> None:
@@ -114,12 +131,12 @@ class VersionCache:
             logger.debug("Update needed because language cache does not exist")
             return True
 
-        if language not in self.data.get("languages", {}):
+        if language not in self._languages():
             logger.debug(f"{language}: Update needed because cache does not exist")
             return True
 
         # Update is needed if there is no cache for the language
-        language_info = self.data["languages"].get(language, {})
+        language_info = self._lang(language)
         if (
             not language_info
             or "recent_releases" not in language_info
@@ -133,7 +150,7 @@ class VersionCache:
         # Update is needed if the number of requested versions is greater than the cached count
         if requested_count > 0:
             current_versions = len(
-                self.data["languages"][language].get("recent_releases", [])
+                cast(List[object], self._lang(language).get("recent_releases", []))
             )
             if current_versions < requested_count:
                 logger.info(
@@ -142,8 +159,8 @@ class VersionCache:
                 return True
 
         # Check the last update date
-        last_updated = self.data["languages"][language].get("last_updated")
-        if not last_updated:
+        last_updated = self._lang(language).get("last_updated")
+        if not isinstance(last_updated, str):
             return True
 
         try:
@@ -177,30 +194,28 @@ class VersionCache:
         Returns:
             (Whether there were changes, Set of newly added versions)
         """
-        if "languages" not in self.data:
-            self.data["languages"] = {}
-
-        if language not in self.data["languages"]:
-            self.data["languages"][language] = {}
+        lang_entry = self._lang(language)
 
         # Get the existing version list
-        existing_versions = set()
-        existing_releases = []
+        existing_versions: Set[str] = set()
+        existing_releases: List[JsonObject] = []
 
-        if incremental and "recent_releases" in self.data["languages"][language]:
-            existing_releases = self.data["languages"][language]["recent_releases"]
+        if incremental and "recent_releases" in lang_entry:
+            existing_releases = cast(
+                List[JsonObject], lang_entry.get("recent_releases", [])
+            )
             for release in existing_releases:
                 if isinstance(release, dict) and "version" in release:
-                    existing_versions.add(release["version"])
+                    existing_versions.add(str(release["version"]))
 
         # Serialize new release information
-        new_releases = [vars(r) for r in version_info.recent_releases]
+        new_releases: List[JsonObject] = [vars(r) for r in version_info.recent_releases]
 
         # Track newly added versions
-        new_versions = set()
+        new_versions: Set[str] = set()
         for release in new_releases:
-            if release["version"] not in existing_versions:
-                new_versions.add(release["version"])
+            if str(release["version"]) not in existing_versions:
+                new_versions.add(str(release["version"]))
 
         # Merge existing and new releases in incremental mode
         if incremental:
@@ -209,7 +224,7 @@ class VersionCache:
 
             # Add only versions that do not exist in the existing releases to avoid duplicates
             for release in new_releases:
-                if release["version"] not in existing_versions:
+                if str(release["version"]) not in existing_versions:
                     merged_releases.append(release)
 
             # Sort by version (newest first) and keep the latest N releases
@@ -217,7 +232,7 @@ class VersionCache:
                 merged_releases.sort(
                     key=lambda x: [
                         int(p) if p.isdigit() else p
-                        for p in x["version"].replace("-", ".").split(".")
+                        for p in str(x["version"]).replace("-", ".").split(".")
                     ],
                     reverse=True,
                 )
@@ -231,20 +246,20 @@ class VersionCache:
         stable = version_info.stable
 
         # Maintain existing latest/stable if available and not obtained from API
-        if latest is None and "latest" in self.data["languages"][language]:
-            latest = self.data["languages"][language]["latest"]
+        if latest is None and "latest" in lang_entry:
+            latest = cast(Optional[str], lang_entry["latest"])
             logger.debug(
                 f"{language}: Maintained existing latest version as it was not obtained from API: {latest}"
             )
 
-        if stable is None and "stable" in self.data["languages"][language]:
-            stable = self.data["languages"][language]["stable"]
+        if stable is None and "stable" in lang_entry:
+            stable = cast(Optional[str], lang_entry["stable"])
             logger.debug(
                 f"{language}: Maintained existing stable version as it was not obtained from API: {stable}"
             )
 
         # Update cache
-        self.data["languages"][language].update(
+        lang_entry.update(
             {
                 "latest": latest,
                 "stable": stable,
@@ -254,16 +269,14 @@ class VersionCache:
         )
 
         # Update metadata
-        if "metadata" not in self.data:
-            self.data["metadata"] = {}
-
-        self.data["metadata"]["last_updated"] = get_utc_now().isoformat()
+        metadata = self._metadata()
+        metadata["last_updated"] = get_utc_now().isoformat()
 
         # Update count information
         if count > 0:
-            current_count = self.data["metadata"].get("version_count", 0)
+            current_count = cast(int, metadata.get("version_count", 0))
             if count > current_count:
-                self.data["metadata"]["version_count"] = count
+                metadata["version_count"] = count
                 logger.debug(f"Updated version count: {current_count} → {count}")
 
         # Save the number of newly added versions
@@ -279,7 +292,7 @@ def update_versions(
     count: int = 10,
     cache_file: Optional[Path] = None,
     incremental: bool = False,
-) -> Dict[str, Any]:
+) -> JsonObject:
     """
     Update version information for specified languages
 
@@ -363,7 +376,7 @@ def update_versions(
     cache.save()
 
     # Summary information
-    result = {
+    result: JsonObject = {
         "updated": list(updated_languages),
         "unchanged": list(unchanged_languages),
         "skipped": list(skipped_languages),
@@ -402,7 +415,7 @@ def update_versions(
 
 
 def generate_version_template(
-    cache_data: Dict[str, Any],
+    cache_data: JsonObject,
     output_file: Path,
     existing_file: Optional[Path] = None,
     languages: Optional[List[str]] = None,
@@ -423,16 +436,18 @@ def generate_version_template(
         output_count: Max number of versions per language to include in output (0=unlimited)
     """
     # Start with default template
-    template: Dict[str, Any] = {
+    template: JsonObject = {
         "os": DEFAULT_OS,
         "versions": {},
         "ghpages_branch": DEFAULT_GHPAGES_BRANCH,
     }
+    # The "versions" section maps each language to its list of versions.
+    template_versions = cast(Dict[str, List[str]], template["versions"])
 
     # Load existing template if available
-    existing_data: Dict[str, Any] = {}
+    existing_data: JsonObject = {}
     # Save the order of languages
-    existing_language_order = []
+    existing_language_order: List[str] = []
 
     if existing_file and existing_file.exists():
         try:
@@ -447,7 +462,9 @@ def generate_version_template(
 
             # Save the order of languages in the existing template
             if "versions" in existing_data:
-                existing_language_order = list(existing_data["versions"].keys())
+                existing_language_order = list(
+                    cast(Dict[str, List[str]], existing_data["versions"]).keys()
+                )
 
             logger.info(f"Maintained structure from existing file: {existing_file}")
         except (json.JSONDecodeError, IOError) as e:
@@ -457,11 +474,14 @@ def generate_version_template(
     reverse_sort = sort_order.lower() == "desc"
 
     # Create a temporary dictionary to store language information
-    temp_versions = {}
+    temp_versions: Dict[str, List[str]] = {}
 
     # First, copy existing versions if keep_existing is True
     if keep_existing and "versions" in existing_data:
-        for lang, version_list in existing_data.get("versions", {}).items():
+        existing_versions_map = cast(
+            Dict[str, List[str]], existing_data.get("versions", {})
+        )
+        for lang, version_list in existing_versions_map.items():
             # Only copy if not in specified languages (those will be updated from cache)
             if languages is None or lang not in languages:
                 temp_versions[lang] = version_list
@@ -470,31 +490,36 @@ def generate_version_template(
                 )
 
     # Now process languages from cache
-    for language, info in cache_data.get("languages", {}).items():
+    cache_languages = cast(Dict[str, JsonObject], cache_data.get("languages", {}))
+    for language, info in cache_languages.items():
         # Skip if languages is specified and this language is not in the list
         if languages and language not in languages:
             continue
 
-        if "recent_releases" in info and info["recent_releases"]:
+        if info.get("recent_releases"):
             # Extract versions from recent releases, excluding prereleases
             version_items: List[str] = []
-            for release in info.get("recent_releases", []):
+            recent_releases = cast(List[JsonObject], info.get("recent_releases", []))
+            for release in recent_releases:
                 if (
                     isinstance(release, dict)
                     and "version" in release
                     and not release.get("prerelease", False)
                 ):
                     # Ensure version isn't already in the list
-                    if release["version"] not in version_items:
-                        version_items.append(release["version"])
+                    version = str(release["version"])
+                    if version not in version_items:
+                        version_items.append(version)
 
             # Add stable and latest versions at the beginning
-            if info.get("stable") and info["stable"] not in version_items:
-                version_items.insert(0, info["stable"])
-            if info.get("latest"):
-                if info.get("latest") != info.get("stable"):
-                    if info["latest"] not in version_items:
-                        version_items.insert(0, info["latest"])
+            stable = info.get("stable")
+            if stable and str(stable) not in version_items:
+                version_items.insert(0, str(stable))
+            latest = info.get("latest")
+            if latest:
+                if latest != stable:
+                    if str(latest) not in version_items:
+                        version_items.insert(0, str(latest))
 
             # Sort supporting semantic versioning
             sorted_versions = sorted(
@@ -527,13 +552,13 @@ def generate_version_template(
     # First, maintain the existing order
     for lang in existing_language_order:
         if lang in temp_versions:
-            template["versions"][lang] = temp_versions[lang]
+            template_versions[lang] = temp_versions[lang]
             # Remove as it has been processed
             del temp_versions[lang]
 
     # Add remaining new languages
     for lang, version_list in temp_versions.items():
-        template["versions"][lang] = version_list
+        template_versions[lang] = version_list
 
     # Write template to file
     output_file.parent.mkdir(parents=True, exist_ok=True)
@@ -720,7 +745,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     output_count = args.output_count if args.output_count > 0 else args.count
 
     # Skip cache update in template-only mode
-    cache_data: Optional[Dict[str, Any]] = None
+    cache_data: Optional[JsonObject] = None
     if not args.template_only:
         # Update versions
         result = update_versions(
@@ -731,7 +756,7 @@ def main(argv: Optional[List[str]] = None) -> None:
             cache_file=args.cache_file,
             incremental=args.incremental,
         )
-        cache_data = result["cache_data"]
+        cache_data = cast(JsonObject, result["cache_data"])
     else:
         logger.info("Template-only mode: Skipping cache update")
         # Load existing cache for template generation

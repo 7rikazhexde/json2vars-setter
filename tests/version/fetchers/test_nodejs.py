@@ -1,11 +1,11 @@
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
 import pytest
 import pytest_mock
 import requests
 
 from json2vars_setter.version.core.exceptions import ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.nodejs import (
     NodejsVersionFetcher,
     nodejs_filter_func,
@@ -28,12 +28,12 @@ def test_init(nodejs_fetcher: NodejsVersionFetcher) -> None:
 
 def test_is_stable_tag(nodejs_fetcher: NodejsVersionFetcher) -> None:
     """Test _is_stable_tag method with various tag scenarios."""
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "v18.20.0"},
         {"name": "v20.11.1"},
         {"name": "v22.0.0"},
     ]
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "v18.20.0-rc.1"},
         {"name": "v20.11.1-alpha.1"},
         {"name": "v22.0.0-beta.1"},
@@ -54,7 +54,7 @@ def test_is_stable_tag(nodejs_fetcher: NodejsVersionFetcher) -> None:
 
 def test_parse_version_from_tag(nodejs_fetcher: NodejsVersionFetcher) -> None:
     """Test _parse_version_from_tag method."""
-    valid_tag: Dict[str, Any] = {
+    valid_tag: JsonObject = {
         "name": "v18.20.0",
         "commit": {"sha": "abc123"},
         "tarball_url": "https://example.com/tarball",
@@ -65,7 +65,7 @@ def test_parse_version_from_tag(nodejs_fetcher: NodejsVersionFetcher) -> None:
     assert release_info.prerelease is False
     assert release_info.release_date is None
     assert release_info.additional_info["tag_name"] == "v18.20.0"
-    assert release_info.additional_info["commit"]["sha"] == "abc123"
+    assert cast(JsonObject, release_info.additional_info["commit"])["sha"] == "abc123"
     assert release_info.additional_info["is_lts"] is False
     assert release_info.additional_info["tarball_url"] == "https://example.com/tarball"
     assert release_info.additional_info["zipball_url"] == "https://example.com/zipball"
@@ -83,7 +83,7 @@ def test_get_additional_info(
         "_fetch_nodejs_lts_info",
         return_value={"18.20.0": True},
     )
-    info: Dict[str, Any] = nodejs_fetcher._get_additional_info()
+    info: JsonObject = nodejs_fetcher._get_additional_info()
     assert info == {"lts_info": {"18.20.0": True}}
 
 
@@ -117,7 +117,7 @@ def test_get_stability_criteria_no_lts_fetch_tag(
         ReleaseInfo(version="23.0.0", additional_info={"tag_name": "v23.0.0"}),
         ReleaseInfo(version="21.0.0", additional_info={"tag_name": "v21.0.0"}),
     ]
-    mock_tag: Dict[str, Any] = {
+    mock_tag: JsonObject = {
         "name": "v22.9.0",
         "commit": {"sha": "xyz789"},
         "tarball_url": "https://example.com/tarball",
@@ -297,7 +297,7 @@ def test_get_specific_tag_success(
         "get",
         side_effect=[mock_ref_response, mock_tag_response, mock_commit_response],
     )
-    tag: Optional[Dict[str, Any]] = nodejs_fetcher._get_specific_tag("v22.0.0")
+    tag: Optional[JsonObject] = nodejs_fetcher._get_specific_tag("v22.0.0")
     assert tag == {"name": "v22.0.0", "commit": {"sha": "abc123"}}
 
 
@@ -310,7 +310,7 @@ def test_get_specific_tag_failure(
         "get",
         side_effect=requests.exceptions.RequestException("API Error"),
     )
-    tag: Optional[Dict[str, Any]] = nodejs_fetcher._get_specific_tag("v22.0.0")
+    tag: Optional[JsonObject] = nodejs_fetcher._get_specific_tag("v22.0.0")
     assert tag is None
     (
         nodejs_fetcher.logger.warning.assert_called_once_with(  # type: ignore[attr-defined]
@@ -330,7 +330,7 @@ def test_get_specific_tag_no_tag_url(
         "get",
         return_value=mock_ref_response,
     )
-    tag: Optional[Dict[str, Any]] = nodejs_fetcher._get_specific_tag("v22.0.0")
+    tag: Optional[JsonObject] = nodejs_fetcher._get_specific_tag("v22.0.0")
     assert tag is None
     # No warning expected since this is a silent return
 
@@ -348,7 +348,7 @@ def test_get_specific_tag_no_commit_url(
         "get",
         side_effect=[mock_ref_response, mock_tag_response],
     )
-    tag: Optional[Dict[str, Any]] = nodejs_fetcher._get_specific_tag("v22.0.0")
+    tag: Optional[JsonObject] = nodejs_fetcher._get_specific_tag("v22.0.0")
     assert tag is None
     # No warning expected since this is a silent return
 
@@ -435,11 +435,11 @@ def test_get_stability_criteria_lts_fetch_none(
 
 def test_nodejs_filter_func() -> None:
     """Test nodejs_filter_func with various tag scenarios."""
-    stable_tags: List[Dict[str, Any]] = [
+    stable_tags: List[JsonObject] = [
         {"name": "v18.20.0"},
         {"name": "v20.11.1"},
     ]
-    unstable_tags: List[Dict[str, Any]] = [
+    unstable_tags: List[JsonObject] = [
         {"name": "v18.20.0-rc.1"},
         {"name": "v20.11.1-alpha.1"},
         {"name": ""},  # Invalid format

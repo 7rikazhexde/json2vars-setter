@@ -1,12 +1,13 @@
 import os
 import re
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple, cast
 
 import requests
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.exceptions import ParseError
 from json2vars_setter.version.core.utils import (
+    JsonObject,
     ReleaseInfo,
     check_github_api,
     setup_logging,
@@ -20,7 +21,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
         """Initialize with Ruby's GitHub repository information"""
         super().__init__("ruby", "ruby")
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """
         Check if a tag represents a stable Ruby release
 
@@ -30,7 +31,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
         Returns:
             True if the tag represents a stable release, False otherwise
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
 
         # Ruby uses format "vX_Y_Z" for stable releases
         return (
@@ -53,7 +54,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
             )
         )
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """
         Parse version information from a Ruby tag
 
@@ -66,7 +67,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
         Raises:
             ParseError: If required version information cannot be parsed
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         if not name:
             raise ParseError("No tag name found")
 
@@ -82,7 +83,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
             prerelease=prerelease,
             additional_info={
                 "tag_name": name,
-                "commit": {"sha": tag.get("commit", {}).get("sha")},
+                "commit": {"sha": cast(JsonObject, tag.get("commit", {})).get("sha")},
                 "tarball_url": tag.get("tarball_url"),
                 "zipball_url": tag.get("zipball_url"),
             },
@@ -117,7 +118,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
         match = re.match(r"(\d+)\.(\d+)\.(\d+)", latest_version)
 
         if match:
-            major, minor, patch = map(int, match.groups())
+            major, minor, _patch = map(int, match.groups())
             # Look for the previous minor version
             prev_minor = minor - 1
 
@@ -125,7 +126,7 @@ class RubyVersionFetcher(BaseVersionFetcher):
             for release in releases:
                 r_match = re.match(r"(\d+)\.(\d+)\.(\d+)", release.version)
                 if r_match:
-                    r_major, r_minor, r_patch = map(int, r_match.groups())
+                    r_major, r_minor, _r_patch = map(int, r_match.groups())
                     if r_major == major and r_minor == prev_minor:
                         self.logger.info(
                             f"Using {release.version} as stable vs latest {latest_version}"
@@ -139,9 +140,9 @@ class RubyVersionFetcher(BaseVersionFetcher):
         return latest, latest
 
 
-def ruby_filter_func(tag: Dict[str, Any]) -> bool:
+def ruby_filter_func(tag: JsonObject) -> bool:
     """Filter function for Ruby tags in API checker"""
-    name = tag.get("name", "")
+    name = str(tag.get("name", ""))
     return (
         name.startswith("v")
         and len(name.split("_")) == 3

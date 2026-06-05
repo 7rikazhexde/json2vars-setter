@@ -1,4 +1,5 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple, cast
+from unittest.mock import Mock
 
 import pytest
 import requests
@@ -6,14 +7,14 @@ from pytest_mock import MockerFixture
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.exceptions import GitHubAPIError, ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 
 
 # Mocking ReleaseInfo
 class MockReleaseInfo:
     """Mock for ReleaseInfo - to avoid clean_version"""
 
-    def __init__(self, version: str, prerelease: bool = False):
+    def __init__(self, version: str, prerelease: bool = False) -> None:
         self.version = version
         self.prerelease = prerelease
 
@@ -23,18 +24,18 @@ class ConcreteVersionFetcher(BaseVersionFetcher):
 
     def __init__(
         self, github_owner: str = "test-owner", github_repo: str = "test-repo"
-    ):
+    ) -> None:
         super().__init__(github_owner, github_repo)
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """Simple implementation for testing"""
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         # Assume tags without "alpha", "beta", "rc" are stable
         return not any(x in name.lower() for x in ["alpha", "beta", "rc", "dev", "pre"])
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """Simple implementation for testing"""
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         if not name:
             raise ParseError("Tag name is empty")
         # Check if it's a pre-release (simplified logic)
@@ -169,15 +170,19 @@ def test_get_github_tags_empty_response(mocker: MockerFixture) -> None:
 def test_get_github_tags_pagination(mocker: MockerFixture) -> None:
     """Test GitHub tag fetching with pagination"""
     # Create two pages of responses
-    page1 = [{"name": f"v1.{i}.0"} for i in range(10, 0, -1)]  # v1.10.0 to v1.1.0
-    page2 = [{"name": f"v0.{i}.0"} for i in range(10, 0, -1)]  # v0.10.0 to v0.1.0
+    page1: List[JsonObject] = [
+        {"name": f"v1.{i}.0"} for i in range(10, 0, -1)
+    ]  # v1.10.0 to v1.1.0
+    page2: List[JsonObject] = [
+        {"name": f"v0.{i}.0"} for i in range(10, 0, -1)
+    ]  # v0.10.0 to v0.1.0
 
     # Set up the mock to return different responses for different pages
-    def mock_get_side_effect(*args: Any, **kwargs: Any) -> Any:
-        params = kwargs.get("params", {})
+    def mock_get_side_effect(*args: object, **kwargs: object) -> Mock:
+        params = cast(JsonObject, kwargs.get("params", {}))
         page = params.get("page", 1)
 
-        mock_resp = mocker.Mock()
+        mock_resp: Mock = mocker.Mock()
         mock_resp.raise_for_status.return_value = None
 
         if page == 1:
@@ -189,7 +194,7 @@ def test_get_github_tags_pagination(mocker: MockerFixture) -> None:
 
     # Override the implementation directly
     class TestVersionFetcher(ConcreteVersionFetcher):
-        def _get_github_tags(self, count: Optional[int] = None) -> List[Dict[str, Any]]:
+        def _get_github_tags(self, count: Optional[int] = None) -> List[JsonObject]:
             """Override implementation for testing"""
             all_tags = page1.copy()  # Page 1
             all_tags.extend(page2)  # Page 2
@@ -275,7 +280,7 @@ def test_fetch_versions_basic_flow(mocker: MockerFixture) -> None:
     assert version_info.stable == expected_version
     assert len(version_info.recent_releases) > 0
     assert "source" in version_info.details
-    assert "github:test-owner/test-repo" in version_info.details["source"]
+    assert "github:test-owner/test-repo" in cast(str, version_info.details["source"])
 
 
 def test_fetch_versions_no_tags(mocker: MockerFixture) -> None:
@@ -341,7 +346,7 @@ def test_fetch_versions_all_parse_errors(mocker: MockerFixture) -> None:
     assert version_info.latest is None
     assert version_info.stable is None
     assert "error" in version_info.details
-    assert "Failed to parse any releases" in version_info.details["error"]
+    assert "Failed to parse any releases" in cast(str, version_info.details["error"])
 
 
 def test_fetch_versions_exception(mocker: MockerFixture) -> None:
@@ -361,7 +366,7 @@ def test_fetch_versions_exception(mocker: MockerFixture) -> None:
     assert version_info.latest is None
     assert version_info.stable is None
     assert "error" in version_info.details
-    assert "Unexpected error" in version_info.details["error"]
+    assert "Unexpected error" in cast(str, version_info.details["error"])
     assert version_info.details["error_type"] == "Exception"
 
 

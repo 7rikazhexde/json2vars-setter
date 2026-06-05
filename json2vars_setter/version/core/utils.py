@@ -3,7 +3,14 @@ import re
 import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
+
+import requests
+
+# A parsed JSON object / GitHub REST response object with heterogeneous values.
+# JSON values are heterogeneous, so they are typed as ``object`` and narrowed at
+# the point of use (the project bans ``typing.Any``).
+JsonObject = Dict[str, object]
 
 
 @dataclass
@@ -13,7 +20,7 @@ class ReleaseInfo:
     version: str
     release_date: Optional[str] = None
     prerelease: bool = False
-    additional_info: Dict[str, Any] = field(default_factory=dict)
+    additional_info: JsonObject = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Post-initialization method to clean and standardize version info."""
@@ -24,13 +31,13 @@ class ReleaseInfo:
         if not self.prerelease:
             self.prerelease = is_prerelease(self.version)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         """Equality comparison based on version and prerelease status."""
         if not isinstance(other, ReleaseInfo):
             return NotImplemented
         return self.version == other.version and self.prerelease == other.prerelease
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: object) -> bool:
         """Inequality comparison."""
         result = self.__eq__(other)
         if result is NotImplemented:
@@ -38,22 +45,22 @@ class ReleaseInfo:
         return not result
 
     # Explicitly disallow comparison operators
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: object) -> bool:
         raise TypeError(
             f"'<' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
         )
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: object) -> bool:
         raise TypeError(
             f"'>' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
         )
 
-    def __le__(self, other: Any) -> bool:
+    def __le__(self, other: object) -> bool:
         raise TypeError(
             f"'<=' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
         )
 
-    def __ge__(self, other: Any) -> bool:
+    def __ge__(self, other: object) -> bool:
         raise TypeError(
             f"'>=' not supported between instances of '{self.__class__.__name__}' and '{other.__class__.__name__}'"
         )
@@ -66,7 +73,7 @@ class VersionInfo:
     latest: Optional[str] = None
     stable: Optional[str] = None
     recent_releases: List[ReleaseInfo] = field(default_factory=list)
-    details: Dict[str, Any] = field(default_factory=dict)
+    details: JsonObject = field(default_factory=dict)
 
     def has_error(self) -> bool:
         """Check if the version info contains an error."""
@@ -184,11 +191,11 @@ def is_prerelease(version: str) -> bool:
 
 
 def check_github_api(
-    session: Any,
+    session: requests.Session,
     github_owner: str,
     github_repo: str,
     count: int = 5,
-    filter_func: Optional[Callable[[Dict[str, Any]], bool]] = None,
+    filter_func: Optional[Callable[[JsonObject], bool]] = None,
 ) -> None:
     """
     Utility function to directly check GitHub API for tags
@@ -225,7 +232,7 @@ def check_github_api(
             for tag in filtered_tags[:count]:
                 print(f"- {tag.get('name')}")
     except Exception as e:
-        print(f"Error: {str(e)}")
+        print(f"Error: {e!s}")
 
 
 def get_utc_now() -> datetime:

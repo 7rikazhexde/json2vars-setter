@@ -30,7 +30,7 @@ repos:
   # https://github.com/crate-ci/typos
   # Source-code spell checker (config in pyproject.toml [tool.typos])
   - repo: https://github.com/crate-ci/typos
-    rev: v1.47.1
+    rev: v1
     hooks:
       - id: typos
 
@@ -53,7 +53,7 @@ repos:
   # https://github.com/astral-sh/uv-pre-commit
   # Keep uv.lock in sync with pyproject.toml
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.17
+    rev: 0.11.19
     hooks:
       - id: uv-lock
         verbose: true
@@ -82,7 +82,7 @@ repos:
         args: ["--config", ".markdownlint.jsonc", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.15.15
+    rev: v0.15.16
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
@@ -92,5 +92,11 @@ repos:
     rev: v2.1.0
     hooks:
       - id: mypy
-        additional_dependencies: [types-requests==2.32.0.20240622]
+        # Type stubs / typed libs the isolated hook env needs so mypy strict mode
+        # (disallow_untyped_decorators) can resolve typer/pytest decorators.
+        additional_dependencies:
+          - types-requests==2.33.0.20260518
+          - typer==0.26.4
+          - pytest==9.0.3
+          - pytest-mock==3.15.1
         args: [--config-file=pyproject.toml]
