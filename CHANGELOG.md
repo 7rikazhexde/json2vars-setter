@@ -1,3 +1,8 @@
+# [v1.5.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.4.0...v1.5.0) (2026-06-05)
+
+## ✨ New Features
+- [`4b853c2`](https://github.com/7rikazhexde/json2vars-setter/commit/4b853c2)  Add .NET (C#) version support (Issues: [`#506`](https://github.com/7rikazhexde/json2vars-setter/issues/506))
+
 # [v1.4.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.3.0...v1.4.0) (2026-06-05)
 
 ## ✨ New Features
