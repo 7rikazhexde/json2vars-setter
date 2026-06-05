@@ -295,6 +295,11 @@ Examples:
         help="Strategy for Zig versions",
     )
     parser.add_argument(
+        "--elixir",
+        choices=["stable", "latest", "both"],
+        help="Strategy for Elixir versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -333,6 +338,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.deno = args.all
         args.bun = args.all
         args.zig = args.all
+        args.elixir = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -358,6 +364,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["bun"] = args.bun
     if args.zig:
         language_strategies["zig"] = args.zig
+    if args.elixir:
+        language_strategies["elixir"] = args.elixir
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

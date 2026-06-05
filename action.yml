@@ -56,6 +56,9 @@ inputs:
   zig-strategy:
     description: 'Update strategy for Zig versions (stable, latest, or both)'
     required: false  # Optional
+  elixir-strategy:
+    description: 'Update strategy for Elixir versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -162,6 +165,9 @@ outputs:
   versions_zig:
     description: 'List of Zig versions'
     value: ${{ steps.set_outputs.outputs.versions_zig }}
+  versions_elixir:
+    description: 'List of Elixir versions'
+    value: ${{ steps.set_outputs.outputs.versions_elixir }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -243,6 +249,9 @@ runs:
           fi
           if [[ -n "${{ inputs.zig-strategy }}" ]]; then
             ARGS+=("--zig" "${{ inputs.zig-strategy }}")
+          fi
+          if [[ -n "${{ inputs.elixir-strategy }}" ]]; then
+            ARGS+=("--elixir" "${{ inputs.elixir-strategy }}")
           fi
         fi
 
@@ -368,4 +377,5 @@ runs:
         echo "Deno Versions: ${{ steps.set_outputs.outputs.versions_deno }}"
         echo "Bun Versions: ${{ steps.set_outputs.outputs.versions_bun }}"
         echo "Zig Versions: ${{ steps.set_outputs.outputs.versions_zig }}"
+        echo "Elixir Versions: ${{ steps.set_outputs.outputs.versions_elixir }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"

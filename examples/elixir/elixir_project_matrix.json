@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "elixir": [
+            "1.18",
+            "1.19"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}

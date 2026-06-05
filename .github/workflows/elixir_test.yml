@@ -1,0 +1,162 @@
+name: Elixir Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/elixir/**'
+      - '.github/workflows/elixir_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_elixir: ${{ steps.json2vars.outputs.versions_elixir }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        # Use the in-repo action so this workflow tests the current code. A new
+        # language's `versions_<lang>` output does not exist in the published tag
+        # until the release that adds it, so a tag ref (@vX.Y.Z) would fail here
+        # until then; `./` keeps the example workflow green from the first PR.
+        # TODO(after the release that adds Elixir): switch to the pinned tag
+        #   `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` to match the other
+        #   *_test.yml workflows (see CLAUDE.md "Adding a New Language").
+        uses: ./
+        with:
+          json-file: examples/elixir/elixir_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
+          echo "versions_elixir: ${{ steps.json2vars.outputs.versions_elixir }}"
+          echo "versions_elixir[0]: ${{ fromJson(steps.json2vars.outputs.versions_elixir)[0] }}"
+          echo "versions_elixir[1]: ${{ fromJson(steps.json2vars.outputs.versions_elixir)[1] }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      # Run every matrix combination even if one fails so the aggregated job
+      # result reflects the status of the whole matrix (used by the badge).
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        elixir-version: ${{ fromJson(needs.set_variables.outputs.versions_elixir) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Erlang/Elixir
+        # erlef/setup-beam requires an OTP version; OTP 27 is compatible with
+        # every Elixir version in the matrix (1.18 supports OTP 25-27, 1.19
+        # supports OTP 26-28).
+        uses: erlef/setup-beam@fc68ffb90438ef2936bbb3251622353b3dcb2f93 # v1.24.0
+        with:
+          otp-version: "27"
+          elixir-version: ${{ matrix.elixir-version }}
+
+      - name: Set timezone
+        uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Elixir version
+        run: elixir --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_elixir='${{ needs.set_variables.outputs.versions_elixir }}'
+
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
+
+          versions_elixir_0="${{ fromJson(needs.set_variables.outputs.versions_elixir)[0] }}"
+          versions_elixir_1="${{ fromJson(needs.set_variables.outputs.versions_elixir)[1] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "os_2: ${os_2}"
+          echo "versions_elixir: ${versions_elixir}"
+          echo "versions_elixir_0: ${versions_elixir_0}"
+          echo "versions_elixir_1: ${versions_elixir_1}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          elixir_versions_list=$(echo "${versions_elixir}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${elixir_versions_list}; do
+              echo "Current OS: ${current_os}, Current Elixir Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: elixir_test
+        working-directory: ./examples/elixir
+        shell: bash
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: |
+          elixir json_parser_test.exs
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          # needs.run_tests.result aggregates every matrix combination:
+          # 'success' only when all passed, 'failure' if any leg failed.
+          case "${{ needs.run_tests.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            failure)   status=failing;   color=cf222e ;;
+            cancelled) status=cancelled; color=808080 ;;
+            skipped)   status=skipped;   color=808080 ;;
+            *)         status=pending;   color=dbab09 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: b93c2abf130e91304761df9da4bb5533
+          filename: elixir-test-badge.json
+          label: Elixir Test
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

@@ -11,6 +11,7 @@ from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.fetchers.bun import BunVersionFetcher
 from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
+from json2vars_setter.version.fetchers.elixir import ElixirVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.java import JavaVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
@@ -34,6 +35,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "deno": DenoVersionFetcher,
     "bun": BunVersionFetcher,
     "zig": ZigVersionFetcher,
+    "elixir": ElixirVersionFetcher,
 }
 
 

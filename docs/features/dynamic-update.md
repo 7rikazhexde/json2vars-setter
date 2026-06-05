@@ -198,6 +198,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `deno-strategy` | Strategy for Deno versions | No | - |
 | `bun-strategy` | Strategy for Bun versions | No | - |
 | `zig-strategy` | Strategy for Zig versions | No | - |
+| `elixir-strategy` | Strategy for Elixir versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -254,6 +255,7 @@ The Dynamic Matrix Updater currently supports:
 - **Deno**: Fetches from Deno releases via GitHub API
 - **Bun**: Fetches from Bun releases via GitHub API
 - **Zig**: Fetches from Zig releases via GitHub API
+- **Elixir**: Fetches from Elixir releases via GitHub API
 
 ## Best Practices
 
