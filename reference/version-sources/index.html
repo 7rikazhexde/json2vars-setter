@@ -939,6 +939,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elixir-elixir-langelixir" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Elixir — <code>elixir-lang/elixir</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1192,6 +1203,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#elixir-elixir-langelixir" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Elixir — <code>elixir-lang/elixir</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1342,6 +1364,13 @@ fetcher output (e.g. major-only vs full <code>X.Y.Z</code>).</p>
 <td>previous minor</td>
 <td><code>mlugg/setup-zig</code></td>
 </tr>
+<tr>
+<td>Elixir</td>
+<td><code>elixir-lang/elixir</code> tags</td>
+<td>newest stable</td>
+<td>previous minor</td>
+<td><code>erlef/setup-beam</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1461,6 +1490,16 @@ fetcher output (e.g. major-only vs full <code>X.Y.Z</code>).</p>
   <code>X.Y.Z-dev.*</code> nightly builds are excluded); Zig is still pre-1.0, so <code>stable</code> is
   the previous <strong>minor</strong> (second component) of <code>latest</code>. Example matrices use the
   exact form (<code>"0.14.1"</code>, <code>"0.15.2"</code>) that <code>mlugg/setup-zig</code> accepts.</li>
+</ul>
+<h3 id="elixir-elixir-langelixir">Elixir — <code>elixir-lang/elixir</code></h3>
+<ul>
+<li><strong>Source:</strong> tags of the official Elixir repository (<code>vX.Y.Z</code>).</li>
+<li><strong>Why:</strong> Elixir's release tags are a clean, direct fit for the GitHub-tags fetcher.</li>
+<li><strong>Characteristics:</strong> only tags matching <code>vX.Y.Z</code> are kept (release candidates
+  <code>vX.Y.Z-rc.N</code> and the moving <code>vX.Y-latest</code> tags are excluded); the <code>v</code> prefix is
+  stripped; <code>stable</code> is the previous minor of <code>latest</code>. Example matrices use the form
+  (<code>"1.18"</code>, <code>"1.19"</code>) that <code>erlef/setup-beam</code> accepts. <code>setup-beam</code> also requires an
+  Erlang/OTP version, which the example workflow pins separately.</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to
