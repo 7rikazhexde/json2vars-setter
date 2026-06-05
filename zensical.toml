@@ -33,6 +33,7 @@ nav = [
   ]},
   { "Reference" = [
     { "Command Options" = "reference/options.md" },
+    { "Version Sources" = "reference/version-sources.md" },
   ]},
   { "Contributing" = "contributing.md" },
 ]

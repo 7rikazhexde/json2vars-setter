@@ -23,6 +23,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `rust-strategy` | Update strategy for Rust versions | ✗ | - | Same valid values as `update-strategy` |
 | `php-strategy` | Update strategy for PHP versions | ✗ | - | Same valid values as `update-strategy` |
 | `dotnet-strategy` | Update strategy for .NET (C#) versions | ✗ | - | Same valid values as `update-strategy` |
+| `java-strategy` | Update strategy for Java versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -54,6 +55,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_rust` | List of Rust versions | `["1.70.0", "1.71.0", "stable"]` |
 | `versions_php` | List of PHP versions | `["8.2.0", "8.3.0", "8.4.0"]` |
 | `versions_dotnet` | List of .NET (C#) versions | `["8.0.100", "9.0.100"]` |
+| `versions_java` | List of Java versions | `["21", "17", "11"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes

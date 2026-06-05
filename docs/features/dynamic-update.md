@@ -194,6 +194,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `rust-strategy` | Strategy for Rust versions | No | - |
 | `php-strategy` | Strategy for PHP versions | No | - |
 | `dotnet-strategy` | Strategy for .NET (C#) versions | No | - |
+| `java-strategy` | Strategy for Java versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -246,6 +247,7 @@ The Dynamic Matrix Updater currently supports:
 - **Rust**: Fetches from Rust releases via GitHub API
 - **PHP**: Fetches from PHP releases via GitHub API
 - **.NET (C#)**: Fetches from .NET SDK releases via GitHub API
+- **Java**: Fetches from the Adoptium API (latest feature release / latest LTS)
 
 ## Best Practices
 
