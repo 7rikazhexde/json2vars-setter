@@ -928,6 +928,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#zig-ziglangzig" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Zig — <code>ziglang/zig</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1170,6 +1181,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#zig-ziglangzig" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Zig — <code>ziglang/zig</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1313,6 +1335,13 @@ fetcher output (e.g. major-only vs full <code>X.Y.Z</code>).</p>
 <td>previous minor</td>
 <td><code>oven-sh/setup-bun</code></td>
 </tr>
+<tr>
+<td>Zig</td>
+<td><code>ziglang/zig</code> tags</td>
+<td>newest stable</td>
+<td>previous minor</td>
+<td><code>mlugg/setup-zig</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1422,6 +1451,16 @@ fetcher output (e.g. major-only vs full <code>X.Y.Z</code>).</p>
   <code>v0.x</code> tags are excluded); the <code>bun-v</code> prefix is stripped; <code>stable</code> is the previous
   minor of <code>latest</code>. Example matrices use the form (<code>"1.2.x"</code>, <code>"1.3.x"</code>) that
   <code>oven-sh/setup-bun</code> accepts.</li>
+</ul>
+<h3 id="zig-ziglangzig">Zig — <code>ziglang/zig</code></h3>
+<ul>
+<li><strong>Source:</strong> tags of the official Zig repository (plain <code>X.Y.Z</code>).</li>
+<li><strong>Why:</strong> Zig's stable release tags are bare semantic versions — a clean, direct
+  fit for the GitHub-tags fetcher.</li>
+<li><strong>Characteristics:</strong> only tags matching <code>X.Y.Z</code> are kept (<code>master</code> and
+  <code>X.Y.Z-dev.*</code> nightly builds are excluded); Zig is still pre-1.0, so <code>stable</code> is
+  the previous <strong>minor</strong> (second component) of <code>latest</code>. Example matrices use the
+  exact form (<code>"0.14.1"</code>, <code>"0.15.2"</code>) that <code>mlugg/setup-zig</code> accepts.</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to

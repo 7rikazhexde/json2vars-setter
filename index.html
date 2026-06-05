@@ -1025,7 +1025,7 @@
 <li><strong>JSON Parsing</strong>: Convert JSON files into GitHub Actions output variables for use in your workflows</li>
 <li><strong>Dynamic Version Management</strong>: Automatically update your testing matrix with latest language versions from official sources</li>
 <li><strong>Version Caching</strong>: Cache version information to reduce API calls and improve workflow performance</li>
-<li><strong>Support for Multiple Languages</strong>: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, and Bun</li>
+<li><strong>Support for Multiple Languages</strong>: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, and Zig</li>
 <li><strong>Flexible Configuration</strong>: Maintain a single source of truth for your matrix testing environments</li>
 </ul>
 <h2 id="supported-matrix-components">Supported Matrix Components</h2>
@@ -1088,6 +1088,11 @@
 <td><a href="https://github.com/marketplace/actions/setup-bun"><img alt="setup-bun" src="https://img.shields.io/badge/setup--bun-000000?style=flat&amp;logo=github-actions&amp;logoColor=white" /></a></td>
 <td><a href="https://github.com/7rikazhexde/json2vars-setter/actions/workflows/bun_test.yml"><img alt="Bun Test" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/431a19225ef80b473e7eee8e060b7516/raw/bun-test-badge.json&amp;cacheSeconds=0" /></a></td>
 </tr>
+<tr>
+<td><img alt="Zig" src="https://img.shields.io/badge/Zig-F7A41D?style=flat&amp;logo=zig&amp;logoColor=white" /></td>
+<td><a href="https://github.com/marketplace/actions/setup-zig-compiler"><img alt="setup-zig" src="https://img.shields.io/badge/setup--zig-F7A41D?style=flat&amp;logo=github-actions&amp;logoColor=white" /></a></td>
+<td><a href="https://github.com/7rikazhexde/json2vars-setter/actions/workflows/zig_test.yml"><img alt="Zig Test" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/35f4914a9b707f6570a2c7b508e1f675/raw/zig-test-badge.json&amp;cacheSeconds=0" /></a></td>
+</tr>
 </tbody>
 </table>
 <h2 id="quick-start">Quick Start</h2>
@@ -1141,7 +1146,7 @@
 <a id="__codelineno-0-11" name="__codelineno-0-11"></a>
 <a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set variables from JSON</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json2vars</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.6.0</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.7.0</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">          </span><span class="nt">json-file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.github/json2vars-setter/sample/matrix.json</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a>
