@@ -147,7 +147,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gistID: REPLACE_WITH_ZIG_GIST_ID
+          gistID: 35f4914a9b707f6570a2c7b508e1f675
           filename: zig-test-badge.json
           label: Zig Test
           message: ${{ steps.status.outputs.status }}

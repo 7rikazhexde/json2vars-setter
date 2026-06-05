@@ -144,7 +144,7 @@ jobs:
         uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
         with:
           auth: ${{ secrets.GIST_TOKEN }}
-          gistID: REPLACE_WITH_SWIFT_GIST_ID
+          gistID: c20279820e1c89d7864bf440e8c7cfa2
           filename: swift-test-badge.json
           label: Swift Test
           message: ${{ steps.status.outputs.status }}
