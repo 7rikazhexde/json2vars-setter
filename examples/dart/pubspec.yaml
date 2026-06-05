@@ -1,0 +1,6 @@
+name: json2vars_dart_example
+description: Example Dart project that parses the json2vars-setter matrix file.
+publish_to: none
+
+environment:
+  sdk: ^3.0.0

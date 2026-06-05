@@ -43,6 +43,7 @@ The dynamic-update strategies map onto these fields:
 | Bun | `oven-sh/bun` tags | newest stable | previous minor | `oven-sh/setup-bun` |
 | Zig | `ziglang/zig` tags | newest stable | previous minor | `mlugg/setup-zig` |
 | Elixir | `elixir-lang/elixir` tags | newest stable | previous minor | `erlef/setup-beam` |
+| Dart | **Dart release archive** | newest stable | previous minor | `dart-lang/setup-dart` |
 
 ## Per-language details
 
@@ -168,6 +169,18 @@ The dynamic-update strategies map onto these fields:
   stripped; `stable` is the previous minor of `latest`. Example matrices use the form
   (`"1.18"`, `"1.19"`) that `erlef/setup-beam` accepts. `setup-beam` also requires an
   Erlang/OTP version, which the example workflow pins separately.
+
+### Dart — Dart release archive
+
+- **Source:** the Dart SDK release archive on Google Cloud Storage
+  (`channels/stable/release/`), listed via the GCS JSON API.
+- **Why:** the `dart-lang/sdk` GitHub tags are dominated by per-package tags
+  (`analyzer-*`, `meta-*`) with the plain SDK version tags buried, so — like Java —
+  Dart uses a dedicated source rather than the GitHub-tags fetcher.
+- **Characteristics:** release "folders" matching `X.Y.Z` are extracted and sorted
+  **numerically** (the listing is lexicographic, so `3.9.x` sorts after `3.12.x`);
+  `latest` is the newest version and `stable` is the previous minor. Example matrices
+  use the form (`"3.11.6"`, `"3.12.1"`) that `dart-lang/setup-dart` accepts.
 
 ## Adding another language
 
