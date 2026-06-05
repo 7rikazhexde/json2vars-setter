@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-json2vars-setter is a **GitHub Action** (composite action) that parses JSON files and sets their values as GitHub Actions output variables. It supports dynamic version management and caching for Python, Node.js, Ruby, Go, Rust, PHP, .NET (C#), Java, Deno, and Bun. The action reads a matrix JSON file (default: `.github/json2vars-setter/matrix.json`) and exposes OS lists, language versions, and other config as workflow outputs.
+json2vars-setter is a **GitHub Action** (composite action) that parses JSON files and sets their values as GitHub Actions output variables. It supports dynamic version management and caching for Python, Node.js, Ruby, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, and Zig. The action reads a matrix JSON file (default: `.github/json2vars-setter/matrix.json`) and exposes OS lists, language versions, and other config as workflow outputs.
 
 ## Common Commands
 
@@ -79,7 +79,7 @@ A pluggable architecture for fetching language versions from GitHub:
 - **`version/core/base.py`** — `BaseVersionFetcher` abstract class handles GitHub API pagination, authentication (via `GITHUB_TOKEN`), and defines the interface (`_is_stable_tag()`, `_parse_version_from_tag()`)
 - **`version/core/exceptions.py`** — Exception hierarchy: `VersionFetchError` → `GitHubAPIError`, `ParseError`, `ValidationError`
 - **`version/core/utils.py`** — Shared data classes (`VersionInfo`, `ReleaseInfo`) and helpers
-- **`version/fetchers/`** — Language-specific implementations (`python.py`, `nodejs.py`, `ruby.py`, `go.py`, `rust.py`, `php.py`, `dotnet.py`, `java.py`, `deno.py`, `bun.py`). Most parse tags from the respective GitHub repository; `java.py` is the exception — it overrides `fetch_versions` to query the Adoptium API (see `docs/reference/version-sources.md`)
+- **`version/fetchers/`** — Language-specific implementations (`python.py`, `nodejs.py`, `ruby.py`, `go.py`, `rust.py`, `php.py`, `dotnet.py`, `java.py`, `deno.py`, `bun.py`, `zig.py`). Most parse tags from the respective GitHub repository; `java.py` is the exception — it overrides `fetch_versions` to query the Adoptium API (see `docs/reference/version-sources.md`)
 
 ### Entry Points
 

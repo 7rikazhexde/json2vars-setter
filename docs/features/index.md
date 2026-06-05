@@ -109,7 +109,7 @@ graph LR
 - **Automated Version Updates**: Keep testing matrices current without manual intervention
 - **Efficient API Usage**: Reduce external API calls by caching version information
 - **Cross-Platform Testing**: Define operating systems and language versions for comprehensive testing
-- **Multi-Language Projects**: Support for Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, and Bun in a single configuration
+- **Multi-Language Projects**: Support for Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, and Zig in a single configuration
 
 ## Component Integration
 

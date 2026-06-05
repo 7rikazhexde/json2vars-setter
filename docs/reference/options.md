@@ -26,6 +26,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `java-strategy` | Update strategy for Java versions | ✗ | - | Same valid values as `update-strategy` |
 | `deno-strategy` | Update strategy for Deno versions | ✗ | - | Same valid values as `update-strategy` |
 | `bun-strategy` | Update strategy for Bun versions | ✗ | - | Same valid values as `update-strategy` |
+| `zig-strategy` | Update strategy for Zig versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -60,6 +61,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_java` | List of Java versions | `["21", "17", "11"]` |
 | `versions_deno` | List of Deno versions | `["2.1.4", "1.46.3"]` |
 | `versions_bun` | List of Bun versions | `["1.3.14", "1.2.23"]` |
+| `versions_zig` | List of Zig versions | `["0.15.2", "0.14.1"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes
