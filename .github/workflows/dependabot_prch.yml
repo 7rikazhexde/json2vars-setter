@@ -40,7 +40,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.5.0
+        uses: 7rikazhexde/json2vars-setter@v1.6.0
         with:
           json-file: tests/matrix_static.json
 

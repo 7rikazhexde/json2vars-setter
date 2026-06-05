@@ -1,3 +1,8 @@
+# [v1.6.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.5.0...v1.6.0) (2026-06-05)
+
+## ✨ New Features
+- [`7c985e7`](https://github.com/7rikazhexde/json2vars-setter/commit/7c985e7)  Add Java version support (Issues: [`#505`](https://github.com/7rikazhexde/json2vars-setter/issues/505))
+
 # [v1.5.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.4.0...v1.5.0) (2026-06-05)
 
 ## ✨ New Features
