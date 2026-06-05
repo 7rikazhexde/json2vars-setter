@@ -41,6 +41,7 @@ The dynamic-update strategies map onto these fields:
 | Java | **Adoptium API** | newest **feature** | newest **LTS** | `actions/setup-java` |
 | Deno | `denoland/deno` tags | newest stable | previous minor | `denoland/setup-deno` |
 | Bun | `oven-sh/bun` tags | newest stable | previous minor | `oven-sh/setup-bun` |
+| Zig | `ziglang/zig` tags | newest stable | previous minor | `mlugg/setup-zig` |
 
 ## Per-language details
 
@@ -146,6 +147,16 @@ The dynamic-update strategies map onto these fields:
   `v0.x` tags are excluded); the `bun-v` prefix is stripped; `stable` is the previous
   minor of `latest`. Example matrices use the form (`"1.2.x"`, `"1.3.x"`) that
   `oven-sh/setup-bun` accepts.
+
+### Zig — `ziglang/zig`
+
+- **Source:** tags of the official Zig repository (plain `X.Y.Z`).
+- **Why:** Zig's stable release tags are bare semantic versions — a clean, direct
+  fit for the GitHub-tags fetcher.
+- **Characteristics:** only tags matching `X.Y.Z` are kept (`master` and
+  `X.Y.Z-dev.*` nightly builds are excluded); Zig is still pre-1.0, so `stable` is
+  the previous **minor** (second component) of `latest`. Example matrices use the
+  exact form (`"0.14.1"`, `"0.15.2"`) that `mlugg/setup-zig` accepts.
 
 ## Adding another language
 

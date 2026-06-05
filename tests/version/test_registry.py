@@ -12,6 +12,7 @@ from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher
+from json2vars_setter.version.fetchers.zig import ZigVersionFetcher
 from json2vars_setter.version.registry import get_version_fetcher
 
 
@@ -27,6 +28,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("java"), JavaVersionFetcher)
     assert isinstance(get_version_fetcher("deno"), DenoVersionFetcher)
     assert isinstance(get_version_fetcher("bun"), BunVersionFetcher)
+    assert isinstance(get_version_fetcher("zig"), ZigVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:

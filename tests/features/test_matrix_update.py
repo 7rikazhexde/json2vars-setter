@@ -306,6 +306,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "java": "stable",
             "deno": "stable",
             "bun": "stable",
+            "zig": "stable",
         },
         False,
     )
@@ -329,6 +330,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "latest",
             "--bun",
             "stable",
+            "--zig",
+            "latest",
             "--dry-run",
         ],
     )
@@ -344,6 +347,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "java": "both",
             "deno": "latest",
             "bun": "stable",
+            "zig": "latest",
         },
         True,  # dry_run=True
     )

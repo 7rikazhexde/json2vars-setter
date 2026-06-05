@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "zig": [
+            "0.14.1",
+            "0.15.2"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}

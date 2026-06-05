@@ -197,6 +197,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `java-strategy` | Strategy for Java versions | No | - |
 | `deno-strategy` | Strategy for Deno versions | No | - |
 | `bun-strategy` | Strategy for Bun versions | No | - |
+| `zig-strategy` | Strategy for Zig versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -252,6 +253,7 @@ The Dynamic Matrix Updater currently supports:
 - **Java**: Fetches from the Adoptium API (latest feature release / latest LTS)
 - **Deno**: Fetches from Deno releases via GitHub API
 - **Bun**: Fetches from Bun releases via GitHub API
+- **Zig**: Fetches from Zig releases via GitHub API
 
 ## Best Practices
 
