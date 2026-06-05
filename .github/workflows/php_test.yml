@@ -1,0 +1,158 @@
+name: PHP Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/php/**'
+      - '.github/workflows/php_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_php: ${{ steps.json2vars.outputs.versions_php }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.3.0
+        with:
+          json-file: examples/php/php_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
+          echo "versions_php: ${{ steps.json2vars.outputs.versions_php }}"
+          echo "versions_php[0]: ${{ fromJson(steps.json2vars.outputs.versions_php)[0] }}"
+          echo "versions_php[1]: ${{ fromJson(steps.json2vars.outputs.versions_php)[1] }}"
+          echo "versions_php[2]: ${{ fromJson(steps.json2vars.outputs.versions_php)[2] }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      # Run every matrix combination even if one fails so the aggregated job
+      # result reflects the status of the whole matrix (used by the badge).
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        php-version: ${{ fromJson(needs.set_variables.outputs.versions_php) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc # 2.37.1
+        with:
+          php-version: ${{ matrix.php-version }}
+          tools: composer
+
+      - name: Set timezone
+        uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display PHP version
+        run: |
+          php --version
+          composer --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_php='${{ needs.set_variables.outputs.versions_php }}'
+
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
+
+          versions_php_0="${{ fromJson(needs.set_variables.outputs.versions_php)[0] }}"
+          versions_php_1="${{ fromJson(needs.set_variables.outputs.versions_php)[1] }}"
+          versions_php_2="${{ fromJson(needs.set_variables.outputs.versions_php)[2] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "os_2: ${os_2}"
+          echo "versions_php: ${versions_php}"
+          echo "versions_php_0: ${versions_php_0}"
+          echo "versions_php_1: ${versions_php_1}"
+          echo "versions_php_2: ${versions_php_2}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          php_versions_list=$(echo "${versions_php}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${php_versions_list}; do
+              echo "Current OS: ${current_os}, Current PHP Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: php_test
+        working-directory: ./examples/php
+        shell: bash
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: |
+          composer install --no-interaction --no-progress
+          composer test
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          # needs.run_tests.result aggregates every matrix combination:
+          # 'success' only when all passed, 'failure' if any leg failed.
+          case "${{ needs.run_tests.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            failure)   status=failing;   color=cf222e ;;
+            cancelled) status=cancelled; color=808080 ;;
+            skipped)   status=skipped;   color=808080 ;;
+            *)         status=pending;   color=dbab09 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: a9bc428c9f5a2f998bd7307038e557e1
+          filename: php-test-badge.json
+          label: PHP Test
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

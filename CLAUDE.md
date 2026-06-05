@@ -87,6 +87,46 @@ A pluggable architecture for fetching language versions from GitHub:
 - **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess)
 - **Direct module execution**: `python -m json2vars_setter.features.<module>`
 
+## Adding a New Language (complete checklist)
+
+Adding a supported language touches **code, the action contract, tests, an example
+project, a CI workflow, status badges, and docs**. All of the following must be done
+or the addition is incomplete:
+
+1. **Fetcher** — `json2vars_setter/version/fetchers/<lang>.py`: a `BaseVersionFetcher`
+   subclass implementing `_is_stable_tag` / `_parse_version_from_tag` (and usually
+   `_get_stability_criteria`) plus a `<lang>_filter_func` and the `__main__` block,
+   modeled on the closest existing fetcher (e.g. `ruby.py` / `go.py`).
+2. **Registry** — register the fetcher in `json2vars_setter/version/registry.py`
+   (`LANGUAGE_FETCHERS`).
+3. **Matrix update CLI** — `json2vars_setter/features/matrix_update.py`: add the
+   `--<lang>` argument, the `args.<lang> = args.all` line in the `--all` block, and
+   the `if args.<lang>: language_strategies["<lang>"] = ...` wiring.
+4. **Action contract** — `action.yml`: add the `<lang>-strategy` input, the
+   `versions_<lang>` output, the strategy-arg building block, and the summary `echo`.
+5. **Tests (keep 100% coverage)** — `tests/version/fetchers/test_<lang>.py`, plus add
+   the language to `tests/version/test_registry.py` and the `--all` / individual-flag
+   assertions in `tests/features/test_matrix_update.py`.
+6. **Example project** — `examples/<lang>/`: a small JSON-parser project with source,
+   tests, `<lang>_project_matrix.json`, build config, and `README.md` (mirror
+   `examples/ruby/`). The matrix versions must be in the format the language's
+   `setup-*` action accepts.
+7. **Example CI workflow** — `.github/workflows/<lang>_test.yml` (mirror
+   `ruby_test.yml`): `set_variables` → `run_tests` (matrix) → `update_badge`. The
+   `update_badge` job needs a **dedicated gist** (`<lang>-test-badge.json`, written via
+   `GIST_TOKEN`) — its `gistID` must be created by the repo owner and cannot be
+   generated programmatically.
+8. **Status badges** — add a row to the language table in `README.md` **and** the
+   matching badge in `docs/index.md`, pointing at the new gist
+   (`gist.githubusercontent.com/7rikazhexde/<GIST_ID>/raw/<lang>-test-badge.json`) and
+   the new workflow. Also update any "supported languages" prose (README intro,
+   `docs/features/dynamic-update.md`, `docs/reference/options.md`, this file's
+   Project Overview + fetcher list).
+9. **Release ordering caveat** — the new `<lang>_test.yml` references the action by its
+   published tag (`@vX.Y.Z`), so `versions_<lang>` is only available **after** the
+   release that includes the new language. The workflow stays red between merge and the
+   next release; the release's `sync-version-refs.sh` bumps the tag and it goes green.
+
 ## Code Conventions
 
 - **Commit messages**: Follow [gitmoji](https://gitmoji.dev/) conventions. Releases are automated by **semantic-release-gitmoji**, which reads the gitmoji to pick the next version: `:boom:` → major, `:sparkles:` → minor, and fixes/maintenance (`:bug:`, `:lock:`, `:ambulance:`, `:zap:`, `:wrench:`, `:recycle:`, `:arrow_up:`, …) → patch. Other gitmoji (e.g. `:memo:`, `:art:`, `:white_check_mark:`) don't trigger a release. The full mapping is the `releaseRules` in `.releaserc.json`.

@@ -1,0 +1,29 @@
+{
+    "name": "json2vars-setter/php-example",
+    "description": "PHP example for json2vars-setter matrix testing",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JsonVarsSetter\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JsonVarsSetter\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "start": "php src/JsonParser.php"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
