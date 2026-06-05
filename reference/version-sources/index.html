@@ -906,6 +906,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#deno-denolanddeno" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Deno — <code>denoland/deno</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1126,6 +1137,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#deno-denolanddeno" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Deno — <code>denoland/deno</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1255,6 +1277,13 @@ fetcher output (e.g. major-only vs full <code>X.Y.Z</code>).</p>
 <td>newest <strong>LTS</strong></td>
 <td><code>actions/setup-java</code></td>
 </tr>
+<tr>
+<td>Deno</td>
+<td><code>denoland/deno</code> tags</td>
+<td>newest stable</td>
+<td>previous minor</td>
+<td><code>denoland/setup-deno</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1346,6 +1375,15 @@ fetcher output (e.g. major-only vs full <code>X.Y.Z</code>).</p>
   releases, newest first. The consumer side uses the official <code>actions/setup-java</code> with
   the <code>temurin</code> distribution; example matrices use major versions (<code>"11"</code>, <code>"17"</code>,
   <code>"21"</code>).</li>
+</ul>
+<h3 id="deno-denolanddeno">Deno — <code>denoland/deno</code></h3>
+<ul>
+<li><strong>Source:</strong> tags of the official Deno repository (<code>vX.Y.Z</code>).</li>
+<li><strong>Why:</strong> Deno publishes clean, stable-only release tags (no pre-release noise), so it is
+  a direct fit for the GitHub-tags fetcher.</li>
+<li><strong>Characteristics:</strong> the <code>v</code> prefix is stripped; <code>stable</code> is the previous minor of
+  <code>latest</code>. Example matrices use the channel form (<code>"v1.x"</code>, <code>"v2.x"</code>) that
+  <code>denoland/setup-deno</code> accepts.</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to

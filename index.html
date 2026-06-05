@@ -1025,7 +1025,7 @@
 <li><strong>JSON Parsing</strong>: Convert JSON files into GitHub Actions output variables for use in your workflows</li>
 <li><strong>Dynamic Version Management</strong>: Automatically update your testing matrix with latest language versions from official sources</li>
 <li><strong>Version Caching</strong>: Cache version information to reduce API calls and improve workflow performance</li>
-<li><strong>Support for Multiple Languages</strong>: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), and Java</li>
+<li><strong>Support for Multiple Languages</strong>: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, and Deno</li>
 <li><strong>Flexible Configuration</strong>: Maintain a single source of truth for your matrix testing environments</li>
 </ul>
 <h2 id="supported-matrix-components">Supported Matrix Components</h2>
@@ -1077,6 +1077,11 @@
 <td><img alt="Java" src="https://img.shields.io/badge/Java-007396?style=flat&amp;logo=openjdk&amp;logoColor=white" /></td>
 <td><a href="https://github.com/marketplace/actions/setup-java-jdk"><img alt="setup-java" src="https://img.shields.io/badge/setup--java-007396?style=flat&amp;logo=github-actions&amp;logoColor=white" /></a></td>
 <td><a href="https://github.com/7rikazhexde/json2vars-setter/actions/workflows/java_test.yml"><img alt="Java Test" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/813e5201a834d06253014b66ee8fd154/raw/java-test-badge.json&amp;cacheSeconds=0" /></a></td>
+</tr>
+<tr>
+<td><img alt="Deno" src="https://img.shields.io/badge/Deno-000000?style=flat&amp;logo=deno&amp;logoColor=white" /></td>
+<td><a href="https://github.com/marketplace/actions/setup-deno"><img alt="setup-deno" src="https://img.shields.io/badge/setup--deno-000000?style=flat&amp;logo=github-actions&amp;logoColor=white" /></a></td>
+<td><a href="https://github.com/7rikazhexde/json2vars-setter/actions/workflows/deno_test.yml"><img alt="Deno Test" src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/5a34d5cdfb2b13ed4ab1939009b6f5b1/raw/deno-test-badge.json&amp;cacheSeconds=0" /></a></td>
 </tr>
 </tbody>
 </table>
@@ -1131,7 +1136,7 @@
 <a id="__codelineno-0-11" name="__codelineno-0-11"></a>
 <a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set variables from JSON</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">json2vars</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.5.0</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7rikazhexde/json2vars-setter@v1.6.0</span>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="w">        </span><span class="nt">with</span><span class="p">:</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">          </span><span class="nt">json-file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.github/json2vars-setter/sample/matrix.json</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a>
