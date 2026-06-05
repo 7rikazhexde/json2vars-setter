@@ -28,20 +28,16 @@ The dynamic-update strategies map onto these fields:
 > format the language's `setup-*` action expects, which may differ from the raw
 > fetcher output (e.g. major-only vs full `X.Y.Z`).
 
-## What the example projects verify
+## What the example projects are for
 
-Each `examples/<lang>/` project is a minimal JSON parser that the matching
-`<lang>_test.yml` workflow runs across the matrix. Their purpose is to confirm that:
+Each `examples/<lang>/` project is a small, self-contained example that the matching
+`<lang>_test.yml` workflow runs across the matrix — demonstrating json2vars-setter
+driving the language's `setup-*` action end to end.
 
-1. **json2vars-setter** parses the matrix JSON and exposes the `os` / `versions_<lang>`
-   outputs, and
-2. the language's **`setup-*` action** consumes those values and runs a real build/test.
-
-They are **not** a check that a specific version is installable — that is the `setup-*`
-action's responsibility, and its supported-version list can lag the upstream source the
-fetcher reads (see the Swift caveat below). Accordingly, the example tests assert the
-**shape** of the parsed matrix (e.g. `versions_<lang>` is a non-empty list of strings),
-not exact version values, so bumping a matrix version never requires touching the test.
+They are examples only: their exact contents are illustrative and may change. In
+particular they are **not** a check that a specific version is installable — that is the
+`setup-*` action's responsibility, and its supported-version list can lag the upstream
+source the fetcher reads (see the Swift caveat below).
 
 ## Summary
 
