@@ -41,6 +41,9 @@ inputs:
   php-strategy:
     description: 'Update strategy for PHP versions (stable, latest, or both)'
     required: false  # Optional
+  dotnet-strategy:
+    description: 'Update strategy for .NET (C#) versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -132,6 +135,9 @@ outputs:
   versions_php:
     description: 'List of PHP versions'
     value: ${{ steps.set_outputs.outputs.versions_php }}
+  versions_dotnet:
+    description: 'List of .NET (C#) versions'
+    value: ${{ steps.set_outputs.outputs.versions_dotnet }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -198,6 +204,9 @@ runs:
           fi
           if [[ -n "${{ inputs.php-strategy }}" ]]; then
             ARGS+=("--php" "${{ inputs.php-strategy }}")
+          fi
+          if [[ -n "${{ inputs.dotnet-strategy }}" ]]; then
+            ARGS+=("--dotnet" "${{ inputs.dotnet-strategy }}")
           fi
         fi
 
@@ -318,4 +327,5 @@ runs:
         echo "Go Versions: ${{ steps.set_outputs.outputs.versions_go }}"
         echo "Rust Versions: ${{ steps.set_outputs.outputs.versions_rust }}"
         echo "PHP Versions: ${{ steps.set_outputs.outputs.versions_php }}"
+        echo ".NET Versions: ${{ steps.set_outputs.outputs.versions_dotnet }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"
