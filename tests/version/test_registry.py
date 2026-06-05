@@ -4,6 +4,7 @@ import pytest
 
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
+from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
 from json2vars_setter.version.fetchers.rust import RustVersionFetcher
@@ -17,6 +18,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("ruby"), RubyVersionFetcher)
     assert isinstance(get_version_fetcher("go"), GoVersionFetcher)
     assert isinstance(get_version_fetcher("rust"), RustVersionFetcher)
+    assert isinstance(get_version_fetcher("php"), PhpVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:

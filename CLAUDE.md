@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-json2vars-setter is a **GitHub Action** (composite action) that parses JSON files and sets their values as GitHub Actions output variables. It supports dynamic version management and caching for Python, Node.js, Ruby, Go, and Rust. The action reads a matrix JSON file (default: `.github/json2vars-setter/matrix.json`) and exposes OS lists, language versions, and other config as workflow outputs.
+json2vars-setter is a **GitHub Action** (composite action) that parses JSON files and sets their values as GitHub Actions output variables. It supports dynamic version management and caching for Python, Node.js, Ruby, Go, Rust, and PHP. The action reads a matrix JSON file (default: `.github/json2vars-setter/matrix.json`) and exposes OS lists, language versions, and other config as workflow outputs.
 
 ## Common Commands
 
@@ -79,13 +79,60 @@ A pluggable architecture for fetching language versions from GitHub:
 - **`version/core/base.py`** — `BaseVersionFetcher` abstract class handles GitHub API pagination, authentication (via `GITHUB_TOKEN`), and defines the interface (`_is_stable_tag()`, `_parse_version_from_tag()`)
 - **`version/core/exceptions.py`** — Exception hierarchy: `VersionFetchError` → `GitHubAPIError`, `ParseError`, `ValidationError`
 - **`version/core/utils.py`** — Shared data classes (`VersionInfo`, `ReleaseInfo`) and helpers
-- **`version/fetchers/`** — Language-specific implementations (`python.py`, `nodejs.py`, `ruby.py`, `go.py`, `rust.py`), each parsing tags from the respective GitHub repository
+- **`version/fetchers/`** — Language-specific implementations (`python.py`, `nodejs.py`, `ruby.py`, `go.py`, `rust.py`, `php.py`), each parsing tags from the respective GitHub repository
 
 ### Entry Points
 
 - **GitHub Action**: `action.yml` defines the composite action with inputs/outputs; its steps invoke `python -m json2vars_setter.features.<module>`
 - **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess)
 - **Direct module execution**: `python -m json2vars_setter.features.<module>`
+
+## Adding a New Language (complete checklist)
+
+Adding a supported language touches **code, the action contract, tests, an example
+project, a CI workflow, status badges, and docs**. All of the following must be done
+or the addition is incomplete:
+
+1. **Fetcher** — `json2vars_setter/version/fetchers/<lang>.py`: a `BaseVersionFetcher`
+   subclass implementing `_is_stable_tag` / `_parse_version_from_tag` (and usually
+   `_get_stability_criteria`) plus a `<lang>_filter_func` and the `__main__` block,
+   modeled on the closest existing fetcher (e.g. `ruby.py` / `go.py`).
+2. **Registry** — register the fetcher in `json2vars_setter/version/registry.py`
+   (`LANGUAGE_FETCHERS`).
+3. **Matrix update CLI** — `json2vars_setter/features/matrix_update.py`: add the
+   `--<lang>` argument, the `args.<lang> = args.all` line in the `--all` block, and
+   the `if args.<lang>: language_strategies["<lang>"] = ...` wiring.
+4. **Action contract** — `action.yml`: add the `<lang>-strategy` input, the
+   `versions_<lang>` output, the strategy-arg building block, and the summary `echo`.
+5. **Tests (keep 100% coverage)** — `tests/version/fetchers/test_<lang>.py`, plus add
+   the language to `tests/version/test_registry.py` and the `--all` / individual-flag
+   assertions in `tests/features/test_matrix_update.py`.
+6. **Example project** — `examples/<lang>/`: a small JSON-parser project with source,
+   tests, `<lang>_project_matrix.json`, build config, and `README.md` (mirror
+   `examples/ruby/`). The matrix versions must be in the format the language's
+   `setup-*` action accepts.
+7. **Example CI workflow** — `.github/workflows/<lang>_test.yml` (mirror
+   `ruby_test.yml`): `set_variables` → `run_tests` (matrix) → `update_badge`. The
+   `update_badge` job needs a **dedicated gist** (`<lang>-test-badge.json`, written via
+   `GIST_TOKEN`) — its `gistID` must be created by the repo owner and cannot be
+   generated programmatically.
+8. **Status badges** — add a row to the language table in `README.md` **and** the
+   matching badge in `docs/index.md`, pointing at the new gist
+   (`gist.githubusercontent.com/7rikazhexde/<GIST_ID>/raw/<lang>-test-badge.json`) and
+   the new workflow. Also update any "supported languages" prose (README intro,
+   `docs/features/dynamic-update.md`, `docs/reference/options.md`, this file's
+   Project Overview + fetcher list).
+9. **Release ordering (two-phase action reference)** — a new language's
+   `versions_<lang>` output does not exist in the published tag until the release that
+   adds it, so a tag ref (`@vX.Y.Z`) in `<lang>_test.yml` would fail on the introducing
+   PR. Handle this in two phases:
+   - **In the introducing PR:** point `<lang>_test.yml` at the in-repo action with
+     `uses: ./` so the workflow tests the PR's own code and is green from the start.
+   - **After the release that adds the language:** switch it to the pinned tag
+     `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` to match every other `*_test.yml` and
+     the Versioning Rule. From then on `sync-version-refs.sh` keeps it pinned to the
+     latest release. **This swap is a required follow-up** — track it so the example
+     workflow does not stay on `./`.
 
 ## Code Conventions
 

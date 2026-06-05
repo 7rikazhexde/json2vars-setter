@@ -26,7 +26,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 - **JSON Parsing**: Convert JSON files into GitHub Actions output variables for use in your workflows
 - **Dynamic Version Management**: Automatically update your testing matrix with latest language versions from official sources
 - **Version Caching**: Cache version information to reduce API calls and improve workflow performance
-- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, and Rust
+- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, and PHP
 - **Flexible Configuration**: Maintain a single source of truth for your matrix testing environments
 
 ## Supported Matrix Components
@@ -38,6 +38,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white) | [![setup-node](https://img.shields.io/badge/setup--node-339933?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-node-js-environment) | [![Node.js Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/11f46ff9ef47d3362dabe767255b0d9e/raw/nodejs-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/nodejs_test.yml) |
 | ![Go](https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white) | [![setup-go](https://img.shields.io/badge/setup--go-00ADD8?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-go-environment) | [![Go Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/c334da204406866563668140885d170e/raw/go-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/go_test.yml) |
 | ![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white) | [![rust-toolchain](https://img.shields.io/badge/rust--toolchain-000000?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/rustup-toolchain-install) | [![Rust Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/5e160d06cfffd42a8f0e4ae6e8e8f025/raw/rust-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/rust_test.yml) |
+| ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white) | [![setup-php](https://img.shields.io/badge/setup--php-777BB4?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-php-action) | [![PHP Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/a9bc428c9f5a2f998bd7307038e557e1/raw/php-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/php_test.yml) |
 
 ## Quick Start
 
