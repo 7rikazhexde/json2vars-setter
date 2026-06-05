@@ -4,7 +4,7 @@ import tempfile
 from collections import defaultdict
 from datetime import timedelta
 from pathlib import Path
-from typing import Any, Dict, Generator, Optional
+from typing import Dict, Generator, List, Optional, cast
 
 import pytest
 from pytest_mock import MockFixture
@@ -15,18 +15,44 @@ from json2vars_setter.features.version_cache import (
     main,
     update_versions,
 )
-from json2vars_setter.version.core.base import (
-    BaseVersionFetcher,
+from json2vars_setter.version.core.base import BaseVersionFetcher
+from json2vars_setter.version.core.utils import (
+    JsonObject,
     ReleaseInfo,
     VersionInfo,
+    get_utc_now,
 )
-from json2vars_setter.version.core.utils import get_utc_now
 
 # ---- Fixtures and Mocks ----
 
 
+def _langs(cache: VersionCache) -> Dict[str, JsonObject]:
+    """Return the ``languages`` section narrowed to a typed mapping."""
+    return cast(Dict[str, JsonObject], cache.data["languages"])
+
+
+def _lang(cache: VersionCache, language: str) -> JsonObject:
+    """Return a single language entry narrowed to a typed mapping."""
+    return _langs(cache)[language]
+
+
+def _meta(cache: VersionCache) -> JsonObject:
+    """Return the ``metadata`` section narrowed to a typed mapping."""
+    return cast(JsonObject, cache.data["metadata"])
+
+
+def _obj(value: object) -> JsonObject:
+    """Narrow an arbitrary JSON value to a typed mapping."""
+    return cast(JsonObject, value)
+
+
+def _list(value: object) -> List[object]:
+    """Narrow an arbitrary JSON value to a typed list."""
+    return cast(List[object], value)
+
+
 @pytest.fixture
-def sample_cache_data() -> dict:
+def sample_cache_data() -> JsonObject:
     """Sample cache data for testing"""
     return {
         "metadata": {
@@ -58,7 +84,7 @@ def sample_cache_data() -> dict:
 
 
 @pytest.fixture
-def temp_cache_file(sample_cache_data: Dict[str, Any]) -> Generator[str, None, None]:
+def temp_cache_file(sample_cache_data: JsonObject) -> Generator[str, None, None]:
     """Create a temporary cache file with sample data"""
     fd, path = tempfile.mkstemp(suffix=".json")
     with os.fdopen(fd, "w") as f:
@@ -78,7 +104,7 @@ def temp_template_file() -> Generator[str, None, None]:
 
 
 @pytest.fixture
-def sample_template_data() -> Dict[str, Any]:
+def sample_template_data() -> JsonObject:
     """Sample template data for testing"""
     return {
         "os": ["ubuntu-latest", "windows-latest", "macos-latest"],
@@ -92,7 +118,7 @@ def sample_template_data() -> Dict[str, Any]:
 
 @pytest.fixture
 def temp_existing_template(
-    sample_template_data: Dict[str, Any],
+    sample_template_data: JsonObject,
 ) -> Generator[str, None, None]:
     """Create a temporary existing template file"""
     fd, path = tempfile.mkstemp(suffix=".json")
@@ -134,21 +160,21 @@ class MockVersionFetcher(BaseVersionFetcher):
             },
         )
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """Mock implementation of abstract method"""
         return True
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """Mock implementation of abstract method"""
         # Return stable ReleaseInfo from tag
-        return ReleaseInfo(version=tag.get("name", "1.0.0"), prerelease=False)
+        return ReleaseInfo(version=str(tag.get("name", "1.0.0")), prerelease=False)
 
 
 # ---- Basic Tests ----
 
 
 def test_version_cache_init(
-    temp_cache_file: str, sample_cache_data: Dict[str, Any]
+    temp_cache_file: str, sample_cache_data: JsonObject
 ) -> None:
     """Test initialization of VersionCache"""
     cache = VersionCache(Path(temp_cache_file))
@@ -164,8 +190,8 @@ def test_version_cache_load_nonexistent_file() -> None:
         cache_file = Path(temp_dir) / "nonexistent.json"
         cache = VersionCache(cache_file)
         assert "metadata" in cache.data
-        assert "last_updated" in cache.data["metadata"]
-        assert cache.data["metadata"]["version"] == "1.1"
+        assert "last_updated" in _meta(cache)
+        assert _meta(cache)["version"] == "1.1"
         assert "languages" in cache.data
         assert cache.version_count == 0
 
@@ -242,7 +268,7 @@ def test_version_cache_is_update_needed() -> None:
         assert cache.is_update_needed("python") is True
 
         # Add language to cache
-        cache.data["languages"]["python"] = {
+        _langs(cache)["python"] = {
             "latest": "3.11.0",
             "stable": "3.10.0",
             "recent_releases": [
@@ -256,23 +282,23 @@ def test_version_cache_is_update_needed() -> None:
 
         # Test with stale cache
         stale_date = (get_utc_now() - timedelta(days=2)).isoformat()
-        cache.data["languages"]["python"]["last_updated"] = stale_date
+        _langs(cache)["python"]["last_updated"] = stale_date
         assert cache.is_update_needed("python", max_age_days=1) is True
 
         # Test with requested count larger than cached count
-        cache.data["languages"]["python"]["last_updated"] = get_utc_now().isoformat()
+        _langs(cache)["python"]["last_updated"] = get_utc_now().isoformat()
         assert cache.is_update_needed("python", requested_count=2) is True
 
         # Test with empty recent_releases
-        cache.data["languages"]["python"]["recent_releases"] = []
+        _langs(cache)["python"]["recent_releases"] = []
         assert cache.is_update_needed("python") is True
 
         # Test with no recent_releases key
-        del cache.data["languages"]["python"]["recent_releases"]
+        del _langs(cache)["python"]["recent_releases"]
         assert cache.is_update_needed("python") is True
 
         # Test with invalid last_updated format
-        cache.data["languages"]["python"] = {
+        _langs(cache)["python"] = {
             "latest": "3.11.0",
             "stable": "3.10.0",
             "recent_releases": [{"version": "3.11.0"}],
@@ -281,7 +307,7 @@ def test_version_cache_is_update_needed() -> None:
         assert cache.is_update_needed("python") is True
 
         # Test with missing last_updated
-        del cache.data["languages"]["python"]["last_updated"]
+        del _langs(cache)["python"]["last_updated"]
         assert cache.is_update_needed("python") is True
 
 
@@ -304,10 +330,10 @@ def test_version_cache_merge_versions() -> None:
         # Test adding new language
         has_changes, new_versions = cache.merge_versions("python", version_info)
         assert has_changes is True
-        assert "python" in cache.data["languages"]
-        assert cache.data["languages"]["python"]["latest"] == "3.11.0"
-        assert cache.data["languages"]["python"]["stable"] == "3.10.0"
-        assert len(cache.data["languages"]["python"]["recent_releases"]) == 2
+        assert "python" in _langs(cache)
+        assert _langs(cache)["python"]["latest"] == "3.11.0"
+        assert _langs(cache)["python"]["stable"] == "3.10.0"
+        assert len(_list(_langs(cache)["python"]["recent_releases"])) == 2
         assert cache.new_versions_found["python"] == 2
         assert new_versions == {"3.11.0", "3.10.0"}
 
@@ -333,7 +359,7 @@ def test_version_cache_merge_versions() -> None:
         )
 
         # Set up the cache state to avoid sorting issues
-        cache.data["languages"]["python"]["recent_releases"] = [
+        _langs(cache)["python"]["recent_releases"] = [
             {"version": "3.12.0", "prerelease": False}
         ]
 
@@ -350,13 +376,13 @@ def test_version_cache_merge_versions() -> None:
         )
 
         # Cache existing values first
-        cache.data["languages"]["python"]["latest"] = "3.13.0"
-        cache.data["languages"]["python"]["stable"] = "3.10.0"
+        _langs(cache)["python"]["latest"] = "3.13.0"
+        _langs(cache)["python"]["stable"] = "3.10.0"
 
         # Existing data should be preserved if not obtained from API
         has_changes, new_versions = cache.merge_versions("python", version_info_none)
-        assert cache.data["languages"]["python"]["latest"] == "3.13.0"
-        assert cache.data["languages"]["python"]["stable"] == "3.10.0"
+        assert _langs(cache)["python"]["latest"] == "3.13.0"
+        assert _langs(cache)["python"]["stable"] == "3.10.0"
 
 
 def test_update_versions(mocker: MockFixture) -> None:
@@ -402,9 +428,9 @@ def test_update_versions(mocker: MockFixture) -> None:
     assert "new_versions_by_language" in result
     assert "cache_data" in result
 
-    assert "python" in result["updated"]
-    assert "nodejs" in result["unchanged"]
-    assert "3.11.0" in result["new_versions_by_language"]["python"]
+    assert "python" in _list(result["updated"])
+    assert "nodejs" in _list(result["unchanged"])
+    assert "3.11.0" in _list(_obj(result["new_versions_by_language"])["python"])
 
     # Test with custom cache file
     custom_cache_file = Path("custom_cache.json")
@@ -427,7 +453,7 @@ def test_update_versions(mocker: MockFixture) -> None:
     )
 
     result = update_versions(["python"], force=True)
-    assert "python" in result["failed"]
+    assert "python" in _list(result["failed"])
 
     # Test with rate limit error
     mock_fetcher.fetch_versions.side_effect = Exception("rate limit exceeded")
@@ -437,8 +463,8 @@ def test_update_versions(mocker: MockFixture) -> None:
     )
 
     result = update_versions(["python", "nodejs"], force=True)
-    assert "python" in result["failed"]
-    assert "nodejs" in result["skipped"]
+    assert "python" in _list(result["failed"])
+    assert "nodejs" in _list(result["skipped"])
 
     # Test default cache file path
     result = update_versions(["python"])
@@ -446,7 +472,7 @@ def test_update_versions(mocker: MockFixture) -> None:
 
 
 def test_generate_version_template(
-    sample_cache_data: Dict[str, Any], temp_template_file: str
+    sample_cache_data: JsonObject, temp_template_file: str
 ) -> None:
     """Test generate_version_template function - basic functionality"""
     # Test with default parameters
@@ -814,7 +840,7 @@ def test_generate_version_template_with_existing_mock(mocker: MockFixture) -> No
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data
-    data: Dict[str, Any] = {
+    data: JsonObject = {
         "languages": {
             "golang": {
                 "latest": "1.18.0",
@@ -882,7 +908,7 @@ def test_merge_versions_edge_cases() -> None:
     cache = VersionCache(Path("cache.json"))
 
     # Directly manipulate data to test specific states
-    cache.data["languages"]["python"] = {}  # Empty language entry
+    _langs(cache)["python"] = {}  # Empty language entry
 
     # Version info for testing
     version_info = VersionInfo(
@@ -898,10 +924,10 @@ def test_merge_versions_edge_cases() -> None:
         "python", version_info, incremental=True
     )
     assert has_changes is True
-    assert len(cache.data["languages"]["python"]["recent_releases"]) > 0
+    assert len(_list(_langs(cache)["python"]["recent_releases"])) > 0
 
     # Line 261: When the version is the same and incremental=True, it is judged as no change
-    cache.data["languages"]["python"]["recent_releases"] = [
+    _langs(cache)["python"]["recent_releases"] = [
         {"version": "3.11.0", "prerelease": False}
     ]
 
@@ -930,7 +956,7 @@ def test_generate_template_empty_releases(mocker: MockFixture) -> None:
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data with empty releases
-    empty_release_data: Dict[str, Any] = {
+    empty_release_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -961,7 +987,7 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
     # Mock logger
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
-    none_values_data: Dict[str, Any] = {
+    none_values_data: JsonObject = {
         "languages": {
             "golang": {
                 "latest": None,
@@ -988,7 +1014,7 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
-    none_latest_data: Dict[str, Any] = {
+    none_latest_data: JsonObject = {
         "languages": {
             "golang": {
                 "latest": None,
@@ -1018,7 +1044,7 @@ def test_generate_template_none_values(mocker: MockFixture) -> None:
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
-    none_stable_data: Dict[str, Any] = {
+    none_stable_data: JsonObject = {
         "languages": {
             "golang": {
                 "latest": "1.18.0-beta",
@@ -1044,7 +1070,7 @@ def test_generate_template_with_versions_and_latest_stable(mocker: MockFixture) 
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
     mock_dumps = mocker.patch("json.dumps")
 
-    test_data: Dict[str, Any] = {
+    test_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1087,7 +1113,7 @@ def test_load_cache_additional_error_handling() -> None:
         # Verify that the default empty data structure is set
         assert "metadata" in cache.data
         assert "languages" in cache.data
-        assert "last_updated" in cache.data["metadata"]
+        assert "last_updated" in _meta(cache)
 
 
 def test_save_method_path_creation() -> None:
@@ -1126,7 +1152,7 @@ def test_merge_versions_with_partially_populated_cache() -> None:
     cache = VersionCache(Path("temp_cache.json"))
 
     # Partially populated cache data
-    cache.data["languages"]["python"] = {"latest": None, "stable": None}
+    _langs(cache)["python"] = {"latest": None, "stable": None}
 
     # Create version info
     version_info = VersionInfo(
@@ -1146,12 +1172,12 @@ def test_merge_versions_with_partially_populated_cache() -> None:
     # Verify results
     assert has_changes is True
     assert new_versions == {"3.11.0", "3.10.0"}
-    assert cache.data["languages"]["python"]["latest"] == "3.11.0"
-    assert cache.data["languages"]["python"]["stable"] == "3.10.0"
+    assert _langs(cache)["python"]["latest"] == "3.11.0"
+    assert _langs(cache)["python"]["stable"] == "3.10.0"
 
 
 def test_generate_version_template_complex_scenarios() -> None:
-    complex_data = {
+    complex_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.12.0",
@@ -1238,7 +1264,7 @@ def test_is_update_needed_empty_language_cache() -> None:
     Test is_update_needed() method when language cache does not exist
     """
     # Initialize VersionCache with mocked data
-    mock_data: Dict[str, Any] = {"metadata": {}}
+    mock_data: JsonObject = {"metadata": {}}
     cache = VersionCache(Path("dummy_cache.json"))
     cache.data = mock_data
 
@@ -1251,7 +1277,7 @@ def test_merge_versions_empty_languages_key() -> None:
     Test merge_versions() method when languages key does not exist
     """
     # Initialize VersionCache with mocked data
-    mock_data: Dict[str, Any] = {"metadata": {}}
+    mock_data: JsonObject = {"metadata": {}}
     cache = VersionCache(Path("dummy_cache.json"))
     cache.data = mock_data
 
@@ -1270,7 +1296,7 @@ def test_merge_versions_empty_languages_key() -> None:
 
     # Verify that languages key was added to the cache
     assert "languages" in cache.data
-    assert "python" in cache.data["languages"]
+    assert "python" in _langs(cache)
     assert has_changes is True
     assert new_versions == {"3.11.0", "3.10.0"}
 
@@ -1296,13 +1322,13 @@ def test_merge_versions_release_sorting() -> None:
     )
 
     # Call with count=3 to keep only the latest 3 releases
-    has_changes, new_versions = cache.merge_versions(
+    _has_changes, _new_versions = cache.merge_versions(
         "python", mock_version_info, count=3, incremental=True
     )
 
     # Verify results
-    python_releases = cache.data["languages"]["python"]["recent_releases"]
-    versions = [release["version"] for release in python_releases]
+    python_releases = _list(_langs(cache)["python"]["recent_releases"])
+    versions = [_obj(release)["version"] for release in python_releases]
 
     # Verify that the latest 3 releases are kept in descending order
     assert versions == ["3.11.0", "3.10.0", "3.9.0"]
@@ -1326,12 +1352,12 @@ def test_merge_versions_empty_metadata() -> None:
     )
 
     # Call merge_versions()
-    has_changes, new_versions = cache.merge_versions("python", mock_version_info)
+    _has_changes, _new_versions = cache.merge_versions("python", mock_version_info)
 
     # Verify that metadata was added
     assert "metadata" in cache.data
-    assert "last_updated" in cache.data["metadata"]
-    assert cache.data["metadata"]["last_updated"] is not None
+    assert "last_updated" in _meta(cache)
+    assert _meta(cache)["last_updated"] is not None
 
 
 def test_generate_version_template_output_count(
@@ -1346,7 +1372,7 @@ def test_generate_version_template_output_count(
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Create test data with many versions
-    cache_data: Dict[str, Any] = {
+    cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.12.0",
@@ -1437,7 +1463,7 @@ def test_generate_version_template_existing_file_error_handling(
         f.write("{invalid json")  # Invalid JSON file
 
     # Prepare mock cache data
-    mock_cache_data = {
+    mock_cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1487,7 +1513,7 @@ def test_generate_version_template_with_no_existing_file(mocker: MockFixture) ->
     non_existent_file.unlink(missing_ok=True)  # Ensure it is deleted
 
     # Prepare mock cache data
-    mock_cache_data = {
+    mock_cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1538,7 +1564,7 @@ def test_generate_version_template_multiline_logging_paths(mocker: MockFixture) 
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Complete existing template data
-    existing_data: Dict[str, Any] = {
+    existing_data: JsonObject = {
         "os": ["ubuntu-latest"],
         "versions": {
             "python": ["3.9.0", "3.8.0"],
@@ -1549,7 +1575,7 @@ def test_generate_version_template_multiline_logging_paths(mocker: MockFixture) 
     }
 
     # Mock cache data
-    mock_cache_data: Dict[str, Any] = {
+    mock_cache_data: JsonObject = {
         "languages": {
             "rust": {
                 "latest": "1.68.0",
@@ -1584,8 +1610,10 @@ def test_generate_version_template_multiline_logging_paths(mocker: MockFixture) 
                 Path(output_file.name),
                 existing_file=Path(existing_template_file.name),
                 keep_existing=True,
-                languages=list(existing_data["versions"].keys())
-                + ["rust"],  # Explicitly specify all languages
+                languages=[
+                    *_obj(existing_data["versions"]).keys(),
+                    "rust",
+                ],  # Explicitly specify all languages
             )
 
             # Read the output file
@@ -1630,7 +1658,7 @@ def test_generate_version_template_keep_existing_no_recent_releases(
     }
 
     # Cache data with empty recent_releases
-    mock_cache_data = {
+    mock_cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1680,7 +1708,7 @@ def test_is_update_needed_requested_count_branches() -> None:
     cache = VersionCache(Path("dummy_cache.json"))
 
     # Setup the language cache with a few versions
-    cache.data["languages"]["python"] = {
+    _langs(cache)["python"] = {
         "latest": "3.10.0",
         "stable": "3.9.0",
         "recent_releases": [
@@ -1704,7 +1732,7 @@ def test_is_update_needed_requested_count_branches() -> None:
     assert cache.is_update_needed("python", max_age_days=1, requested_count=-1) is False
 
     # Case 5: Another case to ensure both branches are taken - empty recent_releases
-    cache.data["languages"]["ruby"] = {
+    _langs(cache)["ruby"] = {
         "latest": "3.0.0",
         "stable": "2.7.0",
         "recent_releases": [],  # Empty list
@@ -1724,7 +1752,7 @@ def test_merge_versions_invalid_release_format() -> None:
     cache = VersionCache(Path("dummy_cache.json"))
 
     # Setup existing releases with invalid format
-    cache.data["languages"]["python"] = {
+    _langs(cache)["python"] = {
         "latest": "3.10.0",
         "stable": "3.9.0",
         "recent_releases": [
@@ -1767,7 +1795,7 @@ def test_merge_versions_invalid_release_format() -> None:
 
     # Get all valid version strings from the merged result
     valid_versions = set()
-    for release in cache.data["languages"]["python"]["recent_releases"]:
+    for release in _list(_langs(cache)["python"]["recent_releases"]):
         if isinstance(release, dict) and "version" in release:
             valid_versions.add(release["version"])
 
@@ -1798,7 +1826,7 @@ def test_merge_versions_count_metadata_update() -> None:
     }
 
     # Setup the language cache
-    cache.data["languages"]["python"] = {
+    _langs(cache)["python"] = {
         "latest": "3.10.0",
         "stable": "3.9.0",
         "recent_releases": [
@@ -1818,23 +1846,23 @@ def test_merge_versions_count_metadata_update() -> None:
     )
 
     # Test case 1: count < current_count (should not update version_count)
-    has_changes, new_versions = cache.merge_versions(
+    _has_changes, _new_versions = cache.merge_versions(
         "python", version_info, count=3, incremental=True
     )
 
     # Verify version_count was not updated
-    assert cache.data["metadata"]["version_count"] == 5, (
+    assert _meta(cache)["version_count"] == 5, (
         "version_count should not be updated when count < current_count"
     )
 
     # Test case 2: count > current_count (should update version_count)
     # This should trigger the branch at lines 268-273
-    has_changes, new_versions = cache.merge_versions(
+    _has_changes, _new_versions = cache.merge_versions(
         "python", version_info, count=10, incremental=True
     )
 
     # Verify version_count was updated
-    assert cache.data["metadata"]["version_count"] == 10, (
+    assert _meta(cache)["version_count"] == 10, (
         "version_count should be updated when count > current_count"
     )
 
@@ -1844,7 +1872,7 @@ def test_merge_versions_count_metadata_update() -> None:
     # Don't set metadata explicitly to test initialization behavior
 
     # Setup the language cache
-    cache2.data["languages"]["python"] = {
+    _langs(cache2)["python"] = {
         "latest": "3.10.0",
         "stable": "3.9.0",
         "recent_releases": [
@@ -1855,14 +1883,14 @@ def test_merge_versions_count_metadata_update() -> None:
     }
 
     # Call merge_versions with count > 0
-    has_changes, new_versions = cache2.merge_versions(
+    _has_changes, _new_versions = cache2.merge_versions(
         "python", version_info, count=7, incremental=True
     )
 
     # Verify metadata was created and version_count was set
     assert "metadata" in cache2.data
-    assert "version_count" in cache2.data["metadata"]
-    assert cache2.data["metadata"]["version_count"] == 7
+    assert "version_count" in _meta(cache2)
+    assert _meta(cache2)["version_count"] == 7
 
 
 # Assuming these are defined in your module
@@ -1884,7 +1912,7 @@ def test_generate_version_template_missing_branches(
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data setup
-    cache_data: Dict[str, Any] = {
+    cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1902,7 +1930,7 @@ def test_generate_version_template_missing_branches(
     }
 
     # Existing template with minimal data (missing 'os' and 'ghpages_branch')
-    existing_data: Dict[str, Any] = {
+    existing_data: JsonObject = {
         "versions": {"python": ["3.8.0"]}
         # Intentionally omitting 'os' and 'ghpages_branch' to hit 469->471 and 471->474
     }
@@ -1976,7 +2004,7 @@ def test_generate_version_template_empty_existing(
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data
-    cache_data: Dict[str, Any] = {
+    cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -1990,7 +2018,7 @@ def test_generate_version_template_empty_existing(
     }
 
     # Empty existing template
-    existing_data: Dict[str, Any] = {}
+    existing_data: JsonObject = {}
 
     # Create temporary files
     existing_file = tmp_path / "empty_existing.json"
@@ -2037,7 +2065,7 @@ def test_generate_version_template_uncovered_branches(
     mock_logger = mocker.patch("json2vars_setter.features.version_cache.logger")
 
     # Test data setup
-    cache_data: Dict[str, Any] = {
+    cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",
@@ -2120,7 +2148,7 @@ def test_generate_version_template_content_already_ends_with_newline(
     # Mock open to track what is written
     mock_open = mocker.patch("builtins.open", mocker.mock_open())
 
-    cache_data = {
+    cache_data: JsonObject = {
         "languages": {
             "python": {
                 "latest": "3.11.0",

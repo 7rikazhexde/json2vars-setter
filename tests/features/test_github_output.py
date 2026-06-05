@@ -2,12 +2,14 @@ import json
 import os
 import platform
 import subprocess
-from typing import Any
+from pathlib import Path
+from typing import Dict
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
 from json2vars_setter.features.github_output import parse_json, set_github_output
+from json2vars_setter.version.core.utils import JsonObject
 
 MATRIX_JSON_PATH = "./tests/matrix_static.json"
 
@@ -76,15 +78,15 @@ def test_parse_matrix_static_json() -> None:
 
 def test_empty_json() -> None:
     """Test empty JSON data with parse_json"""
-    data: dict[str, Any] = {}
-    expected_outputs: dict[str, Any] = {}
+    data: JsonObject = {}
+    expected_outputs: Dict[str, str] = {}
     outputs = parse_json(data)
     assert outputs == expected_outputs
 
 
 def test_invalid_data_type() -> None:
     """Test exceptions when invalid data types are passed"""
-    data: Any = "invalid_type"
+    data: object = "invalid_type"
     with pytest.raises(TypeError):
         parse_json(data)
 
@@ -98,7 +100,7 @@ def test_parse_json_nested_list() -> None:
     assert outputs == expected_outputs
 
 
-def test_parse_json_scalar_list_with_debug(capsys: Any) -> None:
+def test_parse_json_scalar_list_with_debug(capsys: pytest.CaptureFixture[str]) -> None:
     """Test a top-level scalar list with debug enabled.
 
     Covers the debug-print branches for both the serialized list and each
@@ -119,9 +121,9 @@ def test_parse_json_scalar_list_with_debug(capsys: Any) -> None:
 # --- Test case for set_github_output() ---
 
 
-def test_set_github_output(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+def test_set_github_output(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     """Test if output is written correctly using set_github_output"""
-    output_file = tmpdir.join("GITHUB_OUTPUT")
+    output_file = tmp_path / "GITHUB_OUTPUT"
     monkeypatch.setenv("GITHUB_OUTPUT", str(output_file))
 
     outputs = {"TEST_OUTPUT": "test_value"}
@@ -142,10 +144,10 @@ def test_github_output_not_set(monkeypatch: MonkeyPatch) -> None:
 
 
 def test_set_github_output_without_debug(
-    monkeypatch: MonkeyPatch, tmpdir: Any, capsys: Any
+    monkeypatch: MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """Test that debug messages are not output when debug=False"""
-    github_output_file = tmpdir.join("GITHUB_OUTPUT")
+    github_output_file = tmp_path / "GITHUB_OUTPUT"
     monkeypatch.setenv("GITHUB_OUTPUT", str(github_output_file))
 
     outputs = {"TEST_OUTPUT": "test_value"}
@@ -158,9 +160,11 @@ def test_set_github_output_without_debug(
 # --- Test cases with sub-processes ---
 
 
-def test_main_execution_with_matrix_json(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+def test_main_execution_with_matrix_json(
+    monkeypatch: MonkeyPatch, tmp_path: Path
+) -> None:
     """Test executing a script in a sub-process using matrix.json"""
-    github_output_file = tmpdir.join("GITHUB_OUTPUT")
+    github_output_file = tmp_path / "GITHUB_OUTPUT"
     monkeypatch.setenv("GITHUB_OUTPUT", str(github_output_file))
 
     # Script Execution
@@ -179,10 +183,10 @@ def test_main_execution_with_matrix_json(monkeypatch: MonkeyPatch, tmpdir: Any) 
     assert "Written to GITHUB_OUTPUT" in result.stdout
 
 
-def test_windows_path_handling(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+def test_windows_path_handling(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     """Test handling of Windows-style paths"""
     # Normalize path using platform-specific separator
-    output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
+    output_file = os.path.normpath(os.path.join(str(tmp_path), "GITHUB_OUTPUT"))
 
     # Create the directory if it doesn't exist
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -214,10 +218,10 @@ def test_windows_path_handling(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
 
 # Windows特有のテストをプラットフォームに関係なく実行するために修正
 # @pytest.mark.skipif(platform.system() != "Windows", reason="Windows-specific test")
-def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     """Test Windows-specific environment variable handling"""
     # モックするためにWindows固有の部分を一般化
-    output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
+    output_file = os.path.normpath(os.path.join(str(tmp_path), "GITHUB_OUTPUT"))
 
     # Create the directory if it doesn't exist
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
@@ -227,7 +231,7 @@ def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None
         pass
 
     monkeypatch.setenv("GITHUB_OUTPUT", output_file)
-    monkeypatch.setenv("TEMP", str(tmpdir))
+    monkeypatch.setenv("TEMP", str(tmp_path))
 
     # プラットフォームに依存しない方法でテストデータを作成
     temp_path = "%TEMP%/test"
@@ -256,9 +260,9 @@ def test_windows_environment_vars(monkeypatch: MonkeyPatch, tmpdir: Any) -> None
     assert f"MIXED_PATH={expected_mixed_path}\n" in content
 
 
-def test_empty_file_handling(monkeypatch: MonkeyPatch, tmpdir: Any) -> None:
+def test_empty_file_handling(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
     """Test handling of empty files"""
-    output_file = os.path.normpath(os.path.join(str(tmpdir), "GITHUB_OUTPUT"))
+    output_file = os.path.normpath(os.path.join(str(tmp_path), "GITHUB_OUTPUT"))
 
     # Create the directory if it doesn't exist
     os.makedirs(os.path.dirname(output_file), exist_ok=True)

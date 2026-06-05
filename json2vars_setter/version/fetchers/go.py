@@ -1,12 +1,12 @@
 import os
 import re
-from typing import Any, Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple, cast
 
 import requests
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.exceptions import ParseError
-from json2vars_setter.version.core.utils import ReleaseInfo, setup_logging
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo, setup_logging
 
 
 class GoVersionFetcher(BaseVersionFetcher):
@@ -16,7 +16,7 @@ class GoVersionFetcher(BaseVersionFetcher):
         """Initialize with Go's GitHub repository information"""
         super().__init__("golang", "go")
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """
         Check if a tag represents a stable Go release
 
@@ -26,7 +26,7 @@ class GoVersionFetcher(BaseVersionFetcher):
         Returns:
             True if the tag represents a stable release, False otherwise
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
 
         # Go uses format "goX.Y.Z" for stable releases
         return (
@@ -47,7 +47,7 @@ class GoVersionFetcher(BaseVersionFetcher):
             )
         )
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """
         Parse version information from a Go tag
 
@@ -60,7 +60,7 @@ class GoVersionFetcher(BaseVersionFetcher):
         Raises:
             ParseError: If required version information cannot be parsed
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         if not name:
             raise ParseError("No tag name found")
 
@@ -76,7 +76,7 @@ class GoVersionFetcher(BaseVersionFetcher):
             prerelease=prerelease,
             additional_info={
                 "tag_name": name,
-                "commit": {"sha": tag.get("commit", {}).get("sha")},
+                "commit": {"sha": cast(JsonObject, tag.get("commit", {})).get("sha")},
                 "tarball_url": tag.get("tarball_url"),
                 "zipball_url": tag.get("zipball_url"),
             },
@@ -111,7 +111,7 @@ class GoVersionFetcher(BaseVersionFetcher):
         match = re.match(r"(\d+)\.(\d+)\.(\d+)", latest_version)
 
         if match:
-            major, minor, patch = map(int, match.groups())
+            major, minor, _patch = map(int, match.groups())
             # Look for the previous minor version
             prev_minor = minor - 1
 
@@ -119,7 +119,7 @@ class GoVersionFetcher(BaseVersionFetcher):
             for release in releases:
                 r_match = re.match(r"(\d+)\.(\d+)\.(\d+)", release.version)
                 if r_match:
-                    r_major, r_minor, r_patch = map(int, r_match.groups())
+                    r_major, r_minor, _r_patch = map(int, r_match.groups())
                     if r_major == major and r_minor == prev_minor:
                         self.logger.info(
                             f"Using {release.version} as stable vs latest {latest_version}"
@@ -149,7 +149,7 @@ def check_api(
         return
 
     count = count or 5  # Set default value
-    stable_tags: List[Dict[str, Any]] = []
+    stable_tags: List[JsonObject] = []
     page = 1
     max_pages = 3  # Check up to 3 pages
 
@@ -179,7 +179,7 @@ def check_api(
             # Filter only stable tags
             new_stable_tags = []
             for tag in tags:
-                name = tag.get("name", "")
+                name = str(tag.get("name", ""))
                 if (
                     name.startswith("go")
                     and len(name.replace("go", "").split(".")) == 3

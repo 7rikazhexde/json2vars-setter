@@ -1,11 +1,12 @@
 import logging
-from typing import Any, Dict
+import operator
 
 import pytest
 import requests
 from pytest_mock import MockFixture
 
 from json2vars_setter.version.core.utils import (
+    JsonObject,
     ReleaseInfo,
     VersionInfo,
     check_github_api,
@@ -75,7 +76,7 @@ def test_version_info_with_recent_releases() -> None:
 
 def test_version_info_with_details() -> None:
     """Test VersionInfo with details dictionary"""
-    details = {
+    details: JsonObject = {
         "source": "github:test/repo",
         "fetch_time": "2023-01-01T12:00:00",
         "additional_info": "test data",
@@ -109,13 +110,13 @@ def test_release_info_comparison() -> None:
     release1 = ReleaseInfo(version="1.0.0", prerelease=False)
     release2 = ReleaseInfo(version="1.1.0", prerelease=False)
     with pytest.raises(TypeError):
-        release1 < release2
+        operator.lt(release1, release2)
     with pytest.raises(TypeError):
-        release1 > release2
+        operator.gt(release1, release2)
     with pytest.raises(TypeError):
-        release1 <= release2
+        operator.le(release1, release2)
     with pytest.raises(TypeError):
-        release1 >= release2
+        operator.ge(release1, release2)
     assert release1 == ReleaseInfo(version="1.0.0", prerelease=False)
     assert release1 != release2
 
@@ -329,11 +330,11 @@ def test_check_github_api_with_complex_filter(
     ]
     mock_session.get.return_value = mock_response
 
-    def complex_filter(tag: Dict[str, Any]) -> bool:
+    def complex_filter(tag: JsonObject) -> bool:
         """
         Filter to keep only stable (non-beta/alpha) tags
         """
-        return not any(pre in tag["name"] for pre in ["-beta", "-alpha"])
+        return not any(pre in str(tag["name"]) for pre in ["-beta", "-alpha"])
 
     check_github_api(
         mock_session, "test-owner", "test-repo", count=2, filter_func=complex_filter
@@ -388,8 +389,8 @@ def test_check_github_api_with_filter(mocker: MockFixture) -> None:
     mock_response.json.return_value = [{"name": "v1.0.0"}, {"name": "v2.0.0-beta"}]
     mock_session.get.return_value = mock_response
 
-    def filter_func(tag: Dict[str, Any]) -> bool:
-        return "beta" not in tag["name"]
+    def filter_func(tag: JsonObject) -> bool:
+        return "beta" not in str(tag["name"])
 
     check_github_api(
         mock_session, "test-owner", "test-repo", count=2, filter_func=filter_func

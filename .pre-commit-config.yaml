@@ -92,5 +92,11 @@ repos:
     rev: v2.1.0
     hooks:
       - id: mypy
-        additional_dependencies: [types-requests==2.32.0.20240622]
+        # Type stubs / typed libs the isolated hook env needs so mypy strict mode
+        # (disallow_untyped_decorators) can resolve typer/pytest decorators.
+        additional_dependencies:
+          - types-requests==2.33.0.20260518
+          - typer==0.26.4
+          - pytest==9.0.3
+          - pytest-mock==3.15.1
         args: [--config-file=pyproject.toml]

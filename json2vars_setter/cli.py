@@ -69,10 +69,10 @@ def _run_feature(name: str, run: Callable[[List[str]], None], args: List[str]) -
         code = exc.code
         if code is None or code == 0:
             return
-        raise typer.Exit(code if isinstance(code, int) else 1)
-    except Exception as exc:  # noqa: BLE001 - surface any failure as a CLI error
+        raise typer.Exit(code if isinstance(code, int) else 1) from exc
+    except Exception as exc:
         typer.echo(f"Error: Failed to execute {name} ({exc})", err=True)
-        raise typer.Exit(1)
+        raise typer.Exit(1) from exc
 
 
 @app.command(

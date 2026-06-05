@@ -1,12 +1,13 @@
 import os
 import re
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple
 
 import requests
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.exceptions import ParseError
 from json2vars_setter.version.core.utils import (
+    JsonObject,
     ReleaseInfo,
     check_github_api,
     setup_logging,
@@ -20,7 +21,7 @@ class PythonVersionFetcher(BaseVersionFetcher):
         """Initialize with Python's GitHub repository information"""
         super().__init__("python", "cpython")
 
-    def _is_stable_tag(self, tag: Dict[str, Any]) -> bool:
+    def _is_stable_tag(self, tag: JsonObject) -> bool:
         """
         Check if a tag represents a stable Python release
 
@@ -30,7 +31,7 @@ class PythonVersionFetcher(BaseVersionFetcher):
         Returns:
             True if the tag represents a stable release, False otherwise
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
 
         # Python uses format "vX.Y.Z" for stable releases (3.x and 4.x series)
         return name.startswith(("v3", "v4")) and not any(
@@ -50,7 +51,7 @@ class PythonVersionFetcher(BaseVersionFetcher):
             ]
         )
 
-    def _parse_version_from_tag(self, tag: Dict[str, Any]) -> ReleaseInfo:
+    def _parse_version_from_tag(self, tag: JsonObject) -> ReleaseInfo:
         """
         Parse version information from a Python tag
 
@@ -63,7 +64,7 @@ class PythonVersionFetcher(BaseVersionFetcher):
         Raises:
             ParseError: If required version information cannot be parsed
         """
-        name = tag.get("name", "")
+        name = str(tag.get("name", ""))
         if not name:
             raise ParseError("No tag name found")
 
@@ -73,13 +74,16 @@ class PythonVersionFetcher(BaseVersionFetcher):
         # All filtered tags are considered stable
         prerelease = False
 
+        commit = tag.get("commit")
+        commit_sha = commit.get("sha") if isinstance(commit, dict) else None
+
         return ReleaseInfo(
             version=version,
             release_date=None,
             prerelease=prerelease,
             additional_info={
                 "tag_name": name,
-                "commit": {"sha": tag.get("commit", {}).get("sha")},
+                "commit": {"sha": commit_sha},
                 "tarball_url": tag.get("tarball_url"),
                 "zipball_url": tag.get("zipball_url"),
             },
@@ -114,7 +118,7 @@ class PythonVersionFetcher(BaseVersionFetcher):
         match = re.match(r"(\d+)\.(\d+)\.(\d+)", latest_version)
 
         if match:
-            major, minor, patch = map(int, match.groups())
+            major, minor, _patch = map(int, match.groups())
             # Look for the previous minor version
             prev_minor = minor - 1
 
@@ -122,7 +126,7 @@ class PythonVersionFetcher(BaseVersionFetcher):
             for release in releases:
                 r_match = re.match(r"(\d+)\.(\d+)\.(\d+)", release.version)
                 if r_match:
-                    r_major, r_minor, r_patch = map(int, r_match.groups())
+                    r_major, r_minor, _r_patch = map(int, r_match.groups())
                     if r_major == major and r_minor == prev_minor:
                         self.logger.info(
                             f"Using {release.version} as stable vs latest {latest_version}"
@@ -136,9 +140,9 @@ class PythonVersionFetcher(BaseVersionFetcher):
         return latest, latest
 
 
-def python_filter_func(tag: Dict[str, Any]) -> bool:
+def python_filter_func(tag: JsonObject) -> bool:
     """Filter function for Python tags in API checker"""
-    name = tag.get("name", "")
+    name = str(tag.get("name", ""))
 
     # Regular expression pattern to fully detect keywords indicating unstable versions
     unstable_pattern = r"(a|rc|b|beta|alpha|pre|preview|dev|test|nightly|snapshot)"

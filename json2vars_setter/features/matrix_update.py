@@ -9,9 +9,9 @@ import json
 import logging
 import os
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional, cast
 
-from json2vars_setter.version.core.base import VersionInfo
+from json2vars_setter.version.core.utils import JsonObject, VersionInfo
 from json2vars_setter.version.registry import get_version_fetcher
 
 # Set up logging
@@ -66,7 +66,7 @@ def get_versions_from_strategy(version_info: VersionInfo, strategy: str) -> List
     return versions
 
 
-def load_json_file(file_path: str) -> Dict[str, Any]:
+def load_json_file(file_path: str) -> JsonObject:
     """
     Load a JSON file
 
@@ -81,14 +81,14 @@ def load_json_file(file_path: str) -> Dict[str, Any]:
     """
     try:
         with open(file_path, "r") as f:
-            data: Dict[str, Any] = json.load(f)
+            data: JsonObject = json.load(f)
             return data
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.error(f"Error loading JSON file: {e}")
         sys.exit(1)
 
 
-def save_json_file(file_path: str, data: Dict[str, Any]) -> None:
+def save_json_file(file_path: str, data: JsonObject) -> None:
     """
     Save a dictionary to a JSON file, ensuring it ends with a newline
 
@@ -143,6 +143,8 @@ def update_matrix_json(
     # Ensure versions key exists
     if "versions" not in matrix_data:
         matrix_data["versions"] = {}
+    # The "versions" section maps each language to its list of versions.
+    versions_section = cast(Dict[str, List[str]], matrix_data["versions"])
 
     # Backup original file
     if not dry_run:
@@ -155,7 +157,7 @@ def update_matrix_json(
             logger.warning(f"Could not create backup: {e}")
 
     # Keep track of changes
-    changes: Dict[str, Dict[str, Any]] = {}
+    changes: Dict[str, JsonObject] = {}
 
     # Update each language
     for language, strategy in language_strategies.items():
@@ -182,12 +184,12 @@ def update_matrix_json(
             }
 
             # Overwrite existing versions with new ones
-            if language not in matrix_data["versions"]:
-                matrix_data["versions"][language] = []
+            if language not in versions_section:
+                versions_section[language] = []
 
             # Replace entirely with new versions (no appending)
             logger.info(f"Replacing {language} versions with: {versions}")
-            matrix_data["versions"][language] = versions
+            versions_section[language] = versions
 
         except Exception as e:
             logger.error(f"Error updating {language} versions: {e}")
@@ -207,7 +209,7 @@ def update_matrix_json(
         logger.info(f"- {language} ({info['strategy']}):")
         logger.info(f"  - Latest: {info['latest']}")
         logger.info(f"  - Stable: {info['stable']}")
-        logger.info(f"  - Set to: {', '.join(info['versions'])}")
+        logger.info(f"  - Set to: {', '.join(cast(List[str], info['versions']))}")
 
 
 def build_parser() -> argparse.ArgumentParser:
