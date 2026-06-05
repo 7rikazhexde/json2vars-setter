@@ -1,3 +1,9 @@
+# [v1.7.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.6.0...v1.7.0) (2026-06-05)
+
+## ✨ New Features
+- [`e4c54a6`](https://github.com/7rikazhexde/json2vars-setter/commit/e4c54a6)  Add Deno version support (Issues: [`#513`](https://github.com/7rikazhexde/json2vars-setter/issues/513))
+- [`7431f03`](https://github.com/7rikazhexde/json2vars-setter/commit/7431f03)  Add Bun version support
+
 # [v1.6.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.5.0...v1.6.0) (2026-06-05)
 
 ## ✨ New Features

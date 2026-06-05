@@ -96,7 +96,7 @@ Some input parameters have relationships or constraints:
 ```yaml
 - name: Set variables with dynamic update
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@v1.6.0
+  uses: 7rikazhexde/json2vars-setter@v1.7.0
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
@@ -109,7 +109,7 @@ Some input parameters have relationships or constraints:
 ```yaml
 - name: Set variables with caching
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@v1.6.0
+  uses: 7rikazhexde/json2vars-setter@v1.7.0
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     use-cache: 'true'
@@ -123,7 +123,7 @@ Some input parameters have relationships or constraints:
 ```yaml
 - name: Set variables from static JSON
   id: json2vars
-  uses: 7rikazhexde/json2vars-setter@v1.6.0
+  uses: 7rikazhexde/json2vars-setter@v1.7.0
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
 ```
