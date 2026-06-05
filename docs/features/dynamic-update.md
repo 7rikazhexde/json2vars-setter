@@ -193,6 +193,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `go-strategy` | Strategy for Go versions | No | - |
 | `rust-strategy` | Strategy for Rust versions | No | - |
 | `php-strategy` | Strategy for PHP versions | No | - |
+| `dotnet-strategy` | Strategy for .NET (C#) versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -244,6 +245,7 @@ The Dynamic Matrix Updater currently supports:
 - **Go**: Fetches from Go releases via GitHub API
 - **Rust**: Fetches from Rust releases via GitHub API
 - **PHP**: Fetches from PHP releases via GitHub API
+- **.NET (C#)**: Fetches from .NET SDK releases via GitHub API
 
 ## Best Practices
 

@@ -270,6 +270,11 @@ Examples:
         help="Strategy for PHP versions",
     )
     parser.add_argument(
+        "--dotnet",
+        choices=["stable", "latest", "both"],
+        help="Strategy for .NET (C#) versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -303,6 +308,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.go = args.all
         args.rust = args.all
         args.php = args.all
+        args.dotnet = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -318,6 +324,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["rust"] = args.rust
     if args.php:
         language_strategies["php"] = args.php
+    if args.dotnet:
+        language_strategies["dotnet"] = args.dotnet
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

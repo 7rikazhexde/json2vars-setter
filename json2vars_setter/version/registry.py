@@ -8,6 +8,7 @@ shared by the matrix-update and version-cache features.
 from typing import Callable, Dict
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
+from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
 from json2vars_setter.version.fetchers.php import PhpVersionFetcher
@@ -24,6 +25,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "go": GoVersionFetcher,
     "rust": RustVersionFetcher,
     "php": PhpVersionFetcher,
+    "dotnet": DotnetVersionFetcher,
 }
 
 

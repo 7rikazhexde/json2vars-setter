@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "dotnet": [
+            "8.0",
+            "9.0"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}
