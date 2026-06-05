@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "dart": [
+            "3.11.6",
+            "3.12.1"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}

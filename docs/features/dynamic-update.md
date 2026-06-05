@@ -199,6 +199,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `bun-strategy` | Strategy for Bun versions | No | - |
 | `zig-strategy` | Strategy for Zig versions | No | - |
 | `elixir-strategy` | Strategy for Elixir versions | No | - |
+| `dart-strategy` | Strategy for Dart versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -256,6 +257,7 @@ The Dynamic Matrix Updater currently supports:
 - **Bun**: Fetches from Bun releases via GitHub API
 - **Zig**: Fetches from Zig releases via GitHub API
 - **Elixir**: Fetches from Elixir releases via GitHub API
+- **Dart**: Fetches from the Dart SDK release archive
 
 ## Best Practices
 

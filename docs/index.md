@@ -13,7 +13,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 - **JSON Parsing**: Convert JSON files into GitHub Actions output variables for use in your workflows
 - **Dynamic Version Management**: Automatically update your testing matrix with latest language versions from official sources
 - **Version Caching**: Cache version information to reduce API calls and improve workflow performance
-- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, and Elixir
+- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, and Dart
 - **Flexible Configuration**: Maintain a single source of truth for your matrix testing environments
 
 ## Supported Matrix Components
@@ -32,6 +32,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![Bun](https://img.shields.io/badge/Bun-000000?style=flat&logo=bun&logoColor=white) | [![setup-bun](https://img.shields.io/badge/setup--bun-000000?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-bun) | [![Bun Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/431a19225ef80b473e7eee8e060b7516/raw/bun-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/bun_test.yml) |
 | ![Zig](https://img.shields.io/badge/Zig-F7A41D?style=flat&logo=zig&logoColor=white) | [![setup-zig](https://img.shields.io/badge/setup--zig-F7A41D?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-zig-compiler) | [![Zig Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/35f4914a9b707f6570a2c7b508e1f675/raw/zig-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/zig_test.yml) |
 | ![Elixir](https://img.shields.io/badge/Elixir-4B275F?style=flat&logo=elixir&logoColor=white) | [![setup-beam](https://img.shields.io/badge/setup--beam-4B275F?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/erlang-otp-elixir-setup) | [![Elixir Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/b93c2abf130e91304761df9da4bb5533/raw/elixir-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/elixir_test.yml) |
+| ![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat&logo=dart&logoColor=white) | [![setup-dart](https://img.shields.io/badge/setup--dart-0175C2?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-dart-sdk) | [![Dart Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/838b360075fcd8c54f8ccdb2a8ff2e88/raw/dart-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dart_test.yml) |
 
 ## Quick Start
 
