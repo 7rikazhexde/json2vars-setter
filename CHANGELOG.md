@@ -1,3 +1,11 @@
+# [v1.8.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.7.0...v1.8.0) (2026-06-05)
+
+## ✨ New Features
+- [`476d560`](https://github.com/7rikazhexde/json2vars-setter/commit/476d560)  Add Zig version support 
+- [`10aaaff`](https://github.com/7rikazhexde/json2vars-setter/commit/10aaaff)  Add Elixir version support 
+- [`4f80769`](https://github.com/7rikazhexde/json2vars-setter/commit/4f80769)  Add Dart version support 
+- [`488f7d0`](https://github.com/7rikazhexde/json2vars-setter/commit/488f7d0)  Add Swift version support
+
 # [v1.7.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.6.0...v1.7.0) (2026-06-05)
 
 ## ✨ New Features
