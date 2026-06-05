@@ -67,7 +67,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_zig` | List of Zig versions | `["0.15.2", "0.14.1"]` |
 | `versions_elixir` | List of Elixir versions | `["1.19.5", "1.18.4"]` |
 | `versions_dart` | List of Dart versions | `["3.12.1", "3.11.6"]` |
-| `versions_swift` | List of Swift versions | `["6.3.2", "6.2.4"]` |
+| `versions_swift` | List of Swift versions | `["6.2.1", "6.1.3"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes

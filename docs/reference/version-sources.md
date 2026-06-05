@@ -192,8 +192,12 @@ The dynamic-update strategies map onto these fields:
   the tags listing, so — like Java and Dart — Swift uses a dedicated source.
 - **Characteristics:** release `name`s matching `X.Y[.Z]` are kept and sorted
   **numerically**; `latest` is the newest and `stable` is the previous minor. Example
-  matrices use the form (`"6.2.4"`, `"6.3.2"`) that `swift-actions/setup-swift`
+  matrices use the form (`"6.1.3"`, `"6.2.1"`) that `swift-actions/setup-swift`
   accepts, and target `ubuntu`/`macos` (Swift's first-class CI platforms).
+- **Caveat:** `swift-actions/setup-swift` installs from its own bundled list of known
+  Swift versions, which can lag behind the newest swift.org release. When using the
+  dynamic update, pin to versions the action supports if the very latest is not yet
+  available there.
 
 ## Adding another language
 

@@ -31,17 +31,21 @@ swift test
 `swift_project_matrix.json` defines the OS list and Swift versions used by the matrix
 testing workflow. The versions use the form accepted by
 [`swift-actions/setup-swift`](https://github.com/marketplace/actions/setup-swift-environment)
-(e.g. an exact `6.3.2`, or the `6.3` short form):
+(e.g. an exact `6.2.1`, or the `6.2` short form):
 
 ```json
 {
     "os": ["ubuntu-latest", "macos-latest"],
     "versions": {
-        "swift": ["6.2.4", "6.3.2"]
+        "swift": ["6.1.3", "6.2.1"]
     },
     "ghpages_branch": "ghgapes"
 }
 ```
+
+> **Version availability:** `swift-actions/setup-swift` installs from its own bundled
+> list of known Swift versions, which can lag behind the very latest swift.org
+> release. Pick example/matrix versions that the action supports.
 
 > **OS note:** the Swift matrix targets `ubuntu-latest` and `macos-latest` — Swift's
 > first-class CI platforms via `swift-actions/setup-swift`. Windows is intentionally
