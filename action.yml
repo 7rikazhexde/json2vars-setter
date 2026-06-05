@@ -62,6 +62,9 @@ inputs:
   dart-strategy:
     description: 'Update strategy for Dart versions (stable, latest, or both)'
     required: false  # Optional
+  swift-strategy:
+    description: 'Update strategy for Swift versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -174,6 +177,9 @@ outputs:
   versions_dart:
     description: 'List of Dart versions'
     value: ${{ steps.set_outputs.outputs.versions_dart }}
+  versions_swift:
+    description: 'List of Swift versions'
+    value: ${{ steps.set_outputs.outputs.versions_swift }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -261,6 +267,9 @@ runs:
           fi
           if [[ -n "${{ inputs.dart-strategy }}" ]]; then
             ARGS+=("--dart" "${{ inputs.dart-strategy }}")
+          fi
+          if [[ -n "${{ inputs.swift-strategy }}" ]]; then
+            ARGS+=("--swift" "${{ inputs.swift-strategy }}")
           fi
         fi
 
@@ -388,4 +397,5 @@ runs:
         echo "Zig Versions: ${{ steps.set_outputs.outputs.versions_zig }}"
         echo "Elixir Versions: ${{ steps.set_outputs.outputs.versions_elixir }}"
         echo "Dart Versions: ${{ steps.set_outputs.outputs.versions_dart }}"
+        echo "Swift Versions: ${{ steps.set_outputs.outputs.versions_swift }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"

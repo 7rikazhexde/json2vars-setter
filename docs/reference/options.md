@@ -29,6 +29,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `zig-strategy` | Update strategy for Zig versions | ✗ | - | Same valid values as `update-strategy` |
 | `elixir-strategy` | Update strategy for Elixir versions | ✗ | - | Same valid values as `update-strategy` |
 | `dart-strategy` | Update strategy for Dart versions | ✗ | - | Same valid values as `update-strategy` |
+| `swift-strategy` | Update strategy for Swift versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -66,6 +67,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_zig` | List of Zig versions | `["0.15.2", "0.14.1"]` |
 | `versions_elixir` | List of Elixir versions | `["1.19.5", "1.18.4"]` |
 | `versions_dart` | List of Dart versions | `["3.12.1", "3.11.6"]` |
+| `versions_swift` | List of Swift versions | `["6.3.2", "6.2.4"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes

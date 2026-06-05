@@ -44,6 +44,7 @@ The dynamic-update strategies map onto these fields:
 | Zig | `ziglang/zig` tags | newest stable | previous minor | `mlugg/setup-zig` |
 | Elixir | `elixir-lang/elixir` tags | newest stable | previous minor | `erlef/setup-beam` |
 | Dart | **Dart release archive** | newest stable | previous minor | `dart-lang/setup-dart` |
+| Swift | **swift.org install API** | newest stable | previous minor | `swift-actions/setup-swift` |
 
 ## Per-language details
 
@@ -181,6 +182,18 @@ The dynamic-update strategies map onto these fields:
   **numerically** (the listing is lexicographic, so `3.9.x` sorts after `3.12.x`);
   `latest` is the newest version and `stable` is the previous minor. Example matrices
   use the form (`"3.11.6"`, `"3.12.1"`) that `dart-lang/setup-dart` accepts.
+
+### Swift — swift.org install API
+
+- **Source:** the official swift.org install API
+  (`https://www.swift.org/api/v1/install/releases.json`).
+- **Why:** the `apple/swift` GitHub tags are dominated by `DEVELOPMENT-SNAPSHOT`
+  tags and the `swift-X.Y.Z-RELEASE` tags do not appear within the first pages of
+  the tags listing, so — like Java and Dart — Swift uses a dedicated source.
+- **Characteristics:** release `name`s matching `X.Y[.Z]` are kept and sorted
+  **numerically**; `latest` is the newest and `stable` is the previous minor. Example
+  matrices use the form (`"6.2.4"`, `"6.3.2"`) that `swift-actions/setup-swift`
+  accepts, and target `ubuntu`/`macos` (Swift's first-class CI platforms).
 
 ## Adding another language
 
