@@ -2,6 +2,7 @@
 
 import pytest
 
+from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.java import JavaVersionFetcher
@@ -23,6 +24,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("php"), PhpVersionFetcher)
     assert isinstance(get_version_fetcher("dotnet"), DotnetVersionFetcher)
     assert isinstance(get_version_fetcher("java"), JavaVersionFetcher)
+    assert isinstance(get_version_fetcher("deno"), DenoVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:

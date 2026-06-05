@@ -39,6 +39,7 @@ The dynamic-update strategies map onto these fields:
 | PHP | `php/php-src` tags | newest stable | previous minor | `shivammathur/setup-php` |
 | .NET (C#) | `dotnet/sdk` tags | newest SDK | previous **major** | `actions/setup-dotnet` |
 | Java | **Adoptium API** | newest **feature** | newest **LTS** | `actions/setup-java` |
+| Deno | `denoland/deno` tags | newest stable | previous minor | `denoland/setup-deno` |
 
 ## Per-language details
 
@@ -126,6 +127,15 @@ The dynamic-update strategies map onto these fields:
   releases, newest first. The consumer side uses the official `actions/setup-java` with
   the `temurin` distribution; example matrices use major versions (`"11"`, `"17"`,
   `"21"`).
+
+### Deno — `denoland/deno`
+
+- **Source:** tags of the official Deno repository (`vX.Y.Z`).
+- **Why:** Deno publishes clean, stable-only release tags (no pre-release noise), so it is
+  a direct fit for the GitHub-tags fetcher.
+- **Characteristics:** the `v` prefix is stripped; `stable` is the previous minor of
+  `latest`. Example matrices use the channel form (`"v1.x"`, `"v2.x"`) that
+  `denoland/setup-deno` accepts.
 
 ## Adding another language
 
