@@ -307,6 +307,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "deno": "stable",
             "bun": "stable",
             "zig": "stable",
+            "elixir": "stable",
         },
         False,
     )
@@ -332,6 +333,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "stable",
             "--zig",
             "latest",
+            "--elixir",
+            "both",
             "--dry-run",
         ],
     )
@@ -348,6 +351,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "deno": "latest",
             "bun": "stable",
             "zig": "latest",
+            "elixir": "both",
         },
         True,  # dry_run=True
     )

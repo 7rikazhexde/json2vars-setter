@@ -42,6 +42,7 @@ The dynamic-update strategies map onto these fields:
 | Deno | `denoland/deno` tags | newest stable | previous minor | `denoland/setup-deno` |
 | Bun | `oven-sh/bun` tags | newest stable | previous minor | `oven-sh/setup-bun` |
 | Zig | `ziglang/zig` tags | newest stable | previous minor | `mlugg/setup-zig` |
+| Elixir | `elixir-lang/elixir` tags | newest stable | previous minor | `erlef/setup-beam` |
 
 ## Per-language details
 
@@ -157,6 +158,16 @@ The dynamic-update strategies map onto these fields:
   `X.Y.Z-dev.*` nightly builds are excluded); Zig is still pre-1.0, so `stable` is
   the previous **minor** (second component) of `latest`. Example matrices use the
   exact form (`"0.14.1"`, `"0.15.2"`) that `mlugg/setup-zig` accepts.
+
+### Elixir — `elixir-lang/elixir`
+
+- **Source:** tags of the official Elixir repository (`vX.Y.Z`).
+- **Why:** Elixir's release tags are a clean, direct fit for the GitHub-tags fetcher.
+- **Characteristics:** only tags matching `vX.Y.Z` are kept (release candidates
+  `vX.Y.Z-rc.N` and the moving `vX.Y-latest` tags are excluded); the `v` prefix is
+  stripped; `stable` is the previous minor of `latest`. Example matrices use the form
+  (`"1.18"`, `"1.19"`) that `erlef/setup-beam` accepts. `setup-beam` also requires an
+  Erlang/OTP version, which the example workflow pins separately.
 
 ## Adding another language
 
