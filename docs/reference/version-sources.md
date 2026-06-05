@@ -15,7 +15,8 @@ GitHub REST API, filters them to stable releases, and derives:
 - **`recent_releases`** — the most recent stable releases (used by the cache feature)
 
 A language whose versions are not cleanly expressed as a single repo's tags (currently
-**Java**) overrides `fetch_versions` and queries an official API instead.
+**Java**, **Dart**, and **Swift**) overrides `fetch_versions` and queries an official
+API instead.
 
 The dynamic-update strategies map onto these fields:
 
@@ -26,6 +27,21 @@ The dynamic-update strategies map onto these fields:
 > The **example matrices** under `examples/<lang>/` are hand-curated to the version
 > format the language's `setup-*` action expects, which may differ from the raw
 > fetcher output (e.g. major-only vs full `X.Y.Z`).
+
+## What the example projects verify
+
+Each `examples/<lang>/` project is a minimal JSON parser that the matching
+`<lang>_test.yml` workflow runs across the matrix. Their purpose is to confirm that:
+
+1. **json2vars-setter** parses the matrix JSON and exposes the `os` / `versions_<lang>`
+   outputs, and
+2. the language's **`setup-*` action** consumes those values and runs a real build/test.
+
+They are **not** a check that a specific version is installable — that is the `setup-*`
+action's responsibility, and its supported-version list can lag the upstream source the
+fetcher reads (see the Swift caveat below). Accordingly, the example tests assert the
+**shape** of the parsed matrix (e.g. `versions_<lang>` is a non-empty list of strings),
+not exact version values, so bumping a matrix version never requires touching the test.
 
 ## Summary
 
