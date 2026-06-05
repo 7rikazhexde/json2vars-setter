@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "deno": [
+            "v1.x",
+            "v2.x"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}

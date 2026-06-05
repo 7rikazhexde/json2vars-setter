@@ -47,6 +47,9 @@ inputs:
   java-strategy:
     description: 'Update strategy for Java versions (stable, latest, or both)'
     required: false  # Optional
+  deno-strategy:
+    description: 'Update strategy for Deno versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -144,6 +147,9 @@ outputs:
   versions_java:
     description: 'List of Java versions'
     value: ${{ steps.set_outputs.outputs.versions_java }}
+  versions_deno:
+    description: 'List of Deno versions'
+    value: ${{ steps.set_outputs.outputs.versions_deno }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -216,6 +222,9 @@ runs:
           fi
           if [[ -n "${{ inputs.java-strategy }}" ]]; then
             ARGS+=("--java" "${{ inputs.java-strategy }}")
+          fi
+          if [[ -n "${{ inputs.deno-strategy }}" ]]; then
+            ARGS+=("--deno" "${{ inputs.deno-strategy }}")
           fi
         fi
 
@@ -338,4 +347,5 @@ runs:
         echo "PHP Versions: ${{ steps.set_outputs.outputs.versions_php }}"
         echo ".NET Versions: ${{ steps.set_outputs.outputs.versions_dotnet }}"
         echo "Java Versions: ${{ steps.set_outputs.outputs.versions_java }}"
+        echo "Deno Versions: ${{ steps.set_outputs.outputs.versions_deno }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"

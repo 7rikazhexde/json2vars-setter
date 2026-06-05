@@ -26,7 +26,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 - **JSON Parsing**: Convert JSON files into GitHub Actions output variables for use in your workflows
 - **Dynamic Version Management**: Automatically update your testing matrix with latest language versions from official sources
 - **Version Caching**: Cache version information to reduce API calls and improve workflow performance
-- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), and Java
+- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, and Deno
 - **Flexible Configuration**: Maintain a single source of truth for your matrix testing environments
 
 ## Supported Matrix Components
@@ -41,6 +41,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![PHP](https://img.shields.io/badge/PHP-777BB4?style=flat&logo=php&logoColor=white) | [![setup-php](https://img.shields.io/badge/setup--php-777BB4?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-php-action) | [![PHP Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/a9bc428c9f5a2f998bd7307038e557e1/raw/php-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/php_test.yml) |
 | ![.NET](https://img.shields.io/badge/.NET-512BD4?style=flat&logo=dotnet&logoColor=white) | [![setup-dotnet](https://img.shields.io/badge/setup--dotnet-512BD4?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-dotnet) | [![.NET Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/33c8a05d3ed6c038877d847ffc12b2f9/raw/dotnet-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dotnet_test.yml) |
 | ![Java](https://img.shields.io/badge/Java-007396?style=flat&logo=openjdk&logoColor=white) | [![setup-java](https://img.shields.io/badge/setup--java-007396?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-java-jdk) | [![Java Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/813e5201a834d06253014b66ee8fd154/raw/java-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/java_test.yml) |
+| ![Deno](https://img.shields.io/badge/Deno-000000?style=flat&logo=deno&logoColor=white) | [![setup-deno](https://img.shields.io/badge/setup--deno-000000?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-deno) | [![Deno Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/5a34d5cdfb2b13ed4ab1939009b6f5b1/raw/deno-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/deno_test.yml) |
 
 ## Quick Start
 

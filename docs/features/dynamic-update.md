@@ -195,6 +195,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `php-strategy` | Strategy for PHP versions | No | - |
 | `dotnet-strategy` | Strategy for .NET (C#) versions | No | - |
 | `java-strategy` | Strategy for Java versions | No | - |
+| `deno-strategy` | Strategy for Deno versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -248,6 +249,7 @@ The Dynamic Matrix Updater currently supports:
 - **PHP**: Fetches from PHP releases via GitHub API
 - **.NET (C#)**: Fetches from .NET SDK releases via GitHub API
 - **Java**: Fetches from the Adoptium API (latest feature release / latest LTS)
+- **Deno**: Fetches from Deno releases via GitHub API
 
 ## Best Practices
 
