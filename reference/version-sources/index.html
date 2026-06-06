@@ -983,6 +983,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#julia-julialangjulia" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Julia — <code>JuliaLang/julia</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1280,6 +1291,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#julia-julialangjulia" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Julia — <code>JuliaLang/julia</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1460,6 +1482,13 @@ source the fetcher reads (see the Swift caveat below).</p>
 <td>previous minor</td>
 <td><code>swift-actions/setup-swift</code></td>
 </tr>
+<tr>
+<td>Julia</td>
+<td><code>JuliaLang/julia</code> tags (sorted)</td>
+<td>newest stable</td>
+<td>previous minor line</td>
+<td><code>julia-actions/setup-julia</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1617,6 +1646,17 @@ source the fetcher reads (see the Swift caveat below).</p>
   Swift versions, which can lag behind the newest swift.org release. When using the
   dynamic update, pin to versions the action supports if the very latest is not yet
   available there.</li>
+</ul>
+<h3 id="julia-julialangjulia">Julia — <code>JuliaLang/julia</code></h3>
+<ul>
+<li><strong>Source:</strong> <code>JuliaLang/julia</code> GitHub tags.</li>
+<li><strong>Characteristics:</strong> stable tags look like <code>vX.Y.Z</code>; pre-releases (<code>-rc</code>, <code>-beta</code>,
+  <code>-alpha</code>) are excluded. Unlike most repositories, the JuliaLang/julia tag API is <strong>not
+  reliably newest-first</strong>, so <code>julia.py</code> overrides <code>_get_github_tags</code> to sort the stable
+  tags <strong>numerically</strong> by semantic version before selecting; <code>latest</code> is the newest and
+  <code>stable</code> is the newest release from the previous minor line. Example matrices use the
+  short form (<code>"1.10"</code>, <code>"1.11"</code>) that <code>julia-actions/setup-julia</code> accepts (it also
+  accepts an exact <code>X.Y.Z</code> or aliases such as <code>lts</code> / <code>nightly</code>).</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to
