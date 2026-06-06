@@ -1,3 +1,19 @@
+# [v1.9.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.8.0...v1.9.0) (2026-06-06)
+
+## ✨ New Features
+- [`672da56`](https://github.com/7rikazhexde/json2vars-setter/commit/672da56)  Add Julia language support (#530) (Issues: [`#530`](https://github.com/7rikazhexde/json2vars-setter/issues/530))
+- [`1ca67f9`](https://github.com/7rikazhexde/json2vars-setter/commit/1ca67f9)  Add Crystal language support (#532) (Issues: [`#532`](https://github.com/7rikazhexde/json2vars-setter/issues/532))
+- [`8060eb2`](https://github.com/7rikazhexde/json2vars-setter/commit/8060eb2)  Add Haskell (GHC) language support (#533) (Issues: [`#533`](https://github.com/7rikazhexde/json2vars-setter/issues/533))
+- [`9c37f7a`](https://github.com/7rikazhexde/json2vars-setter/commit/9c37f7a)  Add OCaml language support (#534) (Issues: [`#534`](https://github.com/7rikazhexde/json2vars-setter/issues/534))
+
+## 🐛 Bug Fixes
+- [`855eec2`](https://github.com/7rikazhexde/json2vars-setter/commit/855eec2)  Block setup-swift v3 by update-type, not version range (#528) (Issues: [`#528`](https://github.com/7rikazhexde/json2vars-setter/issues/528) [`#527`](https://github.com/7rikazhexde/json2vars-setter/issues/527))
+- [`fb9231b`](https://github.com/7rikazhexde/json2vars-setter/commit/fb9231b)  Fix broken/mismatched setup-action marketplace badge links (#529) (Issues: [`#529`](https://github.com/7rikazhexde/json2vars-setter/issues/529))
+- [`ac58b9d`](https://github.com/7rikazhexde/json2vars-setter/commit/ac58b9d)  Fix mypy strict violations in dart/swift fetcher tests (#531) (Issues: [`#531`](https://github.com/7rikazhexde/json2vars-setter/issues/531))
+
+## 🔒 Security Issues
+- [`eb5f4ce`](https://github.com/7rikazhexde/json2vars-setter/commit/eb5f4ce)  Pin swift-actions/setup-swift to v2.4.0 (ignore broken v3 beta) (#524) (Issues: [`#524`](https://github.com/7rikazhexde/json2vars-setter/issues/524) [`#523`](https://github.com/7rikazhexde/json2vars-setter/issues/523) [`swift-actions/setup-swift#798`](https://github.com/swift-actions/setup-swift/issues/798))
+
 # [v1.8.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.7.0...v1.8.0) (2026-06-05)
 
 ## ✨ New Features
