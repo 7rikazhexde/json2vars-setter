@@ -3,7 +3,7 @@ from typing import List
 import pytest
 import pytest_mock
 
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.swift import SwiftVersionFetcher
 
 
@@ -26,7 +26,7 @@ class _FakeResponse:
         return self._payload
 
 
-def _entries(names: List[str]) -> List[dict]:
+def _entries(names: List[str]) -> List[JsonObject]:
     """Build swift.org-style release entries for the given names"""
     return [{"name": n, "tag": f"swift-{n}-RELEASE"} for n in names]
 
