@@ -1,0 +1,14 @@
+opam-version: "2.0"
+synopsis: "json2vars-setter OCaml example"
+maintainer: "7rikazhexde"
+authors: "7rikazhexde"
+homepage: "https://github.com/7rikazhexde/json2vars-setter"
+bug-reports: "https://github.com/7rikazhexde/json2vars-setter/issues"
+depends: [
+  "ocaml"
+  "dune" {>= "3.0"}
+  "yojson"
+]
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+]

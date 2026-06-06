@@ -60,6 +60,7 @@ source the fetcher reads (see the Swift caveat below).
 | Julia | `JuliaLang/julia` tags (sorted) | newest stable | previous minor line | `julia-actions/setup-julia` |
 | Crystal | `crystal-lang/crystal` tags (sorted) | newest stable | previous minor line | `crystal-lang/install-crystal` |
 | Haskell | `ghc/ghc` tags (sorted) | newest stable | previous minor line | `haskell-actions/setup` |
+| OCaml | `ocaml/ocaml` tags (sorted) | newest stable | previous minor line | `ocaml/setup-ocaml` |
 
 ## Per-language details
 
@@ -249,6 +250,19 @@ source the fetcher reads (see the Swift caveat below).
   resolved by version rather than `minor - 1`). Example matrices use exact GHC
   versions (`"9.8.4"`, `"9.10.1"`) that `haskell-actions/setup` accepts, and target
   `ubuntu`/`macos` (Haskell's first-class CI platforms).
+
+### OCaml — `ocaml/ocaml`
+
+- **Source:** `ocaml/ocaml` GitHub tags. Stable releases are plain `X.Y.Z` (e.g.
+  `5.4.1`).
+- **Characteristics:** pre-releases (`5.5.0-beta1`, `5.5.0-alpha1`) carry a suffix and
+  the ancient `csl-*` (Caml Special Light) tags carry a prefix, so neither matches and
+  both are excluded. The tag list interleaves those and is not reliably newest-first,
+  so — like `julia.py` — `ocaml.py` overrides `_get_github_tags` to sort the stable
+  tags **numerically** before selecting; `latest` is the newest and `stable` is the
+  newest release from the previous minor line. Example matrices use exact compiler
+  versions (`"5.2.1"`, `"5.3.0"`) that `ocaml/setup-ocaml` accepts, and target
+  `ubuntu`/`macos` (OCaml's first-class CI platforms).
 
 ## Adding another language
 
