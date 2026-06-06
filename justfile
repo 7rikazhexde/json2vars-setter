@@ -46,7 +46,8 @@ install-hooks:
 pre-commit:
     uv run pre-commit run --all-files
 
-# Show CLI usage for the cache / dynamic-update modules
+# Show CLI usage (task guide + per-command options)
 usage:
-    uv run python json2vars_setter/cache_version_info.py --help
-    uv run python json2vars_setter/update_matrix_dynamic.py --help
+    uv run json2vars usage
+    uv run json2vars update-matrix --help
+    uv run json2vars cache-version --help
