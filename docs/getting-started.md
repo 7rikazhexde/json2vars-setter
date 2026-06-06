@@ -11,6 +11,58 @@ This guide will help you set up and use the JSON to Variables Setter action in y
 
 As this is a GitHub Action, there's no installation required. You simply reference the action in your workflow file.
 
+## Try It Locally (No GitHub Needed)
+
+Before wiring the action into a workflow, you can run the **exact same parsing logic** on your own machine and see precisely which outputs it would expose. The package ships a `json2vars` CLI. Inside a workflow the action writes its outputs to the file named by `$GITHUB_OUTPUT`; locally that is simply a file path you choose, so you can open it and read the result.
+
+### Step 1: Create a small matrix file
+
+Save this as `matrix.json`:
+
+```json
+{
+  "os": ["ubuntu-latest", "macos-latest"],
+  "versions": { "python": ["3.12", "3.13"] },
+  "ghpages_branch": "gh-pages"
+}
+```
+
+### Step 2: Run the parser
+
+From a clone of this repository (uses [uv](https://docs.astral.sh/uv/)):
+
+```bash
+uv sync
+GITHUB_OUTPUT=out.txt uv run json2vars parse matrix.json
+```
+
+Or without cloning — `uvx` fetches and runs the CLI straight from GitHub:
+
+```bash
+GITHUB_OUTPUT=out.txt uvx --from git+https://github.com/7rikazhexde/json2vars-setter json2vars parse matrix.json
+```
+
+### Step 3: Inspect the outputs
+
+```bash
+cat out.txt
+```
+
+```text
+OS=["ubuntu-latest", "macos-latest"]
+OS_0=ubuntu-latest
+OS_1=macos-latest
+VERSIONS_PYTHON=["3.12", "3.13"]
+VERSIONS_PYTHON_0=3.12
+VERSIONS_PYTHON_1=3.13
+GHPAGES_BRANCH=gh-pages
+```
+
+Each line is one workflow output: the full JSON list (`VERSIONS_PYTHON`), each indexed element (`VERSIONS_PYTHON_0`, `VERSIONS_PYTHON_1`), and scalars such as `GHPAGES_BRANCH`. This is exactly what `${{ steps.json2vars.outputs.* }}` reads when the action runs in a workflow — so what you see locally is what you get in CI.
+
+!!! tip "Explore the other commands"
+    Run `json2vars usage` for a task-oriented guide. Beyond `parse`, the CLI also exposes `update-matrix` (rewrite the matrix file with the latest/stable versions fetched from upstream) and `cache-version` (maintain a version cache) — the same engines behind the action's [dynamic update](features/dynamic-update.md) and [version caching](features/version-caching.md) features. Those two reach out to GitHub APIs, so set `GITHUB_TOKEN` to avoid rate limits.
+
 ## Basic Setup
 
 ### Step 1: Create a JSON Configuration File

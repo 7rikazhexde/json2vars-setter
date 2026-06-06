@@ -1,0 +1,81 @@
+name: Sample - Single Source of Truth
+
+# A runnable, real-world demonstration of the core value of json2vars-setter:
+# define your build matrix ONCE in a JSON file, then consume it from multiple
+# independent jobs — no version lists copy-pasted across jobs or workflows.
+#
+# This workflow runs in THIS repository, so its green check is living proof you
+# can reproduce in your own project:
+#   1. Copy examples/showcase/matrix.json and this workflow into your repo.
+#   2. Edit the JSON (OS list / Python versions) to taste.
+#   3. Push — the same green result you see here is what you get.
+# See examples/showcase/README.md for the step-by-step adoption guide.
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/**'
+      - '.github/workflows/sample_single_source.yml'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # Step 1: read the matrix from the single JSON file and expose it as outputs.
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        with:
+          json-file: examples/showcase/matrix.json
+
+  # Consumer #1: a full OS x Python test matrix, built entirely from the JSON.
+  # Nothing here repeats the version list — it all comes from set_variables.
+  test:
+    needs: set_variables
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run a trivial check on this matrix leg
+        run: python -c "import sys; print('matrix leg OK:', sys.version)"
+
+  # Consumer #2: a DIFFERENT job reusing the SAME outputs without redefining
+  # them — e.g. a lint/docs job that only needs the lowest supported Python.
+  lint:
+    needs: set_variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up the lowest supported Python from the shared matrix
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}
+
+      - name: Show that this job reuses the single source of truth
+        run: |
+          echo "One JSON, consumed by an independent job:"
+          echo "  OS list:         ${{ needs.set_variables.outputs.os }}"
+          echo "  Python list:     ${{ needs.set_variables.outputs.versions_python }}"
+          echo "  Pinned for lint: ${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}"
+          echo "  Pages branch:    ${{ needs.set_variables.outputs.ghpages_branch }}"
