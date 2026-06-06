@@ -1016,6 +1016,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ocaml-ocamlocaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        OCaml — <code>ocaml/ocaml</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1346,6 +1357,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#ocaml-ocamlocaml" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        OCaml — <code>ocaml/ocaml</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1547,6 +1569,13 @@ source the fetcher reads (see the Swift caveat below).</p>
 <td>previous minor line</td>
 <td><code>haskell-actions/setup</code></td>
 </tr>
+<tr>
+<td>OCaml</td>
+<td><code>ocaml/ocaml</code> tags (sorted)</td>
+<td>newest stable</td>
+<td>previous minor line</td>
+<td><code>ocaml/setup-ocaml</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1740,6 +1769,19 @@ source the fetcher reads (see the Swift caveat below).</p>
   resolved by version rather than <code>minor - 1</code>). Example matrices use exact GHC
   versions (<code>"9.8.4"</code>, <code>"9.10.1"</code>) that <code>haskell-actions/setup</code> accepts, and target
   <code>ubuntu</code>/<code>macos</code> (Haskell's first-class CI platforms).</li>
+</ul>
+<h3 id="ocaml-ocamlocaml">OCaml — <code>ocaml/ocaml</code></h3>
+<ul>
+<li><strong>Source:</strong> <code>ocaml/ocaml</code> GitHub tags. Stable releases are plain <code>X.Y.Z</code> (e.g.
+  <code>5.4.1</code>).</li>
+<li><strong>Characteristics:</strong> pre-releases (<code>5.5.0-beta1</code>, <code>5.5.0-alpha1</code>) carry a suffix and
+  the ancient <code>csl-*</code> (Caml Special Light) tags carry a prefix, so neither matches and
+  both are excluded. The tag list interleaves those and is not reliably newest-first,
+  so — like <code>julia.py</code> — <code>ocaml.py</code> overrides <code>_get_github_tags</code> to sort the stable
+  tags <strong>numerically</strong> before selecting; <code>latest</code> is the newest and <code>stable</code> is the
+  newest release from the previous minor line. Example matrices use exact compiler
+  versions (<code>"5.2.1"</code>, <code>"5.3.0"</code>) that <code>ocaml/setup-ocaml</code> accepts, and target
+  <code>ubuntu</code>/<code>macos</code> (OCaml's first-class CI platforms).</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to
