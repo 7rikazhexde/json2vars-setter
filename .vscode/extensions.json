@@ -1,0 +1,30 @@
+{
+    // Recommended extensions for this repository (well-known, trusted publishers
+    // only). Installing these resolves the "formatter not installed" warnings in
+    // settings.json and provides the linters/formatters the project and its
+    // language examples rely on. VSCode prompts contributors to install these.
+    "recommendations": [
+        // Core (Python package + tooling)
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "DavidAnson.vscode-markdownlint",
+        "tamasfe.even-better-toml",
+        "redhat.vscode-yaml",
+        "github.vscode-github-actions",
+        "timonwong.shellcheck",
+        // Language examples (examples/<lang>/)
+        "esbenp.prettier-vscode",
+        "Shopify.ruby-lsp",
+        "golang.go",
+        "rust-lang.rust-analyzer"
+    ],
+    // Discourage extensions that overlap/conflict with the project's chosen
+    // tooling (Ruff replaces Black/isort/Flake8/Pylint for this repo).
+    "unwantedRecommendations": [
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-python.flake8",
+        "ms-python.pylint"
+    ]
+}

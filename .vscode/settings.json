@@ -54,8 +54,9 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true
     },
-    "javascript.validate.enable": false, // ESLintでのチェックに一任するためにVSCodeのJavaScriptバリデーションを無効化
-    "typescript.validate.enable": false,
+    // ESLintでのチェックに一任するため VSCode の JS/TS バリデーションを無効化
+    // (javascript.validate.enable / typescript.validate.enable は非推奨。統合キーを使用)
+    "js/ts.validate.enabled": false,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit" // ESLintによるすべての修正を保存時に実行
     },
@@ -112,6 +113,23 @@
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/dependabot_prch.yml",
         ".github/workflows/prch_test_matrix_json.yml",
-        ".github/workflows/update-version-and-release.yml"
-    ]
+        ".github/workflows/semantic-release.yml"
+    ],
+    // markdownlint: 自動生成の CHANGELOG.md は除外（.markdownlintignore と整合）
+    "markdownlint.ignore": [
+        "CHANGELOG.md"
+    ],
+    // --- セキュリティ強化 (Node.js / npm サプライチェーン対策) ---
+    // VSCode が npm レジストリから @types を自動取得しないようにする
+    // (Automatic Type Acquisition 経由の供給網リスクを低減)
+    "typescript.disableAutomaticTypeAcquisition": true,
+    // package.json の npm スクリプトを自動検出・実行候補にしない
+    "npm.autoDetect": "off",
+    // フォルダを開いた際に tasks.json のタスクを自動実行しない
+    "task.allowAutomaticTasks": "off",
+    // Workspace Trust を有効に保ち、信頼されていないファイルは常にプロンプト
+    "security.workspace.trust.enabled": true,
+    "security.workspace.trust.untrustedFiles": "prompt",
+    // 拡張機能の自動更新を無効化し、更新内容を明示的に確認する
+    "extensions.autoUpdate": false
 }
