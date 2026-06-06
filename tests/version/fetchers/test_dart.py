@@ -1,9 +1,9 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 
 import pytest
 import pytest_mock
 
-from json2vars_setter.version.core.utils import ReleaseInfo
+from json2vars_setter.version.core.utils import JsonObject, ReleaseInfo
 from json2vars_setter.version.fetchers.dart import DartVersionFetcher
 
 
@@ -16,13 +16,13 @@ def dart_fetcher() -> DartVersionFetcher:
 class _FakeResponse:
     """Minimal stand-in for a requests.Response used in tests"""
 
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: object) -> None:
         self._payload = payload
 
     def raise_for_status(self) -> None:
         return None
 
-    def json(self) -> dict:
+    def json(self) -> object:
         return self._payload
 
 
@@ -171,7 +171,7 @@ def test_list_stable_versions_real_url(
     dart_fetcher: DartVersionFetcher, mocker: "pytest_mock.MockerFixture"
 ) -> None:
     """The listing request targets the Dart archive bucket with the stable prefix"""
-    payload: dict[str, Any] = {"prefixes": _prefixes(["3.12.1"])}
+    payload: JsonObject = {"prefixes": _prefixes(["3.12.1"])}
     mock_get = mocker.patch.object(
         dart_fetcher.session, "get", return_value=_FakeResponse(payload)
     )
