@@ -947,6 +947,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Coding Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modern-quality-preview-ci-advisory" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Modern Quality preview (CI, advisory)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1210,6 +1227,23 @@
       </span>
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Coding Guidelines">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modern-quality-preview-ci-advisory" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Modern Quality preview (CI, advisory)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1584,7 +1618,7 @@ Use the following prefixes based on the purpose of the branch:</p>
 </li>
 <li>You can run all linters at once using: <code>uv run pre-commit run --all-files</code></li>
 </ul>
-<p><strong>Modern Quality preview (CI, advisory)</strong></p>
+<h3 id="modern-quality-preview-ci-advisory">Modern Quality preview (CI, advisory)</h3>
 <ul>
 <li>The <a href="https://github.com/7rikazhexde/json2vars-setter/blob/main/.github/workflows/modern-quality.yml"><code>modern-quality.yml</code></a> workflow runs an extra, <strong>non-blocking</strong> quality/security suite on pull requests and on <code>main</code> (every analysis job is <code>continue-on-error</code>; findings appear in the run summary). pre-commit and the test workflows remain the required checks.</li>
 <li>Jobs: <code>validate-pyproject</code>, <code>typos</code>, <a href="https://github.com/woodruffw/zizmor"><code>zizmor</code></a> (GitHub Actions security audit), <a href="https://github.com/astral-sh/ty"><code>ty</code></a> (Astral fast type checker — mypy stays canonical), <a href="https://github.com/pypa/pip-audit"><code>pip-audit</code></a> (dependency CVE scan), and <a href="https://github.com/gitleaks/gitleaks"><code>gitleaks</code></a> (secret scan; CI-only).</li>
