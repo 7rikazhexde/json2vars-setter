@@ -9,6 +9,12 @@ on:
       - '.github/workflows/nodejs_test.yml'
       - '.github/json2vars-setter/nodejs_test.yml'
 
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+# Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)
+# have no Node 24 release yet; this forces them onto Node 24 per GitHub guidance.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   set_variables:
     runs-on: ubuntu-latest
