@@ -111,7 +111,7 @@ jobs:
       versions_python: ${{ steps.json2vars.outputs.versions_python }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.3
 
       - name: Set variables with dynamic update
         id: json2vars
@@ -160,7 +160,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6.0.3
 
       - name: Update matrix.json
         uses: 7rikazhexde/json2vars-setter@v1.9.1

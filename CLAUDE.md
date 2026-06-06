@@ -145,7 +145,7 @@ or the addition is incomplete:
   `shivammathur/setup-php` for PHP. Pin every `uses:` to a commit SHA with the version
   tag as a trailing comment (except the `7rikazhexde/json2vars-setter@vX.Y.Z`
   self-reference, which the Versioning Rule keeps as a tag).
-- **Python version**: 3.10+ (target 3.12 for mypy)
+- **Python version**: 3.10+ (mypy `python_version` and ruff `target-version` both track the 3.10 support floor)
 - **Linting**: Ruff with E, F, I rules (E402 and E501 ignored)
 - **Type checking**: mypy with strict settings (`disallow_untyped_defs`, `warn_return_any`)
 - **Test coverage**: Minimum 95%, goal 100%. Branch coverage is disabled in config due to testmon compatibility
@@ -154,6 +154,8 @@ or the addition is incomplete:
 ## Versioning Rule
 
 When the action version is bumped, **all usage examples must be pinned to the new version**. Every `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` reference across `README.md`, `docs/**`, and the example workflows in `.github/workflows/**` must point to the version being released — usage examples must never lag behind the latest tag. Releases are automated by **semantic-release** (`.github/workflows/semantic-release.yml`): its `@semantic-release/exec` step runs `.github/scripts/sync-version-refs.sh <new-version>` (and `uv version` / `uv lock`), then `@semantic-release/git` commits the synced references back to `main` as part of the release. Keep that script in sync if reference locations change, and apply the same rule for any manual version bump.
+
+The **third-party / official** action versions in the docs/README usage examples (`actions/checkout`, `actions/setup-python`, …) are a separate concern: `sync-version-refs.sh` only touches the `json2vars-setter` self-reference, and Dependabot only updates real workflows / `action.yml` (never Markdown). `.github/scripts/sync_doc_action_refs.py` closes that gap — it treats the SHA-pinned workflows + `action.yml` as the source of truth and rewrites each matching action's version tag in `README.md` and `docs/**`. It runs as the `sync-doc-action-refs` pre-commit hook (and `--check` for CI). Actions that appear only in the docs (e.g. `dorny/paths-filter`) have no source of truth and are left alone.
 
 ### Releasing (semantic-release-gitmoji)
 
