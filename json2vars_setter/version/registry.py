@@ -19,6 +19,7 @@ from json2vars_setter.version.fetchers.haskell import HaskellVersionFetcher
 from json2vars_setter.version.fetchers.java import JavaVersionFetcher
 from json2vars_setter.version.fetchers.julia import JuliaVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
+from json2vars_setter.version.fetchers.ocaml import OcamlVersionFetcher
 from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
 from json2vars_setter.version.fetchers.ruby import RubyVersionFetcher
@@ -46,6 +47,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "julia": JuliaVersionFetcher,
     "crystal": CrystalVersionFetcher,
     "haskell": HaskellVersionFetcher,
+    "ocaml": OcamlVersionFetcher,
 }
 
 

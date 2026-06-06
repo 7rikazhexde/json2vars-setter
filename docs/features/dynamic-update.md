@@ -204,6 +204,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `julia-strategy` | Strategy for Julia versions | No | - |
 | `crystal-strategy` | Strategy for Crystal versions | No | - |
 | `haskell-strategy` | Strategy for Haskell (GHC) versions | No | - |
+| `ocaml-strategy` | Strategy for OCaml versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -266,6 +267,7 @@ The Dynamic Matrix Updater currently supports:
 - **Julia**: Fetches from Julia releases via GitHub API
 - **Crystal**: Fetches from Crystal releases via GitHub API
 - **Haskell**: Fetches from GHC releases via GitHub API
+- **OCaml**: Fetches from OCaml releases via GitHub API
 
 ## Best Practices
 

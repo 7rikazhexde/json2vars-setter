@@ -74,6 +74,9 @@ inputs:
   haskell-strategy:
     description: 'Update strategy for Haskell (GHC) versions (stable, latest, or both)'
     required: false  # Optional
+  ocaml-strategy:
+    description: 'Update strategy for OCaml versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -198,6 +201,9 @@ outputs:
   versions_haskell:
     description: 'List of Haskell (GHC) versions'
     value: ${{ steps.set_outputs.outputs.versions_haskell }}
+  versions_ocaml:
+    description: 'List of OCaml versions'
+    value: ${{ steps.set_outputs.outputs.versions_ocaml }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -297,6 +303,9 @@ runs:
           fi
           if [[ -n "${{ inputs.haskell-strategy }}" ]]; then
             ARGS+=("--haskell" "${{ inputs.haskell-strategy }}")
+          fi
+          if [[ -n "${{ inputs.ocaml-strategy }}" ]]; then
+            ARGS+=("--ocaml" "${{ inputs.ocaml-strategy }}")
           fi
         fi
 
@@ -428,4 +437,5 @@ runs:
         echo "Julia Versions: ${{ steps.set_outputs.outputs.versions_julia }}"
         echo "Crystal Versions: ${{ steps.set_outputs.outputs.versions_crystal }}"
         echo "Haskell Versions: ${{ steps.set_outputs.outputs.versions_haskell }}"
+        echo "OCaml Versions: ${{ steps.set_outputs.outputs.versions_ocaml }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"
