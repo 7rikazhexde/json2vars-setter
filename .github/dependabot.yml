@@ -86,4 +86,15 @@ updates:
       dependencies:
         patterns:
           - "*"
+    ignore:
+      # swift-actions/setup-swift v3 is currently only a pre-release
+      # (v3.0.0-beta.1). Its Linux path switched to the Swiftly installer,
+      # which fails GPG signature verification on the runner
+      # ("gpg: Can't check signature: No public key" —
+      # swift-actions/setup-swift#798, still open). The moving `v3` tag points
+      # at that beta, so Dependabot proposes it as if it were a stable major
+      # (see the closed PR #523). Stay on the v2.4.0 stable release; remove
+      # this ignore once a fixed v3 is released as GA.
+      - dependency-name: "swift-actions/setup-swift"
+        versions: ["3.x"]
     open-pull-requests-limit: 10
