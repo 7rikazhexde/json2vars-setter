@@ -25,9 +25,10 @@ cache file ([`.github/json2vars-setter/cache/version_cache.json`](../../../.gith
     cache-file: .github/json2vars-setter/cache/version_cache.json
 ```
 
-No `matrix.json` is committed here — the action **generates** it at runtime from the
-cache, then parses it into outputs. `output-count: '3'` trims each language to its
-newest 3 cached versions, so a large cache can back a small matrix.
+The committed [`matrix.json`](matrix.json) is only a **seed**: in template-only mode the
+action **regenerates** it from the cache at runtime (the action requires the target file
+to exist first), then parses it into outputs. `output-count: '3'` trims each language to
+its newest 3 cached versions, so a large cache can back a small matrix.
 
 ## Try it locally (no API, no GitHub)
 
