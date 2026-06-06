@@ -1,0 +1,100 @@
+name: Sample - Template from Cache
+
+# A runnable demonstration of template-only mode: generate a matrix from an
+# EXISTING version cache (.github/json2vars-setter/cache/version_cache.json)
+# WITHOUT any GitHub API calls. Useful as a fast, rate-limit-free pre-build step
+# once a cache has been populated (see the version-caching feature).
+#
+# `output-count: '3'` trims each language to its 3 newest cached versions.
+# See examples/showcase/template/README.md.
+
+on:
+  # Weekly run keeps the badge fresh; see the sample-workflow policy in CLAUDE.md.
+  schedule:
+    - cron: '17 6 * * 1'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/template/**'
+      - '.github/workflows/sample_template.yml'
+      - '.github/json2vars-setter/cache/version_cache.json'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      versions_nodejs: ${{ steps.json2vars.outputs.versions_nodejs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Generate matrix from the cache (no API calls)
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        with:
+          json-file: examples/showcase/template/matrix.json
+          use-cache: 'true'
+          template-only: 'true'
+          cache-languages: 'python,nodejs'
+          output-count: '3'
+          cache-file: .github/json2vars-setter/cache/version_cache.json
+        env:
+          # template-only skips the API, but pass the token anyway so copying this
+          # sample into a non-template-only setup still authenticates.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Prove the template was generated from the cache and is usable. Kept to a single
+  # job (not a full matrix) because the point here is "template from cache", and the
+  # cached OS list would otherwise fan out into many legs.
+  show:
+    needs: set_variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up the newest cached Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}
+      - name: Show the template generated from the cache
+        run: |
+          echo "Matrix generated from the cache (no API calls), trimmed to 3 each:"
+          echo "  Python: ${{ needs.set_variables.outputs.versions_python }}"
+          echo "  Node.js: ${{ needs.set_variables.outputs.versions_nodejs }}"
+          python -c "import sys; print('using newest cached Python:', sys.version)"
+
+  update_badge:
+    needs: [show]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          case "${{ needs.show.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            cancelled) status=cancelled; color=808080 ;;
+            *)         status=failing;   color=cf222e ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 0d505761860b197c29ff8b6ec3c3a0ed
+          filename: sample-template-badge.json
+          label: "Sample: Template (cache)"
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

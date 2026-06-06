@@ -134,6 +134,51 @@ or the addition is incomplete:
      latest release. **This swap is a required follow-up** — track it so the example
      workflow does not stay on `./`.
 
+## Sample Workflows (use-case gallery)
+
+Beyond the per-language `*_test.yml` tests, the repo carries **`sample_*.yml`** workflows:
+runnable, CI-validated demonstrations of *use cases* (single source of truth, monorepo,
+template-from-cache, …). Their purpose is adoption confidence — a cautious user trusts a
+**green badge on a real run** far more than a doc snippet, and can copy the files to
+reproduce it. The "Sample Workflows" tables in `README.md` and `docs/index.md` are the
+registry. The roadmap (remaining: conditional matrix, dynamic-update/scheduled
+maintenance, reusable `workflow_call`, version caching) lives in the
+`sample-workflows-gallery` memory.
+
+**Execution & maintenance policy (keeps CI cheap as the gallery grows):**
+
+- **Distinguish by filename, not folders** — GitHub only scans `.github/workflows/`
+  flatly, so each sample is `sample_<usecase>.yml`.
+- **Triggers:** `schedule` (weekly, **stagger the cron** across samples so they don't all
+  fire at once) + `workflow_dispatch` + `pull_request` scoped to **that sample's own
+  files only** (its `examples/showcase/<usecase>/**` dir + the workflow file). So routine
+  PRs never run samples; editing a sample (or a Dependabot action bump touching it) runs
+  only that one; the weekly run keeps the badge fresh and catches upstream drift.
+- **Version maintenance stays automatic:** Dependabot bumps the third-party action SHAs
+  (the bump PR touches the sample file → validates by running just that sample);
+  `sync-version-refs.sh` keeps the `json2vars-setter@vX.Y.Z` self-ref current on release
+  (validated by the next weekly run).
+- **API-hitting samples** (dynamic update, cache refresh) must pass
+  `env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}`; prefer `dry-run`/template-only where
+  possible so the run is green and side-effect-free.
+- **High-impact changes** to the action itself (`action.yml`, `json2vars_setter/**`) do
+  **not** auto-run all samples — run them on demand via `workflow_dispatch`.
+
+**Adding a Sample Workflow (checklist):**
+
+1. **Example data** — `examples/showcase/<usecase>/` with the matrix JSON(s) + a
+   `README.md` (what it shows + copy-to-adopt steps), mirroring
+   `examples/showcase/monorepo/`.
+2. **Workflow** — `.github/workflows/sample_<usecase>.yml`: triggers per the policy above
+   (staggered `schedule` + `workflow_dispatch` + own-file `paths`),
+   `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`, the demo jobs, and an `update_badge` job mirroring
+   the per-language pattern.
+3. **Badge gist** — a **dedicated gist** (`sample-<usecase>-badge.json`, written via
+   `GIST_TOKEN`) whose `gistID` must be created by the repo owner (cannot be generated in
+   CI). Wire it into the `update_badge` job.
+4. **Registry** — add a row to the "Sample Workflows" table in **both** `README.md` and
+   `docs/index.md` (endpoint badge + links to the workflow and the example).
+
 ## Code Conventions
 
 - **Commit messages**: Follow [gitmoji](https://gitmoji.dev/) conventions. Releases are automated by **semantic-release-gitmoji**, which reads the gitmoji to pick the next version: `:boom:` → major, `:sparkles:` → minor, and fixes/maintenance (`:bug:`, `:lock:`, `:ambulance:`, `:zap:`, `:wrench:`, `:recycle:`, `:arrow_up:`, …) → patch. Other gitmoji (e.g. `:memo:`, `:art:`, `:white_check_mark:`) don't trigger a release. The full mapping is the `releaseRules` in `.releaserc.json`.
