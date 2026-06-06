@@ -59,6 +59,7 @@ source the fetcher reads (see the Swift caveat below).
 | Swift | **swift.org install API** | newest stable | previous minor | `swift-actions/setup-swift` |
 | Julia | `JuliaLang/julia` tags (sorted) | newest stable | previous minor line | `julia-actions/setup-julia` |
 | Crystal | `crystal-lang/crystal` tags (sorted) | newest stable | previous minor line | `crystal-lang/install-crystal` |
+| Haskell | `ghc/ghc` tags (sorted) | newest stable | previous minor line | `haskell-actions/setup` |
 
 ## Per-language details
 
@@ -235,6 +236,19 @@ source the fetcher reads (see the Swift caveat below).
   release from the previous minor line. Example matrices use exact versions
   (`"1.19.2"`, `"1.20.2"`) that `crystal-lang/install-crystal` accepts, and target
   `ubuntu`/`macos` (Crystal's first-class CI platforms).
+
+### Haskell — `ghc/ghc`
+
+- **Source:** `ghc/ghc` GitHub tags. Final GHC releases are tagged
+  `ghc-X.Y.Z-release`; the version is extracted from that pattern.
+- **Characteristics:** the tag list is dominated by pre-release (`-rc`, `-alpha`),
+  branch-marker (`-start`) and `wip/*` tags and is not newest-first, so — like
+  `julia.py` — `haskell.py` overrides `_get_github_tags` to sort the release tags
+  **numerically** before selecting. `latest` is the newest; `stable` is the newest
+  release from the previous minor line (GHC ships only even minor lines, so this is
+  resolved by version rather than `minor - 1`). Example matrices use exact GHC
+  versions (`"9.8.4"`, `"9.10.1"`) that `haskell-actions/setup` accepts, and target
+  `ubuntu`/`macos` (Haskell's first-class CI platforms).
 
 ## Adding another language
 

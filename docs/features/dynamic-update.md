@@ -203,6 +203,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `swift-strategy` | Strategy for Swift versions | No | - |
 | `julia-strategy` | Strategy for Julia versions | No | - |
 | `crystal-strategy` | Strategy for Crystal versions | No | - |
+| `haskell-strategy` | Strategy for Haskell (GHC) versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -264,6 +265,7 @@ The Dynamic Matrix Updater currently supports:
 - **Swift**: Fetches from the swift.org install API
 - **Julia**: Fetches from Julia releases via GitHub API
 - **Crystal**: Fetches from Crystal releases via GitHub API
+- **Haskell**: Fetches from GHC releases via GitHub API
 
 ## Best Practices
 
