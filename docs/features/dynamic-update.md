@@ -202,6 +202,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `dart-strategy` | Strategy for Dart versions | No | - |
 | `swift-strategy` | Strategy for Swift versions | No | - |
 | `julia-strategy` | Strategy for Julia versions | No | - |
+| `crystal-strategy` | Strategy for Crystal versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -262,6 +263,7 @@ The Dynamic Matrix Updater currently supports:
 - **Dart**: Fetches from the Dart SDK release archive
 - **Swift**: Fetches from the swift.org install API
 - **Julia**: Fetches from Julia releases via GitHub API
+- **Crystal**: Fetches from Crystal releases via GitHub API
 
 ## Best Practices
 

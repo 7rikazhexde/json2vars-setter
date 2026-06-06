@@ -9,6 +9,7 @@ from typing import Callable, Dict
 
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.fetchers.bun import BunVersionFetcher
+from json2vars_setter.version.fetchers.crystal import CrystalVersionFetcher
 from json2vars_setter.version.fetchers.dart import DartVersionFetcher
 from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
@@ -42,6 +43,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "dart": DartVersionFetcher,
     "swift": SwiftVersionFetcher,
     "julia": JuliaVersionFetcher,
+    "crystal": CrystalVersionFetcher,
 }
 
 

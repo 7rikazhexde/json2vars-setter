@@ -311,6 +311,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "dart": "stable",
             "swift": "stable",
             "julia": "stable",
+            "crystal": "stable",
         },
         False,
     )
@@ -344,6 +345,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "stable",
             "--julia",
             "both",
+            "--crystal",
+            "latest",
             "--dry-run",
         ],
     )
@@ -364,6 +367,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "dart": "latest",
             "swift": "stable",
             "julia": "both",
+            "crystal": "latest",
         },
         True,  # dry_run=True
     )

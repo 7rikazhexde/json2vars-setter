@@ -31,6 +31,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `dart-strategy` | Update strategy for Dart versions | ✗ | - | Same valid values as `update-strategy` |
 | `swift-strategy` | Update strategy for Swift versions | ✗ | - | Same valid values as `update-strategy` |
 | `julia-strategy` | Update strategy for Julia versions | ✗ | - | Same valid values as `update-strategy` |
+| `crystal-strategy` | Update strategy for Crystal versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -70,6 +71,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_dart` | List of Dart versions | `["3.12.1", "3.11.6"]` |
 | `versions_swift` | List of Swift versions | `["6.2.1", "6.1.3"]` |
 | `versions_julia` | List of Julia versions | `["1.11", "1.10"]` |
+| `versions_crystal` | List of Crystal versions | `["1.20.2", "1.19.2"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes
