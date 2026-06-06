@@ -1,3 +1,10 @@
+# [v1.9.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.9.0...v1.9.1) (2026-06-06)
+
+## 🔒 Security Issues
+- [`df69487`](https://github.com/7rikazhexde/json2vars-setter/commit/df69487)  Harden and fix .vscode workspace settings (#537) (Issues: [`#537`](https://github.com/7rikazhexde/json2vars-setter/issues/537))
+- [`7aac335`](https://github.com/7rikazhexde/json2vars-setter/commit/7aac335)  Force JavaScript actions onto Node.js 24 in example workflows (#538) (Issues: [`#538`](https://github.com/7rikazhexde/json2vars-setter/issues/538))
+- [`1b899a7`](https://github.com/7rikazhexde/json2vars-setter/commit/1b899a7)  Migrate Pages deploy to Actions-native deployment (#539) (Issues: [`#539`](https://github.com/7rikazhexde/json2vars-setter/issues/539))
+
 # [v1.9.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.8.0...v1.9.0) (2026-06-06)
 
 ## ✨ New Features
