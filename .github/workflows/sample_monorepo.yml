@@ -1,0 +1,122 @@
+name: Sample - Monorepo
+
+# A runnable demonstration of the monorepo pattern: one repository with several
+# projects, each with its OWN matrix JSON. json2vars-setter is invoked once per
+# project, and each project gets an independent test matrix.
+#
+# Here: a Python "backend" (examples/showcase/monorepo/backend.json) and a
+# Node.js "frontend" (examples/showcase/monorepo/frontend.json). Edit either JSON
+# and only that project's matrix changes. See examples/showcase/monorepo/README.md.
+
+on:
+  # Weekly run keeps the badge fresh; see the sample-workflow policy in CLAUDE.md.
+  schedule:
+    - cron: '17 5 * * 1'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/monorepo/**'
+      - '.github/workflows/sample_monorepo.yml'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # --- Backend project: its own JSON -> its own Python matrix ---------------
+  backend_vars:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set variables from the backend JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        with:
+          json-file: examples/showcase/monorepo/backend.json
+
+  backend_test:
+    needs: backend_vars
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.backend_vars.outputs.os) }}
+        python-version: ${{ fromJson(needs.backend_vars.outputs.versions_python) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Backend check
+        run: python -c "import sys; print('backend OK:', sys.version)"
+
+  # --- Frontend project: a SEPARATE JSON -> its own Node.js matrix ----------
+  frontend_vars:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_nodejs: ${{ steps.json2vars.outputs.versions_nodejs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Set variables from the frontend JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        with:
+          json-file: examples/showcase/monorepo/frontend.json
+
+  frontend_test:
+    needs: frontend_vars
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.frontend_vars.outputs.os) }}
+        node-version: ${{ fromJson(needs.frontend_vars.outputs.versions_nodejs) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Frontend check
+        run: node -e "console.log('frontend OK:', process.version)"
+
+  # Publish the status badge shown in README.md / docs/index.md.
+  update_badge:
+    needs: [backend_test, frontend_test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          if [ "${{ needs.backend_test.result }}" = "success" ] && [ "${{ needs.frontend_test.result }}" = "success" ]; then
+            status=passing;   color=2ea44f
+          elif [ "${{ needs.backend_test.result }}" = "cancelled" ] || [ "${{ needs.frontend_test.result }}" = "cancelled" ]; then
+            status=cancelled; color=808080
+          else
+            status=failing;   color=cf222e
+          fi
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: f656174a6e80a09b405b7998acadfbbc
+          filename: sample-monorepo-badge.json
+          label: "Sample: Monorepo"
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

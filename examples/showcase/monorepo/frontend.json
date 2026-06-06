@@ -1,0 +1,12 @@
+{
+    "os": [
+        "ubuntu-latest"
+    ],
+    "versions": {
+        "nodejs": [
+            "20",
+            "22"
+        ]
+    },
+    "ghpages_branch": "gh-pages"
+}

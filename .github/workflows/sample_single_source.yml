@@ -12,11 +12,17 @@ name: Sample - Single Source of Truth
 # See examples/showcase/README.md for the step-by-step adoption guide.
 
 on:
+  # Weekly run keeps the badge fresh and catches upstream action drift, without
+  # running on every unrelated PR (see the sample-workflow policy in CLAUDE.md).
+  schedule:
+    - cron: '17 3 * * 1'
+  # PRs that touch THIS sample's own files (incl. Dependabot action bumps) run it.
   pull_request:
     branches:
       - 'main'
     paths:
-      - 'examples/showcase/**'
+      - 'examples/showcase/matrix.json'
+      - 'examples/showcase/README.md'
       - '.github/workflows/sample_single_source.yml'
   workflow_dispatch:
 
