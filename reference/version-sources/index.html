@@ -994,6 +994,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#crystal-crystal-langcrystal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Crystal — <code>crystal-lang/crystal</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1302,6 +1313,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#crystal-crystal-langcrystal" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Crystal — <code>crystal-lang/crystal</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1489,6 +1511,13 @@ source the fetcher reads (see the Swift caveat below).</p>
 <td>previous minor line</td>
 <td><code>julia-actions/setup-julia</code></td>
 </tr>
+<tr>
+<td>Crystal</td>
+<td><code>crystal-lang/crystal</code> tags (sorted)</td>
+<td>newest stable</td>
+<td>previous minor line</td>
+<td><code>crystal-lang/install-crystal</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1657,6 +1686,18 @@ source the fetcher reads (see the Swift caveat below).</p>
   <code>stable</code> is the newest release from the previous minor line. Example matrices use the
   short form (<code>"1.10"</code>, <code>"1.11"</code>) that <code>julia-actions/setup-julia</code> accepts (it also
   accepts an exact <code>X.Y.Z</code> or aliases such as <code>lts</code> / <code>nightly</code>).</li>
+</ul>
+<h3 id="crystal-crystal-langcrystal">Crystal — <code>crystal-lang/crystal</code></h3>
+<ul>
+<li><strong>Source:</strong> <code>crystal-lang/crystal</code> GitHub tags.</li>
+<li><strong>Characteristics:</strong> stable tags are plain <code>X.Y.Z</code> for recent releases and <code>vX.Y.Z</code>
+  for older ones (both forms are accepted; the <code>v</code> is stripped). The tag API interleaves
+  those forms with junk tags (<code>ruby</code>, <code>test-ci-1</code>) and is not newest-first, so — like
+  <code>julia.py</code> — <code>crystal.py</code> overrides <code>_get_github_tags</code> to sort the stable tags
+  <strong>numerically</strong> before selecting; <code>latest</code> is the newest and <code>stable</code> is the newest
+  release from the previous minor line. Example matrices use exact versions
+  (<code>"1.19.2"</code>, <code>"1.20.2"</code>) that <code>crystal-lang/install-crystal</code> accepts, and target
+  <code>ubuntu</code>/<code>macos</code> (Crystal's first-class CI platforms).</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to
