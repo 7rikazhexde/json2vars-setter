@@ -15,6 +15,7 @@ from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
 from json2vars_setter.version.fetchers.elixir import ElixirVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.java import JavaVersionFetcher
+from json2vars_setter.version.fetchers.julia import JuliaVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
 from json2vars_setter.version.fetchers.php import PhpVersionFetcher
 from json2vars_setter.version.fetchers.python import PythonVersionFetcher
@@ -40,6 +41,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "elixir": ElixirVersionFetcher,
     "dart": DartVersionFetcher,
     "swift": SwiftVersionFetcher,
+    "julia": JuliaVersionFetcher,
 }
 
 

@@ -65,6 +65,9 @@ inputs:
   swift-strategy:
     description: 'Update strategy for Swift versions (stable, latest, or both)'
     required: false  # Optional
+  julia-strategy:
+    description: 'Update strategy for Julia versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -180,6 +183,9 @@ outputs:
   versions_swift:
     description: 'List of Swift versions'
     value: ${{ steps.set_outputs.outputs.versions_swift }}
+  versions_julia:
+    description: 'List of Julia versions'
+    value: ${{ steps.set_outputs.outputs.versions_julia }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -270,6 +276,9 @@ runs:
           fi
           if [[ -n "${{ inputs.swift-strategy }}" ]]; then
             ARGS+=("--swift" "${{ inputs.swift-strategy }}")
+          fi
+          if [[ -n "${{ inputs.julia-strategy }}" ]]; then
+            ARGS+=("--julia" "${{ inputs.julia-strategy }}")
           fi
         fi
 
@@ -398,4 +407,5 @@ runs:
         echo "Elixir Versions: ${{ steps.set_outputs.outputs.versions_elixir }}"
         echo "Dart Versions: ${{ steps.set_outputs.outputs.versions_dart }}"
         echo "Swift Versions: ${{ steps.set_outputs.outputs.versions_swift }}"
+        echo "Julia Versions: ${{ steps.set_outputs.outputs.versions_julia }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"

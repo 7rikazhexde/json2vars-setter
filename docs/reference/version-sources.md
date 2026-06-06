@@ -57,6 +57,7 @@ source the fetcher reads (see the Swift caveat below).
 | Elixir | `elixir-lang/elixir` tags | newest stable | previous minor | `erlef/setup-beam` |
 | Dart | **Dart release archive** | newest stable | previous minor | `dart-lang/setup-dart` |
 | Swift | **swift.org install API** | newest stable | previous minor | `swift-actions/setup-swift` |
+| Julia | `JuliaLang/julia` tags (sorted) | newest stable | previous minor line | `julia-actions/setup-julia` |
 
 ## Per-language details
 
@@ -210,6 +211,17 @@ source the fetcher reads (see the Swift caveat below).
   Swift versions, which can lag behind the newest swift.org release. When using the
   dynamic update, pin to versions the action supports if the very latest is not yet
   available there.
+
+### Julia — `JuliaLang/julia`
+
+- **Source:** `JuliaLang/julia` GitHub tags.
+- **Characteristics:** stable tags look like `vX.Y.Z`; pre-releases (`-rc`, `-beta`,
+  `-alpha`) are excluded. Unlike most repositories, the JuliaLang/julia tag API is **not
+  reliably newest-first**, so `julia.py` overrides `_get_github_tags` to sort the stable
+  tags **numerically** by semantic version before selecting; `latest` is the newest and
+  `stable` is the newest release from the previous minor line. Example matrices use the
+  short form (`"1.10"`, `"1.11"`) that `julia-actions/setup-julia` accepts (it also
+  accepts an exact `X.Y.Z` or aliases such as `lts` / `nightly`).
 
 ## Adding another language
 

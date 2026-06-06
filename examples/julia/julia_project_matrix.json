@@ -1,0 +1,14 @@
+{
+    "os": [
+        "ubuntu-latest",
+        "windows-latest",
+        "macos-latest"
+    ],
+    "versions": {
+        "julia": [
+            "1.10",
+            "1.11"
+        ]
+    },
+    "ghpages_branch": "ghgapes"
+}

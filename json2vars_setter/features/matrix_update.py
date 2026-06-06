@@ -310,6 +310,11 @@ Examples:
         help="Strategy for Swift versions",
     )
     parser.add_argument(
+        "--julia",
+        choices=["stable", "latest", "both"],
+        help="Strategy for Julia versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -351,6 +356,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.elixir = args.all
         args.dart = args.all
         args.swift = args.all
+        args.julia = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -382,6 +388,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["dart"] = args.dart
     if args.swift:
         language_strategies["swift"] = args.swift
+    if args.julia:
+        language_strategies["julia"] = args.julia
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

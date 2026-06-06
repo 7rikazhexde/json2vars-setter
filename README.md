@@ -26,7 +26,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 - **JSON Parsing**: Convert JSON files into GitHub Actions output variables for use in your workflows
 - **Dynamic Version Management**: Automatically update your testing matrix with latest language versions from official sources
 - **Version Caching**: Cache version information to reduce API calls and improve workflow performance
-- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, and Swift
+- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, and Julia
 - **Flexible Configuration**: Maintain a single source of truth for your matrix testing environments
 
 ## Supported Matrix Components
@@ -47,6 +47,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![Elixir](https://img.shields.io/badge/Elixir-4B275F?style=flat&logo=elixir&logoColor=white) | [![setup-beam](https://img.shields.io/badge/setup--beam-4B275F?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-beam) | [![Elixir Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/b93c2abf130e91304761df9da4bb5533/raw/elixir-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/elixir_test.yml) |
 | ![Dart](https://img.shields.io/badge/Dart-0175C2?style=flat&logo=dart&logoColor=white) | [![setup-dart](https://img.shields.io/badge/setup--dart-0175C2?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-dart-sdk) | [![Dart Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/838b360075fcd8c54f8ccdb2a8ff2e88/raw/dart-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/dart_test.yml) |
 | ![Swift](https://img.shields.io/badge/Swift-F05138?style=flat&logo=swift&logoColor=white) | [![setup-swift](https://img.shields.io/badge/setup--swift-F05138?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-swift) | [![Swift Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/c20279820e1c89d7864bf440e8c7cfa2/raw/swift-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/swift_test.yml) |
+| ![Julia](https://img.shields.io/badge/Julia-9558B2?style=flat&logo=julia&logoColor=white) | [![setup-julia](https://img.shields.io/badge/setup--julia-9558B2?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-julia-environment) | [![Julia Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/2d784d1513f73b0cd94f974742f33340/raw/julia-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/julia_test.yml) |
 
 ## Quick Start
 
