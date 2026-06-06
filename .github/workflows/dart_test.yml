@@ -23,14 +23,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        # Use the in-repo action so this workflow tests the current code. A new
-        # language's `versions_<lang>` output does not exist in the published tag
-        # until the release that adds it, so a tag ref (@vX.Y.Z) would fail here
-        # until then; `./` keeps the example workflow green from the first PR.
-        # TODO(after the release that adds Dart): switch to the pinned tag
-        #   `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` to match the other
-        #   *_test.yml workflows (see CLAUDE.md "Adding a New Language").
-        uses: ./
+        uses: 7rikazhexde/json2vars-setter@v1.8.0
         with:
           json-file: examples/dart/dart_project_matrix.json
 
