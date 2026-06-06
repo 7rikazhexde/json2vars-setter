@@ -1005,6 +1005,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#haskell-ghcghc" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Haskell — <code>ghc/ghc</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1324,6 +1335,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#haskell-ghcghc" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Haskell — <code>ghc/ghc</code>
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1518,6 +1540,13 @@ source the fetcher reads (see the Swift caveat below).</p>
 <td>previous minor line</td>
 <td><code>crystal-lang/install-crystal</code></td>
 </tr>
+<tr>
+<td>Haskell</td>
+<td><code>ghc/ghc</code> tags (sorted)</td>
+<td>newest stable</td>
+<td>previous minor line</td>
+<td><code>haskell-actions/setup</code></td>
+</tr>
 </tbody>
 </table>
 <h2 id="per-language-details">Per-language details</h2>
@@ -1698,6 +1727,19 @@ source the fetcher reads (see the Swift caveat below).</p>
   release from the previous minor line. Example matrices use exact versions
   (<code>"1.19.2"</code>, <code>"1.20.2"</code>) that <code>crystal-lang/install-crystal</code> accepts, and target
   <code>ubuntu</code>/<code>macos</code> (Crystal's first-class CI platforms).</li>
+</ul>
+<h3 id="haskell-ghcghc">Haskell — <code>ghc/ghc</code></h3>
+<ul>
+<li><strong>Source:</strong> <code>ghc/ghc</code> GitHub tags. Final GHC releases are tagged
+  <code>ghc-X.Y.Z-release</code>; the version is extracted from that pattern.</li>
+<li><strong>Characteristics:</strong> the tag list is dominated by pre-release (<code>-rc</code>, <code>-alpha</code>),
+  branch-marker (<code>-start</code>) and <code>wip/*</code> tags and is not newest-first, so — like
+  <code>julia.py</code> — <code>haskell.py</code> overrides <code>_get_github_tags</code> to sort the release tags
+  <strong>numerically</strong> before selecting. <code>latest</code> is the newest; <code>stable</code> is the newest
+  release from the previous minor line (GHC ships only even minor lines, so this is
+  resolved by version rather than <code>minor - 1</code>). Example matrices use exact GHC
+  versions (<code>"9.8.4"</code>, <code>"9.10.1"</code>) that <code>haskell-actions/setup</code> accepts, and target
+  <code>ubuntu</code>/<code>macos</code> (Haskell's first-class CI platforms).</li>
 </ul>
 <h2 id="adding-another-language">Adding another language</h2>
 <p>See the <strong>"Adding a New Language"</strong> checklist in <code>CLAUDE.md</code> for the full set of files to
