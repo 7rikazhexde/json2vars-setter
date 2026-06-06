@@ -149,7 +149,7 @@ or the addition is incomplete:
 - **Linting**: Ruff with E, F, I rules (E402 and E501 ignored)
 - **Type checking**: mypy with strict settings (`disallow_untyped_defs`, `warn_return_any`)
 - **Test coverage**: Minimum 95%, goal 100%. Branch coverage is disabled in config due to testmon compatibility
-- **Testing framework**: pytest with pytest-mock, pytest-cov, pytest-xdist
+- **Testing framework**: pytest with pytest-mock, pytest-cov
 
 ## Versioning Rule
 
