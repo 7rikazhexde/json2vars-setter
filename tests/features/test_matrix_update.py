@@ -312,6 +312,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "swift": "stable",
             "julia": "stable",
             "crystal": "stable",
+            "haskell": "stable",
         },
         False,
     )
@@ -347,6 +348,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "both",
             "--crystal",
             "latest",
+            "--haskell",
+            "stable",
             "--dry-run",
         ],
     )
@@ -368,6 +371,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "swift": "stable",
             "julia": "both",
             "crystal": "latest",
+            "haskell": "stable",
         },
         True,  # dry_run=True
     )

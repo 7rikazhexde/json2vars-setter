@@ -9,6 +9,7 @@ from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
 from json2vars_setter.version.fetchers.elixir import ElixirVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
+from json2vars_setter.version.fetchers.haskell import HaskellVersionFetcher
 from json2vars_setter.version.fetchers.java import JavaVersionFetcher
 from json2vars_setter.version.fetchers.julia import JuliaVersionFetcher
 from json2vars_setter.version.fetchers.nodejs import NodejsVersionFetcher
@@ -39,6 +40,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("swift"), SwiftVersionFetcher)
     assert isinstance(get_version_fetcher("julia"), JuliaVersionFetcher)
     assert isinstance(get_version_fetcher("crystal"), CrystalVersionFetcher)
+    assert isinstance(get_version_fetcher("haskell"), HaskellVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:

@@ -320,6 +320,11 @@ Examples:
         help="Strategy for Crystal versions",
     )
     parser.add_argument(
+        "--haskell",
+        choices=["stable", "latest", "both"],
+        help="Strategy for Haskell (GHC) versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -363,6 +368,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.swift = args.all
         args.julia = args.all
         args.crystal = args.all
+        args.haskell = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -398,6 +404,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["julia"] = args.julia
     if args.crystal:
         language_strategies["crystal"] = args.crystal
+    if args.haskell:
+        language_strategies["haskell"] = args.haskell
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

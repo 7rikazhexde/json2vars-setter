@@ -1,0 +1,13 @@
+cabal-version:      2.4
+name:               json-parser-example
+version:            0.1.0.0
+build-type:         Simple
+synopsis:           json2vars-setter Haskell example
+
+executable json-parser-test
+    main-is:          Main.hs
+    hs-source-dirs:   app
+    build-depends:    base
+                    , aeson
+                    , bytestring
+    default-language: Haskell2010

@@ -71,6 +71,9 @@ inputs:
   crystal-strategy:
     description: 'Update strategy for Crystal versions (stable, latest, or both)'
     required: false  # Optional
+  haskell-strategy:
+    description: 'Update strategy for Haskell (GHC) versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -192,6 +195,9 @@ outputs:
   versions_crystal:
     description: 'List of Crystal versions'
     value: ${{ steps.set_outputs.outputs.versions_crystal }}
+  versions_haskell:
+    description: 'List of Haskell (GHC) versions'
+    value: ${{ steps.set_outputs.outputs.versions_haskell }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -288,6 +294,9 @@ runs:
           fi
           if [[ -n "${{ inputs.crystal-strategy }}" ]]; then
             ARGS+=("--crystal" "${{ inputs.crystal-strategy }}")
+          fi
+          if [[ -n "${{ inputs.haskell-strategy }}" ]]; then
+            ARGS+=("--haskell" "${{ inputs.haskell-strategy }}")
           fi
         fi
 
@@ -418,4 +427,5 @@ runs:
         echo "Swift Versions: ${{ steps.set_outputs.outputs.versions_swift }}"
         echo "Julia Versions: ${{ steps.set_outputs.outputs.versions_julia }}"
         echo "Crystal Versions: ${{ steps.set_outputs.outputs.versions_crystal }}"
+        echo "Haskell Versions: ${{ steps.set_outputs.outputs.versions_haskell }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"
