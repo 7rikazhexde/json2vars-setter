@@ -68,6 +68,9 @@ inputs:
   julia-strategy:
     description: 'Update strategy for Julia versions (stable, latest, or both)'
     required: false  # Optional
+  crystal-strategy:
+    description: 'Update strategy for Crystal versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -186,6 +189,9 @@ outputs:
   versions_julia:
     description: 'List of Julia versions'
     value: ${{ steps.set_outputs.outputs.versions_julia }}
+  versions_crystal:
+    description: 'List of Crystal versions'
+    value: ${{ steps.set_outputs.outputs.versions_crystal }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -279,6 +285,9 @@ runs:
           fi
           if [[ -n "${{ inputs.julia-strategy }}" ]]; then
             ARGS+=("--julia" "${{ inputs.julia-strategy }}")
+          fi
+          if [[ -n "${{ inputs.crystal-strategy }}" ]]; then
+            ARGS+=("--crystal" "${{ inputs.crystal-strategy }}")
           fi
         fi
 
@@ -408,4 +417,5 @@ runs:
         echo "Dart Versions: ${{ steps.set_outputs.outputs.versions_dart }}"
         echo "Swift Versions: ${{ steps.set_outputs.outputs.versions_swift }}"
         echo "Julia Versions: ${{ steps.set_outputs.outputs.versions_julia }}"
+        echo "Crystal Versions: ${{ steps.set_outputs.outputs.versions_crystal }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"

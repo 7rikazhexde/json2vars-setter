@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-json2vars-setter is a **GitHub Action** (composite action) that parses JSON files and sets their values as GitHub Actions output variables. It supports dynamic version management and caching for Python, Node.js, Ruby, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, and Julia. The action reads a matrix JSON file (default: `.github/json2vars-setter/matrix.json`) and exposes OS lists, language versions, and other config as workflow outputs.
+json2vars-setter is a **GitHub Action** (composite action) that parses JSON files and sets their values as GitHub Actions output variables. It supports dynamic version management and caching for Python, Node.js, Ruby, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, Julia, and Crystal. The action reads a matrix JSON file (default: `.github/json2vars-setter/matrix.json`) and exposes OS lists, language versions, and other config as workflow outputs.
 
 ## Common Commands
 
@@ -79,7 +79,7 @@ A pluggable architecture for fetching language versions from GitHub:
 - **`version/core/base.py`** — `BaseVersionFetcher` abstract class handles GitHub API pagination, authentication (via `GITHUB_TOKEN`), and defines the interface (`_is_stable_tag()`, `_parse_version_from_tag()`)
 - **`version/core/exceptions.py`** — Exception hierarchy: `VersionFetchError` → `GitHubAPIError`, `ParseError`, `ValidationError`
 - **`version/core/utils.py`** — Shared data classes (`VersionInfo`, `ReleaseInfo`) and helpers
-- **`version/fetchers/`** — Language-specific implementations (`python.py`, `nodejs.py`, `ruby.py`, `go.py`, `rust.py`, `php.py`, `dotnet.py`, `java.py`, `deno.py`, `bun.py`, `zig.py`, `elixir.py`, `dart.py`, `swift.py`, `julia.py`). Most parse tags from the respective GitHub repository; `java.py`, `dart.py`, and `swift.py` are exceptions — they override `fetch_versions` to query the Adoptium API, the Dart release archive, and the swift.org install API respectively (see `docs/reference/version-sources.md`). `julia.py` reads GitHub tags but overrides `_get_github_tags` to sort by semantic version first, because the JuliaLang/julia tag API is not reliably newest-first
+- **`version/fetchers/`** — Language-specific implementations (`python.py`, `nodejs.py`, `ruby.py`, `go.py`, `rust.py`, `php.py`, `dotnet.py`, `java.py`, `deno.py`, `bun.py`, `zig.py`, `elixir.py`, `dart.py`, `swift.py`, `julia.py`, `crystal.py`). Most parse tags from the respective GitHub repository; `java.py`, `dart.py`, and `swift.py` are exceptions — they override `fetch_versions` to query the Adoptium API, the Dart release archive, and the swift.org install API respectively (see `docs/reference/version-sources.md`). `julia.py` and `crystal.py` read GitHub tags but override `_get_github_tags` to sort by semantic version first, because the JuliaLang/julia and crystal-lang/crystal tag APIs are not reliably newest-first (`crystal.py` also accepts both the `vX.Y.Z` and prefix-less `X.Y.Z` tag forms)
 
 ### Entry Points
 

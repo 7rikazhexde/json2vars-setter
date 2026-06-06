@@ -1,0 +1,6 @@
+name: json_parser_example
+version: 0.1.0
+
+crystal: ">= 1.0.0"
+
+license: MIT

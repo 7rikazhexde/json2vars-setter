@@ -58,6 +58,7 @@ source the fetcher reads (see the Swift caveat below).
 | Dart | **Dart release archive** | newest stable | previous minor | `dart-lang/setup-dart` |
 | Swift | **swift.org install API** | newest stable | previous minor | `swift-actions/setup-swift` |
 | Julia | `JuliaLang/julia` tags (sorted) | newest stable | previous minor line | `julia-actions/setup-julia` |
+| Crystal | `crystal-lang/crystal` tags (sorted) | newest stable | previous minor line | `crystal-lang/install-crystal` |
 
 ## Per-language details
 
@@ -222,6 +223,18 @@ source the fetcher reads (see the Swift caveat below).
   `stable` is the newest release from the previous minor line. Example matrices use the
   short form (`"1.10"`, `"1.11"`) that `julia-actions/setup-julia` accepts (it also
   accepts an exact `X.Y.Z` or aliases such as `lts` / `nightly`).
+
+### Crystal — `crystal-lang/crystal`
+
+- **Source:** `crystal-lang/crystal` GitHub tags.
+- **Characteristics:** stable tags are plain `X.Y.Z` for recent releases and `vX.Y.Z`
+  for older ones (both forms are accepted; the `v` is stripped). The tag API interleaves
+  those forms with junk tags (`ruby`, `test-ci-1`) and is not newest-first, so — like
+  `julia.py` — `crystal.py` overrides `_get_github_tags` to sort the stable tags
+  **numerically** before selecting; `latest` is the newest and `stable` is the newest
+  release from the previous minor line. Example matrices use exact versions
+  (`"1.19.2"`, `"1.20.2"`) that `crystal-lang/install-crystal` accepts, and target
+  `ubuntu`/`macos` (Crystal's first-class CI platforms).
 
 ## Adding another language
 

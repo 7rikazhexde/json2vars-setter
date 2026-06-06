@@ -3,6 +3,7 @@
 import pytest
 
 from json2vars_setter.version.fetchers.bun import BunVersionFetcher
+from json2vars_setter.version.fetchers.crystal import CrystalVersionFetcher
 from json2vars_setter.version.fetchers.dart import DartVersionFetcher
 from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
@@ -37,6 +38,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("dart"), DartVersionFetcher)
     assert isinstance(get_version_fetcher("swift"), SwiftVersionFetcher)
     assert isinstance(get_version_fetcher("julia"), JuliaVersionFetcher)
+    assert isinstance(get_version_fetcher("crystal"), CrystalVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:

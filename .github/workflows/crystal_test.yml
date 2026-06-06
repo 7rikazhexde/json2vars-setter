@@ -1,0 +1,155 @@
+name: Crystal Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/crystal/**'
+      - '.github/workflows/crystal_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_crystal: ${{ steps.json2vars.outputs.versions_crystal }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        # Use the in-repo action so this workflow tests the current code. A new
+        # language's `versions_<lang>` output does not exist in the published tag
+        # until the release that adds it, so a tag ref (@vX.Y.Z) would fail here
+        # until then; `./` keeps the example workflow green from the first PR.
+        # TODO(after the release that adds Crystal): switch to the pinned tag
+        #   `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` to match the other
+        #   *_test.yml workflows (see CLAUDE.md "Adding a New Language").
+        uses: ./
+        with:
+          json-file: examples/crystal/crystal_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "versions_crystal: ${{ steps.json2vars.outputs.versions_crystal }}"
+          echo "versions_crystal[0]: ${{ fromJson(steps.json2vars.outputs.versions_crystal)[0] }}"
+          echo "versions_crystal[1]: ${{ fromJson(steps.json2vars.outputs.versions_crystal)[1] }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      # Run every matrix combination even if one fails so the aggregated job
+      # result reflects the status of the whole matrix (used by the badge).
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        crystal-version: ${{ fromJson(needs.set_variables.outputs.versions_crystal) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Crystal
+        uses: crystal-lang/install-crystal@d8ef131ecec0352ce0e39b81b0a6d95def58fe2f # v1.9.2
+        with:
+          crystal: ${{ matrix.crystal-version }}
+
+      - name: Set timezone
+        uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Crystal version
+        run: crystal --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_crystal='${{ needs.set_variables.outputs.versions_crystal }}'
+
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+
+          versions_crystal_0="${{ fromJson(needs.set_variables.outputs.versions_crystal)[0] }}"
+          versions_crystal_1="${{ fromJson(needs.set_variables.outputs.versions_crystal)[1] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "versions_crystal: ${versions_crystal}"
+          echo "versions_crystal_0: ${versions_crystal_0}"
+          echo "versions_crystal_1: ${versions_crystal_1}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          crystal_versions_list=$(echo "${versions_crystal}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${crystal_versions_list}; do
+              echo "Current OS: ${current_os}, Current Crystal Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: crystal_test
+        working-directory: ./examples/crystal
+        shell: bash
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: |
+          crystal spec json_parser_spec.cr
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          # needs.run_tests.result aggregates every matrix combination:
+          # 'success' only when all passed, 'failure' if any leg failed.
+          case "${{ needs.run_tests.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            failure)   status=failing;   color=cf222e ;;
+            cancelled) status=cancelled; color=808080 ;;
+            skipped)   status=skipped;   color=808080 ;;
+            *)         status=pending;   color=dbab09 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 09c90cf4e8e97865f6213085c82716e4
+          filename: crystal-test-badge.json
+          label: Crystal Test
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"
