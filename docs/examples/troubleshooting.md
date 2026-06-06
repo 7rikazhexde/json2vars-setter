@@ -189,14 +189,15 @@ Or use the built-in debug output:
 
 ### Test Configurations Locally
 
-You can test the scripts locally before using them in GitHub Actions:
+You can run the same engines locally with the `json2vars` CLI before using them in
+GitHub Actions (in a clone, prefix with `uv run`):
 
 ```bash
-# Test version_cache.py
-python path/to/version_cache.py --template-only --verbose
+# Version cache (the engine behind the caching feature)
+json2vars cache-version --template-only --verbose
 
-# Test matrix_update.py
-python path/to/matrix_update.py --json-file ./matrix.json --all stable --dry-run
+# Matrix update (the engine behind the dynamic-update feature)
+json2vars update-matrix --json-file ./matrix.json --all stable --dry-run
 ```
 
 ### Inspect Generated Files

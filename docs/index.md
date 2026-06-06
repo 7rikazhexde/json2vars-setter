@@ -39,6 +39,14 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![Haskell](https://img.shields.io/badge/Haskell-5e5086?style=flat&logo=haskell&logoColor=white) | [![setup-haskell](https://img.shields.io/badge/setup--haskell-5e5086?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-haskell) | [![Haskell Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/ac694a2ecdc91ee32dda6afa49863aa4/raw/haskell-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/haskell_test.yml) |
 | ![OCaml](https://img.shields.io/badge/OCaml-EC6813?style=flat&logo=ocaml&logoColor=white) | [![setup-ocaml](https://img.shields.io/badge/setup--ocaml-EC6813?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/set-up-ocaml) | [![OCaml Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/ac8d039239f77264250f852a38143043/raw/ocaml-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ocaml_test.yml) |
 
+## Sample Workflows
+
+Beyond the per-language tests above, these **runnable use-case samples** live in the repository and execute on real GitHub Actions. The green badge is proof you can reproduce the result, then copy the files into your own project — no local setup required to gain confidence.
+
+| Use case | Status | What it demonstrates | Files |
+|----------|--------|----------------------|-------|
+| Single source of truth | [![Sample: Single Source of Truth](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/43c16c21c735a80b673a65e1bb0d9619/raw/sample-single-source-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_single_source.yml) | One JSON parsed once, then consumed by an independent `test` matrix **and** a separate `lint` job — define versions in one place, use them everywhere | [workflow](https://github.com/7rikazhexde/json2vars-setter/blob/main/.github/workflows/sample_single_source.yml) · [example](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase) |
+
 ## Quick Start
 
 !!! info "See [Basic Usage Examples](https://7rikazhexde.github.io/json2vars-setter/examples/basic/) for details."
