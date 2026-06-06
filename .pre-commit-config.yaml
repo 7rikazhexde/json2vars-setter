@@ -88,6 +88,19 @@ repos:
         args: ["--fix","json2vars_setter"]
       - id: ruff-format
 
+  # Keep the action version refs in the docs/README usage examples in sync with
+  # the versions actually pinned in the real workflows (the source of truth that
+  # Dependabot maintains). Dependabot never edits Markdown, and sync-version-refs.sh
+  # only syncs the json2vars-setter self-reference, so this closes that gap.
+  - repo: local
+    hooks:
+      - id: sync-doc-action-refs
+        name: Sync doc action version refs to workflows
+        entry: python .github/scripts/sync_doc_action_refs.py
+        language: python
+        pass_filenames: false
+        files: '^(README\.md|docs/.*\.md|\.github/workflows/.*\.ya?ml|action\.yml)$'
+
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v2.1.0
     hooks:
