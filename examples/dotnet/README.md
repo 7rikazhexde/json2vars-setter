@@ -30,7 +30,7 @@ dotnet test
 
 `dotnet_project_matrix.json` defines the OS list and .NET versions used by the matrix
 testing workflow. The versions use the channel form accepted by
-[`actions/setup-dotnet`](https://github.com/marketplace/actions/setup-dotnet):
+[`actions/setup-dotnet`](https://github.com/marketplace/actions/setup-net-core-sdk):
 
 ```json
 {
