@@ -235,7 +235,7 @@ Before starting any work, please check existing issues or create a new one to di
       - [typos](https://github.com/crate-ci/typos) for source-code spell checking (config in `[tool.typos]`)
 - You can run all linters at once using: `uv run pre-commit run --all-files`
 
-**Modern Quality preview (CI, advisory)**
+### Modern Quality preview (CI, advisory)
 
 - The [`modern-quality.yml`](https://github.com/7rikazhexde/json2vars-setter/blob/main/.github/workflows/modern-quality.yml) workflow runs an extra, **non-blocking** quality/security suite on pull requests and on `main` (every analysis job is `continue-on-error`; findings appear in the run summary). pre-commit and the test workflows remain the required checks.
 - Jobs: `validate-pyproject`, `typos`, [`zizmor`](https://github.com/woodruffw/zizmor) (GitHub Actions security audit), [`ty`](https://github.com/astral-sh/ty) (Astral fast type checker — mypy stays canonical), [`pip-audit`](https://github.com/pypa/pip-audit) (dependency CVE scan), and [`gitleaks`](https://github.com/gitleaks/gitleaks) (secret scan; CI-only).
