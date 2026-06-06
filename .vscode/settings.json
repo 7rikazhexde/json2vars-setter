@@ -1,28 +1,26 @@
 {
     "files.exclude": {
-        // ファイルとフォルダーを除外するための glob パターン 設定
-        // エクスプローラーでは、この設定に基づいて表示または非表示にするファイルとフォルダーが決定される。(trueが非表示)
-        // .gitフォルダを表示する（デフォルトでは非表示）
+        // ファイルとフォルダーを除外するための glob パターン設定
+        // (true が非表示)。.git フォルダは表示する（デフォルトでは非表示）。
         "**/.git": false
     },
-    // Python固有の設定
+
+    // --- Python (this repository's actual codebase) ---
     "[python]": {
         "editor.codeActionsOnSave": {
-            // コード保存時にimport行を整理
+            // コード保存時に import 行を整理
             "source.organizeImports": "explicit"
         },
-        // FormatterにRuffを使用
+        // Formatter に Ruff を使用
         "editor.defaultFormatter": "charliermarsh.ruff",
         // コード保存時にフォーマットを実行
         "editor.formatOnSave": true
     },
-    // Pythonの解析パスに現在のワークスペースフォルダを追加
-    // これにより、プロジェクト内のモジュールをより適切に解析する
+    // Python の解析パスに現在のワークスペースフォルダを追加
     "python.analysis.extraPaths": [
         "${workspaceFolder}"
     ],
-    // プロジェクトの.envファイルを指定
-    // これにより、環境変数の設定がプロジェクト固有になる
+    // プロジェクトの .env ファイルを指定
     "python.envFile": "",
     "terminal.integrated.env.linux": {
         "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}"
@@ -35,94 +33,41 @@
     },
     // ターミナルを開いたときに自動的に Python 環境をアクティブ化
     "python.terminal.activateEnvironment": true,
-    // pytestで指定したディレクトリ内をテスト対象にする
+    // pytest を使用（unittest は無効）
     "python.testing.pytestArgs": [
         "tests"
     ],
-    // VSCodeがテストフレームワークとしてunittestを無効化
     "python.testing.unittestEnabled": false,
-    // VSCodeがテストフレームワークとしてpytestを無効化
     "python.testing.pytestEnabled": true,
-    // Node.js固有設定
+
+    // --- General editor defaults ---
+    // 言語固有の formatter は example 言語向けには設定しない（過剰品質を避ける）。
+    // example プロジェクト (examples/<lang>/) を編集する際は、その言語の拡張を
+    // インストールすれば各拡張の既定フォーマッタが使われる（.vscode/extensions.json
+    // が推奨拡張を提示）。
     "editor.formatOnSave": true,
     "editor.insertSpaces": true,
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true
-    },
-    // ESLintでのチェックに一任するため VSCode の JS/TS バリデーションを無効化
-    // (javascript.validate.enable / typescript.validate.enable は非推奨。統合キーを使用)
-    "js/ts.validate.enabled": false,
-    "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit" // ESLintによるすべての修正を保存時に実行
-    },
-    "prettier.singleQuote": true, // シングルクオートを使用
-    "prettier.trailingComma": "es5", // ES5スタイルで末尾のカンマを追加
-    // Rust固有の設定
-    "[rust]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "rust-lang.rust-analyzer",
-        //"editor.inlayHints.enabled": "offUnlessPressed"
-    },
-    "rust-analyzer.checkOnSave": true,
-    "rust-analyzer.check.command": "clippy",
-    "rust-analyzer.check.extraArgs": [
-        "--",
-        "-A",
-        "clippy::needless_return"
-    ],
-    "rust-analyzer.linkedProjects": [
-        "./examples/rust/Cargo.toml"
-    ],
-    // Rubyの固有設定
-    "[ruby]": {
-        "editor.defaultFormatter": "Shopify.ruby-lsp", // Use the Ruby LSP as the default formatter
-        "editor.formatOnSave": true, // Format files automatically when saving
-        "editor.tabSize": 2, // Use 2 spaces for indentation
-        "editor.insertSpaces": true, // Use spaces and not tabs for indentation
-        "editor.semanticHighlighting.enabled": true, // Enable semantic highlighting
-        "editor.formatOnType": true, // Enable formatting while typing
-    },
-    "rubyLsp.formatter": "rubocop",
+    "editor.tabSize": 4,
+    "files.eol": "\n",
     "files.insertFinalNewline": true,
-    // golangの固有設定
-    "go.gopath": "",
-    "go.useLanguageServer": true,
-    "go.lintOnSave": "file",
-    "go.lintTool": "golangci-lint", // golangci-lintを推奨しますが、go vetなども選択可能
-    "go.formatTool": "gofmt", // フォーマッターとしてgofmtを使用
-    "[go]": {
-        "editor.formatOnSave": true, // 保存時に自動フォーマット
-        "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit", // インポートの自動整列（"true"の代わりに"explicit"を使用）
-            "source.fixAll": "explicit" // リントやフォーマットに基づいた自動補正（"true"の代わりに"explicit"を使用）
-        }
-    },
-    "editor.defaultFormatter": "golang.go", // Go用のデフォルトフォーマッター
-    "editor.tabSize": 4, // タブサイズの指定
-    "files.eol": "\n", // 行末記号の統一
-    "go.testOnSave": true, // 保存時にテストを自動実行
-    "go.testFlags": [
-        "-v"
-    ], // テストの詳細表示オプション
-    // GitHub Actionsの固有設定
+
+    // --- GitHub Actions ---
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/dependabot_prch.yml",
         ".github/workflows/prch_test_matrix_json.yml",
         ".github/workflows/semantic-release.yml"
     ],
-    // markdownlint: 自動生成の CHANGELOG.md は除外（.markdownlintignore と整合）
+
+    // --- markdownlint ---
+    // 自動生成の CHANGELOG.md は除外（.markdownlintignore と整合）
     "markdownlint.ignore": [
         "CHANGELOG.md"
     ],
+
     // --- セキュリティ強化 (Node.js / npm サプライチェーン対策) ---
     // VSCode が npm レジストリから @types を自動取得しないようにする
     // (Automatic Type Acquisition 経由の供給網リスクを低減)
-    "typescript.disableAutomaticTypeAcquisition": true,
+    "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
     // package.json の npm スクリプトを自動検出・実行候補にしない
     "npm.autoDetect": "off",
     // フォルダを開いた際に tasks.json のタスクを自動実行しない
