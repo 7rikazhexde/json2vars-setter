@@ -93,8 +93,12 @@ updates:
       # ("gpg: Can't check signature: No public key" —
       # swift-actions/setup-swift#798, still open). The moving `v3` tag points
       # at that beta, so Dependabot proposes it as if it were a stable major
-      # (see the closed PR #523). Stay on the v2.4.0 stable release; remove
-      # this ignore once a fixed v3 is released as GA.
+      # (see the closed PRs #523/#527). A `versions: ["3.x"]` constraint does
+      # NOT catch a moving major tag (Dependabot reports the bump target as
+      # bare `3`, which a semver-wildcard range fails to match), so block it by
+      # update-type instead: ignore every major bump of this action. Remove
+      # this once a fixed swift-actions/setup-swift v3 is released as GA and
+      # bump the major intentionally.
       - dependency-name: "swift-actions/setup-swift"
-        versions: ["3.x"]
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 10
