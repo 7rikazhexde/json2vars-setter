@@ -16,6 +16,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
   - [Table of Contents](#table-of-contents)
   - [Key Features](#key-features)
   - [Supported Matrix Components](#supported-matrix-components)
+  - [Sample Workflows](#sample-workflows)
   - [Quick Start](#quick-start)
   - [Components](#components)
   - [Documentation](#documentation)
@@ -51,6 +52,14 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![Crystal](https://img.shields.io/badge/Crystal-000000?style=flat&logo=crystal&logoColor=white) | [![install-crystal](https://img.shields.io/badge/install--crystal-000000?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/install-crystal) | [![Crystal Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/09c90cf4e8e97865f6213085c82716e4/raw/crystal-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/crystal_test.yml) |
 | ![Haskell](https://img.shields.io/badge/Haskell-5e5086?style=flat&logo=haskell&logoColor=white) | [![setup-haskell](https://img.shields.io/badge/setup--haskell-5e5086?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-haskell) | [![Haskell Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/ac694a2ecdc91ee32dda6afa49863aa4/raw/haskell-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/haskell_test.yml) |
 | ![OCaml](https://img.shields.io/badge/OCaml-EC6813?style=flat&logo=ocaml&logoColor=white) | [![setup-ocaml](https://img.shields.io/badge/setup--ocaml-EC6813?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/set-up-ocaml) | [![OCaml Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/ac8d039239f77264250f852a38143043/raw/ocaml-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ocaml_test.yml) |
+
+## Sample Workflows
+
+Beyond the per-language tests above, these **runnable use-case samples** live in this repository and execute on real GitHub Actions. The green badge is proof you can reproduce the result, then copy the files into your own project — no local setup required to gain confidence.
+
+| Use case | Status | What it demonstrates | Files |
+|----------|--------|----------------------|-------|
+| Single source of truth | [![Sample: Single Source of Truth](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/43c16c21c735a80b673a65e1bb0d9619/raw/sample-single-source-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_single_source.yml) | One JSON parsed once, then consumed by an independent `test` matrix **and** a separate `lint` job — define versions in one place, use them everywhere | [workflow](.github/workflows/sample_single_source.yml) · [example](examples/showcase) |
 
 ## Quick Start
 
