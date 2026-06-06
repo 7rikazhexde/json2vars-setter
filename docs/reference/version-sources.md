@@ -116,10 +116,10 @@ source the fetcher reads (see the Swift caveat below).
 
 - **Source:** tags of the official .NET SDK repository (`vX.Y.Z`, e.g. `v8.0.100`).
 - **Candidates considered:**
-    - **`dotnet/sdk` tags** (chosen) — consistent with the other languages' GitHub-tags
-      approach.
-    - **`releases-index.json`** release metadata (not chosen) — richer (LTS/STS, support
-      phase, per-channel latest), but diverges from the common fetcher pattern.
+  - **`dotnet/sdk` tags** (chosen) — consistent with the other languages' GitHub-tags
+    approach.
+  - **`releases-index.json`** release metadata (not chosen) — richer (LTS/STS, support
+    phase, per-channel latest), but diverges from the common fetcher pattern.
 - **Why:** keeps .NET on the same simple, consistent GitHub-tags mechanism as the other
   languages.
 - **Characteristics:** the SDK **minor is always `0`**, so the meaningful release line is
@@ -131,15 +131,15 @@ source the fetcher reads (see the Swift caveat below).
 
 - **Source:** the **Adoptium API** `GET /v3/info/available_releases`.
 - **Candidates considered:**
-    - **`openjdk/jdk` tags** (rejected) — that repository carries only **early-access
-      builds of the in-development release** (e.g. `jdk-28+0`); GA and LTS lines live in
-      separate update repositories, so a single repo's tags cannot represent stable Java
-      versions.
-    - **`openjdk/jdkXXu` update repos** (rejected) — would require juggling many
-      repositories and still mixes build metadata.
-    - **Adoptium API** (chosen) — a single authoritative endpoint that reports
-      `available_releases`, `available_lts_releases`, `most_recent_feature_release`, and
-      `most_recent_lts`.
+  - **`openjdk/jdk` tags** (rejected) — that repository carries only **early-access
+    builds of the in-development release** (e.g. `jdk-28+0`); GA and LTS lines live in
+    separate update repositories, so a single repo's tags cannot represent stable Java
+    versions.
+  - **`openjdk/jdkXXu` update repos** (rejected) — would require juggling many
+    repositories and still mixes build metadata.
+  - **Adoptium API** (chosen) — a single authoritative endpoint that reports
+    `available_releases`, `available_lts_releases`, `most_recent_feature_release`, and
+    `most_recent_lts`.
 - **Why:** it is the only clean, single-source way to enumerate real, installable Java
   versions and to distinguish LTS from feature releases.
 - **Characteristics:** this is the **only fetcher that does not use GitHub tags** — it

@@ -38,6 +38,10 @@ lint:
 typecheck:
     uv run mypy --config-file=pyproject.toml
 
+# Install the pre-commit git hook (run once per clone so hooks fire on commit)
+install-hooks:
+    uv run pre-commit install
+
 # Run all pre-commit hooks
 pre-commit:
     uv run pre-commit run --all-files
