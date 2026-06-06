@@ -310,6 +310,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "elixir": "stable",
             "dart": "stable",
             "swift": "stable",
+            "julia": "stable",
         },
         False,
     )
@@ -341,6 +342,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "latest",
             "--swift",
             "stable",
+            "--julia",
+            "both",
             "--dry-run",
         ],
     )
@@ -360,6 +363,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "elixir": "both",
             "dart": "latest",
             "swift": "stable",
+            "julia": "both",
         },
         True,  # dry_run=True
     )

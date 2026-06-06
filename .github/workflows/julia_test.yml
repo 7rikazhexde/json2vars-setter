@@ -1,0 +1,163 @@
+name: Julia Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/julia/**'
+      - '.github/workflows/julia_test.yml'
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_julia: ${{ steps.json2vars.outputs.versions_julia }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        # Use the in-repo action so this workflow tests the current code. A new
+        # language's `versions_<lang>` output does not exist in the published tag
+        # until the release that adds it, so a tag ref (@vX.Y.Z) would fail here
+        # until then; `./` keeps the example workflow green from the first PR.
+        # TODO(after the release that adds Julia): switch to the pinned tag
+        #   `uses: 7rikazhexde/json2vars-setter@vX.Y.Z` to match the other
+        #   *_test.yml workflows (see CLAUDE.md "Adding a New Language").
+        uses: ./
+        with:
+          json-file: examples/julia/julia_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "os[2]: ${{ fromJson(steps.json2vars.outputs.os)[2] }}"
+          echo "versions_julia: ${{ steps.json2vars.outputs.versions_julia }}"
+          echo "versions_julia[0]: ${{ fromJson(steps.json2vars.outputs.versions_julia)[0] }}"
+          echo "versions_julia[1]: ${{ fromJson(steps.json2vars.outputs.versions_julia)[1] }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      # Run every matrix combination even if one fails so the aggregated job
+      # result reflects the status of the whole matrix (used by the badge).
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        julia-version: ${{ fromJson(needs.set_variables.outputs.versions_julia) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@fa02766e078afaaf09b14210362cee14137e6a32 # v3.0.2
+        with:
+          version: ${{ matrix.julia-version }}
+
+      - name: Set timezone
+        uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Julia version
+        run: julia --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_julia='${{ needs.set_variables.outputs.versions_julia }}'
+
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+          os_2="${{ fromJson(needs.set_variables.outputs.os)[2] }}"
+
+          versions_julia_0="${{ fromJson(needs.set_variables.outputs.versions_julia)[0] }}"
+          versions_julia_1="${{ fromJson(needs.set_variables.outputs.versions_julia)[1] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "os_2: ${os_2}"
+          echo "versions_julia: ${versions_julia}"
+          echo "versions_julia_0: ${versions_julia_0}"
+          echo "versions_julia_1: ${versions_julia_1}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          julia_versions_list=$(echo "${versions_julia}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${julia_versions_list}; do
+              echo "Current OS: ${current_os}, Current Julia Version: ${version}"
+            done
+          done
+
+      - name: Install dependencies
+        working-directory: ./examples/julia
+        shell: bash
+        run: julia --project=. -e 'using Pkg; Pkg.instantiate()'
+
+      - name: Run tests
+        id: julia_test
+        working-directory: ./examples/julia
+        shell: bash
+        # Run directly (no output capture) so test output streams to the log
+        # in real time; the non-zero exit still fails this matrix leg.
+        run: |
+          julia --project=. json_parser_test.jl
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          # needs.run_tests.result aggregates every matrix combination:
+          # 'success' only when all passed, 'failure' if any leg failed.
+          case "${{ needs.run_tests.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            failure)   status=failing;   color=cf222e ;;
+            cancelled) status=cancelled; color=808080 ;;
+            skipped)   status=skipped;   color=808080 ;;
+            *)         status=pending;   color=dbab09 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 2d784d1513f73b0cd94f974742f33340
+          filename: julia-test-badge.json
+          label: Julia Test
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"
