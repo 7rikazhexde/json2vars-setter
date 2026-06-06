@@ -30,7 +30,7 @@ swift test
 
 `swift_project_matrix.json` defines the OS list and Swift versions used by the matrix
 testing workflow. The versions use the form accepted by
-[`swift-actions/setup-swift`](https://github.com/marketplace/actions/setup-swift-environment)
+[`swift-actions/setup-swift`](https://github.com/marketplace/actions/setup-swift)
 (e.g. an exact `6.2.1`, or the `6.2` short form):
 
 ```json

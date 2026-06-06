@@ -36,7 +36,7 @@ elixir json_parser_test.exs
 
 `elixir_project_matrix.json` defines the OS list and Elixir versions used by the
 matrix testing workflow. The versions use the form accepted by
-[`erlef/setup-beam`](https://github.com/marketplace/actions/erlang-otp-elixir-setup)
+[`erlef/setup-beam`](https://github.com/marketplace/actions/setup-beam)
 (e.g. `1.18`, `1.19`, or an exact `1.18.4`):
 
 ```json
