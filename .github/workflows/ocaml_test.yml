@@ -73,7 +73,9 @@ jobs:
           timezoneWindows: "Tokyo Standard Time"
 
       - name: Display OCaml version
-        run: ocaml --version
+        # setup-ocaml installs into an opam switch; the `ocaml` binary is only on
+        # PATH inside the opam environment, so invoke it via `opam exec --`.
+        run: opam exec -- ocaml --version
 
       - name: Show matrix
         shell: bash
