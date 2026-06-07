@@ -52,6 +52,8 @@ guaranteed hit (deterministic and quota-free). In a real project use a small val
 
 ## Try it locally (no API on a fresh cache)
 
+**Linux / macOS (bash):**
+
 ```bash
 uv run json2vars cache-version \
   --languages python nodejs --output-count 3 \
@@ -59,6 +61,17 @@ uv run json2vars cache-version \
   --cache-file .github/json2vars-setter/cache/version_cache.json \
   --template-file out-matrix.json
 cat out-matrix.json
+```
+
+**Windows (PowerShell):**
+
+```powershell
+uv run json2vars cache-version `
+  --languages python nodejs --output-count 3 `
+  --max-age 3650 `
+  --cache-file .github/json2vars-setter/cache/version_cache.json `
+  --template-file out-matrix.json
+Get-Content out-matrix.json
 ```
 
 ## Adopt it
