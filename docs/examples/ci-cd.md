@@ -159,6 +159,12 @@ jobs:
 
 This example demonstrates using different configurations for development and production environments. This is particularly useful for teams that want to test extensively in production while keeping development iterations quick.
 
+!!! tip "Runnable sample (green badge)"
+    The same "pick the matrix by context" idea runs live as
+    [`Sample - Conditional Matrix`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_conditional_matrix.yml)
+    ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/conditional)):
+    a light matrix on pull requests and the full cross-OS matrix on schedule / dispatch.
+
 ```yaml
 name: Environment-Specific Testing
 
@@ -280,6 +286,12 @@ Example JSON configurations for different environments:
 
 This example shows an optimized approach for large projects with multiple languages, using caching to reduce API calls. This is especially valuable for repositories that need to test against many language versions but want to minimize external API requests.
 
+!!! tip "Runnable sample (green badge)"
+    See the caching hot path proven live in
+    [`Sample - Version Cache`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_version_cache.yml)
+    ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/version-cache)):
+    a multi-version matrix built from a committed cache with **zero API calls** on a cache hit.
+
 ```yaml
 name: Multi-Language Project CI
 
@@ -384,6 +396,12 @@ jobs:
 
 This example demonstrates a dedicated maintenance workflow that runs on a schedule to keep your matrix configuration up-to-date. By separating this into its own workflow, you can avoid unnecessary updates during normal development cycles.
 
+!!! tip "Runnable sample (green badge)"
+    A side-effect-free version of this pattern runs weekly in this repository:
+    [`Sample - Dynamic Update`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_dynamic_update.yml)
+    ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/dynamic-update)).
+    It fetches the latest stable versions and rebuilds the matrix without committing — copy it, then add the commit/PR step below.
+
 ```yaml
 name: Matrix Maintenance
 
@@ -432,6 +450,12 @@ jobs:
 ## Monorepo Project Configuration
 
 This example demonstrates how to handle multiple projects in a monorepo, each with their own language requirements. This approach is ideal for organizations that maintain multiple independent projects in a single repository.
+
+!!! tip "Runnable sample (green badge)"
+    A minimal version runs live as
+    [`Sample - Monorepo`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_monorepo.yml)
+    ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/monorepo)):
+    a Python backend and a Node.js frontend, each with its own matrix JSON and independent test matrix.
 
 ```yaml
 name: Monorepo CI

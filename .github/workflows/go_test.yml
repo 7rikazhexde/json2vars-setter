@@ -7,6 +7,7 @@ on:
     paths:
       - 'examples/go/**'
       - '.github/json2vars-setter/go_test.yml'
+  workflow_dispatch:
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
 # Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)

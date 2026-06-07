@@ -110,6 +110,10 @@ jobs:
 
 This example shows how to dynamically update your matrix JSON with the latest language versions.
 
+!!! tip "Runnable sample (green badge)"
+    Proven live as [`Sample - Dynamic Update`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_dynamic_update.yml)
+    ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/dynamic-update)).
+
 ```yaml
 name: Dynamic Matrix Update
 
@@ -159,6 +163,10 @@ jobs:
 ## Version Caching Example
 
 This example demonstrates how to use the version caching feature to reduce API calls.
+
+!!! tip "Runnable sample (green badge)"
+    Proven live as [`Sample - Version Cache`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_version_cache.yml)
+    ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/version-cache)).
 
 ```yaml
 name: Cached Version Matrix

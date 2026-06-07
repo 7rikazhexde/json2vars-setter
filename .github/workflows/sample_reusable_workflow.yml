@@ -1,0 +1,83 @@
+name: Sample - Reusable Workflow (workflow_call)
+
+# A runnable demonstration of reuse: the matrix is defined ONCE in a reusable
+# workflow (sample_reusable_lib.yml, called via workflow_call) and consumed by this
+# caller's test matrix. In a real org the library lives in a central repo and every
+# project calls it, so the supported version set is maintained in a single place.
+# See examples/showcase/reusable/README.md.
+
+on:
+  # Weekly run keeps the badge fresh; cron staggered per the policy in CLAUDE.md.
+  schedule:
+    - cron: '17 10 * * 1'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/reusable/**'
+      - '.github/workflows/sample_reusable_workflow.yml'
+      - '.github/workflows/sample_reusable_lib.yml'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # Call the reusable library to produce the matrix outputs.
+  vars:
+    uses: ./.github/workflows/sample_reusable_lib.yml
+    with:
+      json-file: examples/showcase/reusable/matrix.json
+
+  # Consume the reusable workflow's outputs in a normal matrix.
+  test:
+    needs: vars
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.vars.outputs.os) }}
+        python-version: ${{ fromJson(needs.vars.outputs.versions_python) }}
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Show the matrix came from the reusable workflow
+        run: |
+          echo "os:      ${{ needs.vars.outputs.os }}"
+          echo "python:  ${{ needs.vars.outputs.versions_python }}"
+          echo "nodejs:  ${{ needs.vars.outputs.versions_nodejs }}"
+          python --version
+
+  update_badge:
+    needs: [test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          case "${{ needs.test.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            cancelled) status=cancelled; color=808080 ;;
+            *)         status=failing;   color=cf222e ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 16a9385abb96e85e10de11afab646f8f
+          filename: sample-reusable-workflow-badge.json
+          label: "Sample: Reusable Workflow"
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

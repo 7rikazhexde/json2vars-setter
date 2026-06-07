@@ -1,0 +1,98 @@
+name: Sample - Dynamic Update (scheduled maintenance)
+
+# A runnable demonstration of the dynamic-update feature used as scheduled
+# maintenance: on a weekly cron, fetch the latest language versions from the live
+# GitHub APIs and rebuild the matrix, so a project's test matrix tracks upstream
+# releases without anyone editing JSON by hand.
+#
+# This sample is SIDE-EFFECT-FREE on purpose: it updates the matrix in the runner
+# workspace and parses it into outputs, but it does NOT commit anything. A real
+# maintenance workflow adds a commit / pull-request step after the tests pass — see
+# the "Scheduled Maintenance Workflow" example in docs/examples/ci-cd.md.
+#
+# Because it calls the GitHub API it needs GITHUB_TOKEN (see examples/showcase/dynamic-update/README.md).
+
+on:
+  # Weekly run keeps the badge fresh AND catches upstream API drift; the cron is
+  # staggered from the other samples (see the sample-workflow policy in CLAUDE.md).
+  schedule:
+    - cron: '17 7 * * 1'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/dynamic-update/**'
+      - '.github/workflows/sample_dynamic_update.yml'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      versions_nodejs: ${{ steps.json2vars.outputs.versions_nodejs }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Fetch the latest versions and rebuild the matrix (no commit)
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        with:
+          # The committed matrix.json is a stale seed (python 3.11 / node 20);
+          # dynamic update overwrites it in the workspace with the latest releases.
+          json-file: examples/showcase/dynamic-update/matrix.json
+          update-matrix: 'true'
+          python-strategy: 'stable'
+          nodejs-strategy: 'stable'
+        env:
+          # Required: the update step queries the live GitHub release APIs.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Show the freshly fetched matrix. In a real maintenance workflow this is where
+  # you would run your tests, then commit the updated matrix (or open a PR) only
+  # after they pass.
+  show:
+    needs: set_variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show the updated matrix (latest stable, fetched this run)
+        run: |
+          echo "The seed was python 3.11 / node 20; dynamic update fetched the latest stable:"
+          echo "  Python: ${{ needs.set_variables.outputs.versions_python }}"
+          echo "  Node.js: ${{ needs.set_variables.outputs.versions_nodejs }}"
+
+  update_badge:
+    needs: [show]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          case "${{ needs.show.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            cancelled) status=cancelled; color=808080 ;;
+            *)         status=failing;   color=cf222e ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: d6a3df65bb1dbd6eebf6ca7bdd938d80
+          filename: sample-dynamic-update-badge.json
+          label: "Sample: Dynamic Update"
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"
