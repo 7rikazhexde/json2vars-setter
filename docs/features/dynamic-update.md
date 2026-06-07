@@ -86,7 +86,7 @@ Test your update strategies without modifying your JSON file using the dry-run o
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
-    all: 'latest'
+    update-strategy: 'latest'
     dry-run: 'true'
 ```
 
@@ -119,7 +119,7 @@ jobs:
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
-          all: 'latest'
+          update-strategy: 'latest'
 
       # Use the outputs directly
       - name: Display matrix info
@@ -167,7 +167,7 @@ jobs:
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
-          all: 'stable'
+          update-strategy: 'stable'
 
       - name: Commit changes
         run: |

@@ -328,7 +328,7 @@ jobs:
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
-          all: 'stable'  # Use stable versions for all languages
+          update-strategy: 'stable'  # Use stable versions for all languages
 
       - name: Commit changes
         run: |

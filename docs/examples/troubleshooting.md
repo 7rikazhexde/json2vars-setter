@@ -184,7 +184,7 @@ Or use the built-in debug output:
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: 'true'
-    verbose: 'true'  # Enable verbose logging
+    # Verbose debug logging is always emitted by the action (no input needed)
 ```
 
 ### Test Configurations Locally
@@ -314,7 +314,7 @@ Select update strategy based on specific conditions:
   with:
     json-file: .github/json2vars-setter/sample/matrix.json
     update-matrix: ${{ steps.strategy.outputs.update }}
-    all: ${{ steps.strategy.outputs.strategy }}
+    update-strategy: ${{ steps.strategy.outputs.strategy }}
 ```
 
 ## GitHub API Rate Limit Management
