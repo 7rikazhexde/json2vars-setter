@@ -63,6 +63,41 @@ Each line is one workflow output: the full JSON list (`VERSIONS_PYTHON`), each i
 !!! tip "Explore the other commands"
     Run `json2vars usage` for a task-oriented guide. Beyond `parse`, the CLI also exposes `update-matrix` (rewrite the matrix file with the latest/stable versions fetched from upstream) and `cache-version` (maintain a version cache) — the same engines behind the action's [dynamic update](features/dynamic-update.md) and [version caching](features/version-caching.md) features. Those two reach out to GitHub APIs, so set `GITHUB_TOKEN` to avoid rate limits.
 
+### Tab completion (bash & PowerShell)
+
+The CLI ships shell completion for the command names (`parse`, `update-matrix`,
+`cache-version`, `usage`). Install it once with the built-in command, which
+auto-detects your shell:
+
+```bash
+json2vars --install-completion
+```
+
+Then restart the shell. Typing `json2vars <TAB>` now lists the subcommands.
+
+To wire it up by hand (or inspect what gets installed), print the script with
+`json2vars --show-completion` and add it to your shell profile:
+
+=== "bash"
+
+    ```bash
+    # Append the generated script to your shell profile, then restart the shell
+    json2vars --show-completion >> ~/.bashrc
+    ```
+
+=== "PowerShell"
+
+    ```powershell
+    # Append the generated script to your $PROFILE, then restart the shell
+    json2vars --show-completion | Out-String | Add-Content $PROFILE
+    ```
+
+!!! note "Command names only"
+    Completion covers the **subcommand names**. Per-command options
+    (`--languages`, `--max-age`, `--cache-file`, …) are forwarded to each
+    feature's own parser, so they do **not** tab-complete — run
+    `json2vars <command> --help` (e.g. `json2vars cache-version --help`) to list them.
+
 ## Basic Setup
 
 ### Step 1: Create a JSON Configuration File

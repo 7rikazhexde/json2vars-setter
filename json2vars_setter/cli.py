@@ -129,6 +129,10 @@ def usage() -> None:
     typer.echo("See every option for a command:")
     typer.echo("  json2vars update-matrix --help")
     typer.echo("  json2vars cache-version --help")
+    typer.echo("")
+
+    typer.echo("Enable <Tab> completion of these command names (bash / PowerShell):")
+    typer.echo("  json2vars --install-completion")
 
 
 if __name__ == "__main__":

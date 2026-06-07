@@ -23,6 +23,8 @@ def test_usage_command() -> None:
     assert "json2vars cache-version" in result.stdout
     assert "json2vars parse" in result.stdout
     assert "GITHUB_OUTPUT" in result.stdout
+    # Discoverability of shell completion (bash / PowerShell)
+    assert "json2vars --install-completion" in result.stdout
 
 
 def test_no_args_shows_help() -> None:
