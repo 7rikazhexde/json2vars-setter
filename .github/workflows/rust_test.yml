@@ -7,6 +7,7 @@ on:
     paths:
       - 'examples/rust/**'
       - '.github/json2vars-setter/rust_test.yml'
+  workflow_dispatch:
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
 # Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)
