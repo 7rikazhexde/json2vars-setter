@@ -1,0 +1,102 @@
+name: Sample - Conditional Matrix (PR vs full)
+
+# A runnable demonstration of choosing the matrix by event: a small, fast matrix on
+# pull requests (quick feedback) and the full cross-OS matrix on the weekly schedule
+# and on manual dispatch (thorough coverage). Both come from json2vars-setter parsing
+# a different JSON file picked at runtime. See examples/showcase/conditional/README.md.
+
+on:
+  # Weekly run exercises the FULL matrix; cron staggered per the policy in CLAUDE.md.
+  schedule:
+    - cron: '17 9 * * 1'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/conditional/**'
+      - '.github/workflows/sample_conditional_matrix.yml'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      profile: ${{ steps.pick.outputs.profile }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      # On pull_request -> light (1 OS x 1 Python); otherwise -> full (3 OS x 3 Python).
+      - name: Pick the matrix profile for this event
+        id: pick
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            echo "profile=light" >> "$GITHUB_OUTPUT"
+            echo "json-file=examples/showcase/conditional/matrix.light.json" >> "$GITHUB_OUTPUT"
+          else
+            echo "profile=full" >> "$GITHUB_OUTPUT"
+            echo "json-file=examples/showcase/conditional/matrix.full.json" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set variables from the chosen JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        with:
+          json-file: ${{ steps.pick.outputs.json-file }}
+
+  test:
+    needs: set_variables
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Show which profile produced this leg
+        run: |
+          echo "Profile: ${{ needs.set_variables.outputs.profile }}"
+          echo "Leg: ${{ matrix.os }} / Python ${{ matrix.python-version }}"
+          python --version
+
+  update_badge:
+    needs: [test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          case "${{ needs.test.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            cancelled) status=cancelled; color=808080 ;;
+            *)         status=failing;   color=cf222e ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: d3189e6457c55fb9ee6859b4809be195
+          filename: sample-conditional-matrix-badge.json
+          label: "Sample: Conditional Matrix"
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"
