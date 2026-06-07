@@ -2,6 +2,20 @@
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-JSON%20to%20Variables%20Setter-green?colorA=24292e&colorB=3fb950&logo=github)](https://github.com/marketplace/actions/json-to-variables-setter)
 
+<!-- Status & Stack -->
+[![Docs](https://img.shields.io/badge/docs-zensical-526CFE?logo=materialformkdocs&logoColor=white)](https://7rikazhexde.github.io/json2vars-setter/)
+[![Test on PR](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/prch_test_matrix_json.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/prch_test_matrix_json.yml)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue?logo=python&logoColor=white)](https://www.python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/7rikazhexde/json2vars-setter/blob/main/LICENSE)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![ty](https://img.shields.io/badge/ty-preview-261230?logo=astral&logoColor=white)](https://github.com/astral-sh/ty)
+[![typos](https://img.shields.io/badge/spell--check-typos-blue)](https://github.com/crate-ci/typos)
+[![zizmor](https://img.shields.io/badge/zizmor-Actions%20audit-2b5797)](https://github.com/zizmorcore/zizmor)
+[![gitleaks](https://img.shields.io/badge/gitleaks-secret%20scan-blue)](https://github.com/gitleaks/gitleaks)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+
 ## Overview
 
 **JSON to Variables Setter (json2vars-setter)** is a GitHub Action that parses a JSON file and sets its values as output variables in GitHub Actions workflows. This action streamlines the management of matrix testing configurations and other workflow variables, making your CI/CD processes more maintainable and adaptable.
