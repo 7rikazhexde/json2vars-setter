@@ -21,7 +21,7 @@ pointed at the repository's cache file
     json-file: examples/showcase/version-cache/matrix.json
     use-cache: 'true'
     cache-languages: 'python,nodejs'
-    cache-max-age: '365'   # treat the cache as fresh -> no API call (a cache HIT)
+    cache-max-age: '3650'  # treat the cache as fresh -> no API call (a cache HIT)
     output-count: '3'      # newest 3 cached versions per language
     cache-file: .github/json2vars-setter/cache/version_cache.json
   env:
@@ -35,8 +35,9 @@ uses the newest cached Node.js — all from that one cache, with no API requests
 
 `cache-max-age` is the whole point: when the cache is **younger** than N days it is a
 **hit** (no API call); when it is **older**, the action **refreshes** that language
-from the live API and rewrites the cache. This sample uses `365` to guarantee a hit
-so the run is deterministic and quota-free. In a real project use a smaller value
+from the live API and rewrites the cache. The committed cache fixture here is
+intentionally old, so this sample uses a deliberately large `3650` to keep it a
+guaranteed hit (deterministic and quota-free). In a real project use a small value
 (e.g. `7`) so the cache self-refreshes weekly — that refresh path needs `GITHUB_TOKEN`.
 
 ### `use-cache` vs. `template-only`

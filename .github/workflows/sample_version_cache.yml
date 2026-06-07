@@ -40,9 +40,10 @@ jobs:
           json-file: examples/showcase/version-cache/matrix.json
           use-cache: 'true'
           cache-languages: 'python,nodejs'
-          # A large max-age makes this a cache HIT (no API call). Lower it (e.g. '7')
-          # to auto-refresh the cache from the API once it is older than N days.
-          cache-max-age: '365'
+          # The committed cache fixture is intentionally old, so a very large max-age
+          # is what forces a cache HIT (zero API calls) here. Lower it (e.g. '7') to
+          # auto-refresh the cache from the API once it is older than N days.
+          cache-max-age: '3650'
           output-count: '3'   # newest 3 cached versions per language
           cache-file: .github/json2vars-setter/cache/version_cache.json
         env:
