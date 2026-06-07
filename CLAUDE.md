@@ -84,7 +84,7 @@ A pluggable architecture for fetching language versions from GitHub:
 ### Entry Points
 
 - **GitHub Action**: `action.yml` defines the composite action with inputs/outputs; its steps invoke `python -m json2vars_setter.features.<module>`
-- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess)
+- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess). The three feature commands are **bridged** from each feature's `build_parser()`: `cli.py` generates the matching Click options dynamically (argparse stays the single source of truth) so shell completion covers the per-command options/values, then reconstructs argv and calls `main()`. A new feature option therefore needs **no** cli.py change. One consequence: the repeated argparse option `--languages` is completed one value at a time, so via the `json2vars` script you repeat the flag (`--languages python --languages nodejs`); `python -m …` still takes the space-separated list.
 - **Direct module execution**: `python -m json2vars_setter.features.<module>`
 
 ## Adding a New Language (complete checklist)
