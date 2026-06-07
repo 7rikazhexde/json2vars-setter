@@ -18,7 +18,7 @@ from json2vars_setter.version.core.utils import (
     VersionInfo,
     get_utc_now,
 )
-from json2vars_setter.version.registry import get_version_fetcher
+from json2vars_setter.version.registry import LANGUAGE_FETCHERS, get_version_fetcher
 
 # Set up logging
 logging.basicConfig(
@@ -36,6 +36,10 @@ DEFAULT_TEMPLATE_FILE = CACHE_DIR / "version_template.json"
 # Default values for matrix.json
 DEFAULT_OS = ["ubuntu-latest", "windows-latest", "macos-latest"]
 DEFAULT_GHPAGES_BRANCH = "gh-pages"
+
+# Supported languages, derived from the central registry so this feature stays
+# in lock-step with matrix-update and the fetchers (single source of truth).
+SUPPORTED_LANGUAGES = list(LANGUAGE_FETCHERS)
 
 
 class VersionCache:
@@ -641,9 +645,9 @@ Detailed examples:
     parser.add_argument(
         "--languages",
         nargs="+",
-        choices=["python", "nodejs", "ruby", "go", "rust", "all"],
+        choices=[*SUPPORTED_LANGUAGES, "all"],
         default=["all"],
-        help="Languages to update (default: all)",
+        help="Languages to update (default: all supported languages)",
     )
     parser.add_argument(
         "--force", action="store_true", help="Force update even if cache is fresh"
@@ -737,7 +741,7 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     # Expand "all" to all supported languages
     if "all" in args.languages:
-        languages: List[str] = ["python", "nodejs", "ruby", "go", "rust"]
+        languages: List[str] = list(SUPPORTED_LANGUAGES)
     else:
         languages = args.languages
 

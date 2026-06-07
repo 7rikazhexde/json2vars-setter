@@ -10,7 +10,9 @@ import pytest
 from pytest_mock import MockFixture
 
 from json2vars_setter.features.version_cache import (
+    SUPPORTED_LANGUAGES,
     VersionCache,
+    build_parser,
     generate_version_template,
     main,
     update_versions,
@@ -22,6 +24,7 @@ from json2vars_setter.version.core.utils import (
     VersionInfo,
     get_utc_now,
 )
+from json2vars_setter.version.registry import LANGUAGE_FETCHERS
 
 # ---- Fixtures and Mocks ----
 
@@ -589,9 +592,9 @@ def test_main_function(mocker: MockFixture) -> None:
 
     main()
 
-    # update_versions should be called with all languages
+    # update_versions should be called with every supported language
     mock_update.assert_called_with(
-        ["python", "nodejs", "ruby", "go", "rust"],
+        list(SUPPORTED_LANGUAGES),
         force=True,
         max_age_days=1,
         count=10,
@@ -2166,3 +2169,18 @@ def test_generate_version_template_content_already_ends_with_newline(
     # Check that the file was written with the content exactly as returned by json.dumps
     # without adding an additional newline
     mock_open().write.assert_called_once_with('{"test": "value"}\n')
+
+
+def test_supported_languages_matches_registry() -> None:
+    """cache-version's language set must mirror the central registry (no drift)."""
+    assert SUPPORTED_LANGUAGES == list(LANGUAGE_FETCHERS)
+
+    parser = build_parser()
+    # Every registry language is selectable now, not just the original five.
+    for lang in LANGUAGE_FETCHERS:
+        assert parser.parse_args(["--languages", lang]).languages == [lang]
+    # "all" remains a valid meta-selector.
+    assert parser.parse_args(["--languages", "all"]).languages == ["all"]
+    # An unsupported language is rejected by argparse.
+    with pytest.raises(SystemExit):
+        parser.parse_args(["--languages", "cobol"])
