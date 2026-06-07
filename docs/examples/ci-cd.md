@@ -400,7 +400,7 @@ This example demonstrates a dedicated maintenance workflow that runs on a schedu
     A side-effect-free version of this pattern runs weekly in this repository:
     [`Sample - Dynamic Update`](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/sample_dynamic_update.yml)
     ([files](https://github.com/7rikazhexde/json2vars-setter/tree/main/examples/showcase/dynamic-update)).
-    It fetches the latest versions and rebuilds the matrix without committing — copy it, then add the commit/PR step below.
+    It fetches the latest stable versions and rebuilds the matrix without committing — copy it, then add the commit/PR step below.
 
 ```yaml
 name: Matrix Maintenance
