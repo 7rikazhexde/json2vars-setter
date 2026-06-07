@@ -46,10 +46,21 @@ without touching even the workspace file, add `dry-run: 'true'`.
 
 ## Try it locally
 
+**Linux / macOS (bash):**
+
 ```bash
 # Preview what the update would do, without modifying the file:
 uv run json2vars update-matrix \
   --json-file examples/showcase/dynamic-update/matrix.json \
+  --python stable --nodejs stable --dry-run
+```
+
+**Windows (PowerShell):**
+
+```powershell
+# Preview what the update would do, without modifying the file:
+uv run json2vars update-matrix `
+  --json-file examples/showcase/dynamic-update/matrix.json `
   --python stable --nodejs stable --dry-run
 ```
 
