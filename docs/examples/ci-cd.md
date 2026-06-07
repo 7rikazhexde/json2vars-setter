@@ -207,7 +207,7 @@ jobs:
         with:
           json-file: .github/json2vars-setter/sample/development_matrix.json
           update-matrix: 'true'
-          all: 'latest'
+          update-strategy: 'latest'
 
       - name: Set matrix configuration
         id: matrix_config
@@ -434,7 +434,7 @@ jobs:
         with:
           json-file: .github/json2vars-setter/sample/latest_matrix.json
           update-matrix: 'true'
-          all: 'latest'
+          update-strategy: 'latest'
 
       - name: Commit updated files
         run: |
