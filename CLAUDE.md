@@ -98,7 +98,12 @@ or the addition is incomplete:
    `_get_stability_criteria`) plus a `<lang>_filter_func` and the `__main__` block,
    modeled on the closest existing fetcher (e.g. `ruby.py` / `go.py`).
 2. **Registry** — register the fetcher in `json2vars_setter/version/registry.py`
-   (`LANGUAGE_FETCHERS`).
+   (`LANGUAGE_FETCHERS`). This map is the **single source of truth** for the supported
+   language set: the version-cache feature derives its `--languages` choices and `all`
+   expansion from it (`SUPPORTED_LANGUAGES = list(LANGUAGE_FETCHERS)` in
+   `features/version_cache.py`), so registering here automatically extends
+   `cache-version` too. **Never hardcode a language list** anywhere that the registry
+   can supply — derive it, the way `version_cache.py` does.
 3. **Matrix update CLI** — `json2vars_setter/features/matrix_update.py`: add the
    `--<lang>` argument, the `args.<lang> = args.all` line in the `--all` block, and
    the `if args.<lang>: language_strategies["<lang>"] = ...` wiring.
@@ -106,7 +111,11 @@ or the addition is incomplete:
    `versions_<lang>` output, the strategy-arg building block, and the summary `echo`.
 5. **Tests (keep 100% coverage)** — `tests/version/fetchers/test_<lang>.py`, plus add
    the language to `tests/version/test_registry.py` and the `--all` / individual-flag
-   assertions in `tests/features/test_matrix_update.py`.
+   assertions in `tests/features/test_matrix_update.py`. The version-cache tests are
+   registry-derived (`test_supported_languages_matches_registry` and the `all`-expansion
+   assertion in `tests/features/test_version_cache.py` reference `LANGUAGE_FETCHERS` /
+   `SUPPORTED_LANGUAGES`), so they pick up the new language automatically — re-run them
+   to confirm, no hardcoded list to edit.
 6. **Example project** — `examples/<lang>/`: a small JSON-parser project with source,
    tests, `<lang>_project_matrix.json`, build config, and `README.md` (mirror
    `examples/ruby/`). The matrix versions must be in the format the language's
@@ -120,8 +129,8 @@ or the addition is incomplete:
    matching badge in `docs/index.md`, pointing at the new gist
    (`gist.githubusercontent.com/7rikazhexde/<GIST_ID>/raw/<lang>-test-badge.json`) and
    the new workflow. Also update any "supported languages" prose (README intro,
-   `docs/features/dynamic-update.md`, `docs/reference/options.md`, this file's
-   Project Overview + fetcher list).
+   `docs/features/dynamic-update.md`, `docs/features/version-caching.md`,
+   `docs/reference/options.md`, this file's Project Overview + fetcher list).
 9. **Release ordering (two-phase action reference)** — a new language's
    `versions_<lang>` output does not exist in the published tag until the release that
    adds it, so a tag ref (`@vX.Y.Z`) in `<lang>_test.yml` would fail on the introducing
