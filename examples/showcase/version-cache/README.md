@@ -55,7 +55,7 @@ guaranteed hit (deterministic and quota-free). In a real project use a small val
 ```bash
 uv run json2vars cache-version \
   --languages python nodejs --output-count 3 \
-  --max-age 365 \
+  --max-age 3650 \
   --cache-file .github/json2vars-setter/cache/version_cache.json \
   --template-file out-matrix.json
 cat out-matrix.json
