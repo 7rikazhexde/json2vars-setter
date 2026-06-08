@@ -35,7 +35,7 @@ jobs:
 
       - name: Build the matrix from the version cache
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        uses: 7rikazhexde/json2vars-setter@v1.10.0
         with:
           json-file: examples/showcase/version-cache/matrix.json
           use-cache: 'true'

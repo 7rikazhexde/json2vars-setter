@@ -37,7 +37,7 @@ jobs:
 
       - name: Generate matrix from the cache (no API calls)
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        uses: 7rikazhexde/json2vars-setter@v1.10.0
         with:
           json-file: examples/showcase/template/matrix.json
           use-cache: 'true'

@@ -1,3 +1,9 @@
+# [v1.10.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.9.1...v1.10.0) (2026-06-08)
+
+## ✨ New Features
+- [`4b708f4`](https://github.com/7rikazhexde/json2vars-setter/commit/4b708f4)  Support all 18 registry languages in cache-version (#550) (Issues: [`#550`](https://github.com/7rikazhexde/json2vars-setter/issues/550))
+- [`baf26e4`](https://github.com/7rikazhexde/json2vars-setter/commit/baf26e4)  Complete CLI options in shell completion via an argparse-&gt;Click bridge (#552) (Issues: [`#552`](https://github.com/7rikazhexde/json2vars-setter/issues/552))
+
 # [v1.9.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.9.0...v1.9.1) (2026-06-06)
 
 ## 🔒 Security Issues

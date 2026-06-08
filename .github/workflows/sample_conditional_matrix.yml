@@ -47,7 +47,7 @@ jobs:
 
       - name: Set variables from the chosen JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.9.1
+        uses: 7rikazhexde/json2vars-setter@v1.10.0
         with:
           json-file: ${{ steps.pick.outputs.json-file }}
 
