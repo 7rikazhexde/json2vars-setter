@@ -7,20 +7,29 @@ A guided entry point that runs the package features in-process via Typer.
 Each feature module owns its own ``argparse`` parser (``build_parser()``) and
 ``main(argv)`` entry point (also used by ``python -m`` and the Action). To give
 shell completion of the per-command **options** (``--languages``, ``--max-age``,
-``--python`` …), this module bridges each argparse parser to Click: it generates
-the matching Click options dynamically (argparse stays the single source of
-truth), lets Click parse them, then reconstructs the argv list and calls the
-feature's ``main()`` unchanged.
+``--python`` …) *and their values*, this module bridges each argparse parser to
+Typer's Click layer: it generates the matching ``TyperOption``s dynamically
+(argparse stays the single source of truth), lets Click parse them, then
+reconstructs the argv list and calls the feature's ``main()`` unchanged.
+
+The bridged options are built as ``typer.core.TyperOption`` (not plain
+``click.Option``) **on purpose**: Typer's completion only resolves the value of
+an option when the parameter is a ``TyperOption``, and value completion for
+``choices`` is supplied via each option's ``shell_complete`` callback. Building
+plain ``click.Option``s makes option *names* complete but silently drops value
+completion.
 """
 
 import argparse
 from importlib.metadata import version as _dist_version
-from pathlib import Path
 from types import ModuleType
-from typing import Callable, Dict, List, Optional, cast
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, cast
 
-import click
 import typer
+from typer.core import TyperArgument, TyperCommand, TyperGroup, TyperOption
+
+if TYPE_CHECKING:
+    from typer._click.core import Parameter  # pragma: no cover
 
 from json2vars_setter.features import github_output, matrix_update, version_cache
 
@@ -97,46 +106,62 @@ def _long_option(action: argparse.Action) -> str:
     return longs[0] if longs else action.option_strings[0]
 
 
-def _click_type(action: argparse.Action) -> "click.ParamType[object]":
-    """Map an argparse action to the matching Click parameter type."""
-    if action.choices is not None:
-        return cast(
-            "click.ParamType[object]",
-            click.Choice([str(c) for c in action.choices]),
+def _choice_completer(
+    choices: List[str],
+) -> Callable[[object, object, str], List[str]]:
+    """Build a ``shell_complete`` callback that offers an option's choices.
+
+    Typer invokes this with ``(ctx, param, incomplete)``; returning the matching
+    choice strings is what makes ``--languages <TAB>`` / ``--python <TAB>``
+    complete their values.
+    """
+
+    def complete(ctx: object, param: object, incomplete: str) -> List[str]:
+        return [c for c in choices if c.startswith(incomplete)]
+
+    return complete
+
+
+def _make_option(action: argparse.Action) -> TyperOption:
+    """Map a single argparse optional action to a ``TyperOption``."""
+    decls = list(action.option_strings)
+    completer = (
+        _choice_completer([str(c) for c in action.choices])
+        if action.choices is not None
+        else None
+    )
+    if action.nargs == 0:  # store_true flag
+        return TyperOption(
+            param_decls=decls, is_flag=True, default=False, help=action.help
         )
-    if action.type is int:
-        return cast("click.ParamType[object]", click.INT)
-    if action.type is Path:
-        return cast("click.ParamType[object]", click.Path(path_type=Path))
-    return cast("click.ParamType[object]", click.STRING)
+    # int values round-trip through Click's INT; everything else (str, Path)
+    # stays STRING — argparse re-validates/casts when main() runs.
+    opt_type = int if action.type is int else str
+    if action.nargs == "+":
+        # Repeated option (e.g. --languages x --languages y); Click leaves this
+        # as an empty tuple when unset.
+        return TyperOption(
+            param_decls=decls,
+            type=opt_type,
+            multiple=True,
+            default=None,
+            help=action.help,
+            shell_complete=completer,
+        )
+    # Sentinel default so only user-supplied options are forwarded and argparse
+    # applies its own defaults.
+    return TyperOption(
+        param_decls=decls,
+        type=opt_type,
+        default=None,
+        help=action.help,
+        shell_complete=completer,
+    )
 
 
-def _click_params_from_parser(parser: argparse.ArgumentParser) -> List[click.Parameter]:
-    """Generate Click options mirroring an argparse parser (for completion)."""
-    params: List[click.Parameter] = []
-    for action in _iter_options(parser):
-        decls = action.option_strings
-        if action.nargs == 0:  # store_true flag
-            params.append(
-                click.Option(decls, is_flag=True, default=False, help=action.help)
-            )
-        elif action.nargs == "+":
-            # Repeated option (e.g. --languages x --languages y); Click leaves
-            # this as an empty tuple when unset.
-            params.append(
-                click.Option(
-                    decls, type=_click_type(action), multiple=True, help=action.help
-                )
-            )
-        else:
-            # Sentinel default so only user-supplied options are forwarded and
-            # argparse applies its own defaults.
-            params.append(
-                click.Option(
-                    decls, type=_click_type(action), default=None, help=action.help
-                )
-            )
-    return params
+def _params_from_parser(parser: argparse.ArgumentParser) -> "List[Parameter]":
+    """Generate Typer options mirroring an argparse parser (for completion)."""
+    return [_make_option(action) for action in _iter_options(parser)]
 
 
 def _argv_from_values(
@@ -164,7 +189,7 @@ def _make_feature_command(
     parser: argparse.ArgumentParser,
     module: ModuleType,
     help_text: str,
-) -> click.Command:
+) -> TyperCommand:
     """Build a Click command whose options are bridged from an argparse parser.
 
     ``module.main`` is resolved at call time (not captured) so tests can patch it.
@@ -173,27 +198,30 @@ def _make_feature_command(
     def callback(**values: object) -> None:
         _run_feature(name, module.main, _argv_from_values(parser, values))
 
-    return click.Command(
+    return TyperCommand(
         name=name,
-        params=_click_params_from_parser(parser),
+        params=_params_from_parser(parser),
         callback=callback,
         help=help_text,
     )
 
 
-def _parse_command() -> click.Command:
+def _parse_command() -> TyperCommand:
     """Build the `parse` command (github_output has no argparse parser)."""
 
     def callback(json_file: str, debug: bool) -> None:
         argv = [json_file, *(["--debug"] if debug else [])]
         _run_feature("github_output", github_output.main, argv)
 
-    return click.Command(
+    return TyperCommand(
         name="parse",
         params=[
-            click.Argument(["json_file"], type=click.Path()),
-            click.Option(
-                ["--debug"], is_flag=True, default=False, help="Enable debug output."
+            TyperArgument(param_decls=["json_file"], type=str),
+            TyperOption(
+                param_decls=["--debug"],
+                is_flag=True,
+                default=False,
+                help="Enable debug output.",
             ),
         ],
         callback=callback,
@@ -235,9 +263,10 @@ def usage() -> None:
 
 # Build the public entry point: the Typer app supplies the top-level options and
 # `usage`; the three feature commands are bridged from their argparse parsers so
-# their options participate in shell completion. `app` is the augmented Click
-# group (so the existing `cli:app` console-script entry point keeps working).
-app = cast("click.Group", typer.main.get_command(_typer_app))
+# their options (and values) participate in shell completion. `app` is the
+# augmented Typer/Click group (so the existing `cli:app` console-script entry
+# point keeps working).
+app = cast("TyperGroup", typer.main.get_command(_typer_app))
 app.add_command(
     _make_feature_command(
         "update-matrix",

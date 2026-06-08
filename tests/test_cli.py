@@ -2,11 +2,18 @@
 Tests for json2vars_setter.cli
 """
 
+from typing import cast
+
+import click
 import pytest
 from click.testing import CliRunner
 from pytest_mock import MockerFixture
 
-from json2vars_setter.cli import app
+from json2vars_setter.cli import app as _typer_group
+
+# `app` is a Typer/Click group at runtime; cast it to ``click.Group`` so the
+# stdlib-style ``click.testing.CliRunner`` and ``.commands`` access type-check.
+app = cast("click.Group", _typer_group)
 
 runner = CliRunner()
 
@@ -144,6 +151,40 @@ def test_completion_exposes_options() -> None:
     matrix = app.commands["update-matrix"]
     matrix_names = {opt for p in matrix.params for opt in p.opts}
     assert {"--python", "--all", "--dry-run"} <= matrix_names
+
+
+def test_option_values_complete() -> None:
+    """Choice-valued options complete their values (not just the option names).
+
+    This is the behaviour the argparse->Typer bridge exists for: building the
+    bridged params as ``TyperOption`` with a ``shell_complete`` callback lets
+    ``--languages <TAB>`` / ``--python <TAB>`` offer their choices. (Plain
+    ``click.Option`` params complete option *names* but never their values.)
+    """
+    from typer._completion_classes import PowerShellComplete
+
+    completer = PowerShellComplete(_typer_group, {}, "json2vars", "_JSON2VARS_COMPLETE")
+
+    # cache-version --languages -> the supported languages (+ "all")
+    langs = [
+        item.value
+        for item in completer.get_completions(["cache-version", "--languages"], "")
+    ]
+    assert "python" in langs
+    assert "all" in langs
+    # prefix filtering works
+    py = [
+        item.value
+        for item in completer.get_completions(["cache-version", "--languages"], "py")
+    ]
+    assert py == ["python"]
+
+    # update-matrix --python -> stable/latest/both
+    strategies = [
+        item.value
+        for item in completer.get_completions(["update-matrix", "--python"], "")
+    ]
+    assert set(strategies) == {"stable", "latest", "both"}
 
 
 def test_systemexit_zero_returns_zero(mocker: MockerFixture) -> None:
