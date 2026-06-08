@@ -69,9 +69,10 @@ The CLI ships shell completion for the commands (`parse`, `update-matrix`,
 `cache-version`, `usage`), **their options, and option values**:
 
 - `json2vars <TAB>` → the subcommands
-- `json2vars cache-version -<TAB>` → that command's options (`--languages`,
-  `--max-age`, …). Type a leading `-` first — option names only complete once the
-  current word starts with a dash (standard Click/Typer behaviour).
+- `json2vars cache-version <TAB>` → that command's options (`--languages`,
+  `--max-age`, …). With the PowerShell block below they appear at the bare command
+  position; in bash, type a leading `-` first (`cache-version -<TAB>`), since
+  Click only completes option names once the word starts with a dash.
 - `json2vars cache-version --languages <TAB>` → the supported languages;
   `json2vars update-matrix --python <TAB>` → `stable/latest/both`
 
@@ -98,24 +99,39 @@ restart the shell:
 ```powershell
 $json2varsCompleter = {
     param($wordToComplete, $commandAst, $cursorPosition)
-    $Env:_JSON2VARS_COMPLETE = "complete_powershell"
-    $Env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
-    $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
-    try {
-        json2vars | Where-Object { $_ -like '*:::*' } | ForEach-Object {
-            $i = $_.IndexOf(':::')
-            $value = $_.Substring(0, $i)
-            if ([string]::IsNullOrWhiteSpace($value)) { return }
-            $help = $_.Substring($i + 3).Trim()
-            if ([string]::IsNullOrWhiteSpace($help)) { $help = $value }
-            [System.Management.Automation.CompletionResult]::new(
-                $value, $value, 'ParameterValue', $help)
+    $base = $commandAst.ToString()
+    $seen = @{}
+    $results = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+    $fetch = {
+        param($a, $w)
+        $Env:_JSON2VARS_COMPLETE = "complete_powershell"
+        $Env:_TYPER_COMPLETE_ARGS = $a
+        $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $w
+        try {
+            json2vars | Where-Object { $_ -like '*:::*' } | ForEach-Object {
+                $i = $_.IndexOf(':::')
+                $v = $_.Substring(0, $i)
+                if ([string]::IsNullOrWhiteSpace($v) -or $seen.ContainsKey($v)) { return }
+                $seen[$v] = $true
+                $h = $_.Substring($i + 3).Trim()
+                if ([string]::IsNullOrWhiteSpace($h)) { $h = $v }
+                $results.Add([System.Management.Automation.CompletionResult]::new(
+                        $v, $v, 'ParameterValue', $h))
+            }
         }
-    } finally {
-        $Env:_JSON2VARS_COMPLETE = ""
-        $Env:_TYPER_COMPLETE_ARGS = ""
-        $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+        finally {
+            $Env:_JSON2VARS_COMPLETE = ""
+            $Env:_TYPER_COMPLETE_ARGS = ""
+            $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+        }
     }
+    & $fetch $base $wordToComplete
+    # Nothing matched at an empty word (an option position, no dash typed): offer
+    # the command's option names so they are discoverable without a leading '-'.
+    if ($results.Count -eq 0 -and [string]::IsNullOrEmpty($wordToComplete)) {
+        & $fetch ($base.TrimEnd() + ' -') '-'
+    }
+    $results
 }
 Register-ArgumentCompleter -Native -CommandName json2vars -ScriptBlock $json2varsCompleter
 ```
@@ -125,10 +141,12 @@ Register-ArgumentCompleter -Native -CommandName json2vars -ScriptBlock $json2var
     builds a `CompletionResult` whose tooltip must be non-empty. When an option's
     help is long, Typer wraps it across lines; the wrapped fragment has no `:::`,
     so the tooltip is empty and `CompletionResult` **throws** — making a whole
-    command (e.g. `cache-version`) return *no* completions, and leaking the
-    completion env vars to boot. The block above keeps only lines containing
+    command (e.g. `cache-version`) return *no* completions, and **leaking the
+    completion env vars** (after which a normal `json2vars … --help` prints
+    completion noise instead of help). The block above keeps only lines containing
     `:::`, splits on the first one, falls back to the value for an empty tooltip,
-    and resets the env vars in `finally`, so it stays robust.
+    resets the env vars in `finally`, and (only when a bare word matched nothing)
+    re-queries to surface the option names — so it stays robust *and* discoverable.
 
 !!! tip "Seeing the candidate menu (PowerShell)"
     PowerShell's default `Tab` inserts the first match and cycles one at a time.
