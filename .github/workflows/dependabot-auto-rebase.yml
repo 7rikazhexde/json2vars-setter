@@ -36,6 +36,9 @@ on:
   push:
     branches:
       - main
+  # Manual "rebase every open Dependabot PR now" button — handy after main
+  # changes without a Dependabot merge, or to retry if a rebase was missed.
+  workflow_dispatch:
 
 # If several commits land on main in quick succession, rebase once for the
 # latest state instead of stacking duplicate requests.
