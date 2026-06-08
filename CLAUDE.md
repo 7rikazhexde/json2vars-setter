@@ -84,7 +84,8 @@ A pluggable architecture for fetching language versions from GitHub:
 ### Entry Points
 
 - **GitHub Action**: `action.yml` defines the composite action with inputs/outputs; its steps invoke `python -m json2vars_setter.features.<module>`
-- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess). The three feature commands are **bridged** from each feature's `build_parser()`: `cli.py` generates the matching Click options dynamically (argparse stays the single source of truth) so shell completion covers the per-command options/values, then reconstructs argv and calls `main()`. A new feature option therefore needs **no** cli.py change. One consequence: the repeated argparse option `--languages` is completed one value at a time, so via the `json2vars` script you repeat the flag (`--languages python --languages nodejs`); `python -m …` still takes the space-separated list.
+- **CLI**: `json2vars_setter/cli.py` — Typer app exposed as `json2vars` via `[project.scripts]`; commands call each feature's `main()` **in-process** (no subprocess). The three feature commands are **bridged** from each feature's `build_parser()`: `cli.py` generates the matching options dynamically (argparse stays the single source of truth) so shell completion covers the per-command options **and values**, then reconstructs argv and calls `main()`. A new feature option therefore needs **no** cli.py change. **The bridged params must be built as `typer.core.TyperOption` (not plain `click.Option`)**: Typer's completer only resolves an option's *value* when the param is a `TyperOption`, and choice values are supplied via the public `shell_complete=` callback — a plain `click.Option` completes option *names* but silently drops value completion. One consequence: the repeated argparse option `--languages` is completed one value at a time, so via the `json2vars` script you repeat the flag (`--languages python --languages nodejs`); `python -m …` still takes the space-separated list.
+- **Shell completion**: bash uses Typer's generated completer as-is (its output is plain values — robust). **PowerShell** ships a hand-written completer at `scripts/json2vars-completion.ps1` (dot-source it from `$PROFILE`; documented in `docs/getting-started.md`) — Typer's generated PowerShell completer splits each `value:::help` line on `:::` and builds a `CompletionResult` whose tooltip must be non-empty, so **long help that wraps across lines throws and a whole command returns zero completions while leaking the completion env vars** (a later `--help` then prints completion noise). The shipped completer keeps only `:::` lines, splits on the first separator, falls back to the value for an empty tooltip, resets env vars in `finally`, and surfaces options at the bare command position. **Command-execution (subprocess) tests** for this live in `tests/test_cli_exec.py`, separate from the in-process `tests/test_cli.py`.
 - **Direct module execution**: `python -m json2vars_setter.features.<module>`
 
 ## Adding a New Language (complete checklist)
@@ -221,3 +222,13 @@ Releases are **manually triggered** (`workflow_dispatch` on `semantic-release.ym
 - Cache file: `.github/json2vars-setter/cache/version_cache.json`
 - Test fixtures: `tests/matrix_static.json`, `tests/python_project_matrix.json`
 - Docs site: `docs/` (MkDocs Material, deployed to GitHub Pages)
+- PowerShell completion script: `scripts/json2vars-completion.ps1`
+- Future-improvement backlog: `.issues/`
+
+## Future-Improvement Backlog (`.issues/`)
+
+`.issues/` is a **lightweight, in-repo backlog** of ideas that are **not worth a
+GitHub issue yet** but could be **promoted to one later** (kept visible in the repo
+rather than lost in chat). It is a notepad, not a tracker. One Markdown file per idea,
+named `issue<N>-<type>-<slug>.md` (`<type>` ∈ `enhancement`/`bug`/`docs`/`refactor`),
+each capturing the problem, findings, options, and effort. See `.issues/README.md`.
