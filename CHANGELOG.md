@@ -1,3 +1,8 @@
+# [v1.10.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.0...v1.10.1) (2026-06-08)
+
+## 🔒 Security Issues
+- [`cc7e315`](https://github.com/7rikazhexde/json2vars-setter/commit/cc7e315)  Declare explicit least-privilege permissions (contents: read) on all workflows (#556) (Issues: [`#556`](https://github.com/7rikazhexde/json2vars-setter/issues/556))
+
 # [v1.10.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.9.1...v1.10.0) (2026-06-08)
 
 ## ✨ New Features
