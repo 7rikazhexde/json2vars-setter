@@ -30,6 +30,9 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  contents: read
+
 jobs:
   # Step 1: read the matrix from the single JSON file and expose it as outputs.
   set_variables:
