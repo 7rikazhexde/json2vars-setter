@@ -66,35 +66,93 @@ Each line is one workflow output: the full JSON list (`VERSIONS_PYTHON`), each i
 ### Tab completion (bash & PowerShell)
 
 The CLI ships shell completion for the commands (`parse`, `update-matrix`,
-`cache-version`, `usage`) **and their options** — `json2vars cache-version --<TAB>`
-lists `--languages`, `--max-age`, …, and value completion works too
-(`--languages <TAB>` → the supported languages, `--python <TAB>` →
-`stable/latest/both`). Install it once with the built-in command, which
-auto-detects your shell:
+`cache-version`, `usage`), **their options, and option values**:
+
+- `json2vars <TAB>` → the subcommands
+- `json2vars cache-version <TAB>` → that command's options (`--languages`,
+  `--max-age`, …). With the PowerShell block below they appear at the bare command
+  position; in bash, type a leading `-` first (`cache-version -<TAB>`), since
+  Click only completes option names once the word starts with a dash.
+- `json2vars cache-version --languages <TAB>` → the supported languages;
+  `json2vars update-matrix --python <TAB>` → `stable/latest/both`
+
+#### bash
+
+Install once with the built-in command (it auto-detects your shell), then restart
+the shell:
 
 ```bash
 json2vars --install-completion
 ```
 
-Then restart the shell. Typing `json2vars <TAB>` now lists the subcommands, and
-each subcommand completes its own options.
+Or wire it up by hand:
 
-To wire it up by hand (or inspect what gets installed), print the script with
-`json2vars --show-completion` and add it to your shell profile:
+```bash
+json2vars --show-completion >> ~/.bashrc
+```
 
-=== "bash"
+#### PowerShell
 
-    ```bash
-    # Append the generated script to your shell profile, then restart the shell
-    json2vars --show-completion >> ~/.bashrc
-    ```
+Add the block below to your `$PROFILE` (open it with `notepad $PROFILE`), then
+restart the shell:
 
-=== "PowerShell"
+```powershell
+$json2varsCompleter = {
+    param($wordToComplete, $commandAst, $cursorPosition)
+    $base = $commandAst.ToString()
+    $seen = @{}
+    $results = [System.Collections.Generic.List[System.Management.Automation.CompletionResult]]::new()
+    $fetch = {
+        param($a, $w)
+        $Env:_JSON2VARS_COMPLETE = "complete_powershell"
+        $Env:_TYPER_COMPLETE_ARGS = $a
+        $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $w
+        try {
+            json2vars | Where-Object { $_ -like '*:::*' } | ForEach-Object {
+                $i = $_.IndexOf(':::')
+                $v = $_.Substring(0, $i)
+                if ([string]::IsNullOrWhiteSpace($v) -or $seen.ContainsKey($v)) { return }
+                $seen[$v] = $true
+                $h = $_.Substring($i + 3).Trim()
+                if ([string]::IsNullOrWhiteSpace($h)) { $h = $v }
+                $results.Add([System.Management.Automation.CompletionResult]::new(
+                        $v, $v, 'ParameterValue', $h))
+            }
+        }
+        finally {
+            $Env:_JSON2VARS_COMPLETE = ""
+            $Env:_TYPER_COMPLETE_ARGS = ""
+            $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+        }
+    }
+    & $fetch $base $wordToComplete
+    # Nothing matched at an empty word (an option position, no dash typed): offer
+    # the command's option names so they are discoverable without a leading '-'.
+    if ($results.Count -eq 0 -and [string]::IsNullOrEmpty($wordToComplete)) {
+        & $fetch ($base.TrimEnd() + ' -') '-'
+    }
+    $results
+}
+Register-ArgumentCompleter -Native -CommandName json2vars -ScriptBlock $json2varsCompleter
+```
 
-    ```powershell
-    # Append the generated script to your $PROFILE, then restart the shell
-    json2vars --show-completion | Out-String | Add-Content $PROFILE
-    ```
+!!! note "Why not `json2vars --show-completion` on PowerShell?"
+    Typer's generated PowerShell completer splits each candidate on `:::` and
+    builds a `CompletionResult` whose tooltip must be non-empty. When an option's
+    help is long, Typer wraps it across lines; the wrapped fragment has no `:::`,
+    so the tooltip is empty and `CompletionResult` **throws** — making a whole
+    command (e.g. `cache-version`) return *no* completions, and **leaking the
+    completion env vars** (after which a normal `json2vars … --help` prints
+    completion noise instead of help). The block above keeps only lines containing
+    `:::`, splits on the first one, falls back to the value for an empty tooltip,
+    resets the env vars in `finally`, and (only when a bare word matched nothing)
+    re-queries to surface the option names — so it stays robust *and* discoverable.
+
+!!! tip "Seeing the candidate menu (PowerShell)"
+    PowerShell's default `Tab` inserts the first match and cycles one at a time.
+    To pop up a **navigable menu** and pick with the arrow keys, press
+    **Ctrl+Space** (PSReadLine's built-in `MenuComplete`) — no keybinding change
+    needed, so your existing key setup is left untouched.
 
 !!! note "Multi-value `--languages`"
     Because options are completed one value at a time, pass several languages by
