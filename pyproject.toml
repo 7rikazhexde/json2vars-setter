@@ -63,11 +63,17 @@ exclude = [
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "ANN", "RUF"]
+# S = flake8-bandit (SAST): flags shell=True, eval, unsafe yaml.load, requests
+# without timeout, etc. The shipped package (json2vars_setter) is clean today;
+# the rule keeps it that way.
+select = ["E", "F", "I", "B", "ANN", "RUF", "S"]
 # ANN401 (ban typing.Any in annotations) is intentionally kept on to enforce the
 # project-wide "no Any" rule, alongside mypy's disallow_any_explicit.
 ignore = ["E402", "E501"]
-per-file-ignores = {}
+# Bandit rules that are legitimate in the test suite, not production code:
+# S101 assert (pytest), S603/S607 subprocess (command-execution tests), and
+# S105 a fake "test-token" fixture string.
+per-file-ignores = { "tests/**" = ["S101", "S105", "S603", "S607"] }
 
 [tool.typos.files]
 extend-exclude = [
