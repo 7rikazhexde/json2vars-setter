@@ -1,36 +1,31 @@
 name: Auto-rebase Dependabot PRs
 
 # Why this exists:
-# When one pull request is merged into main, every other open PR falls behind
-# main. For Dependabot PRs this usually means a conflict on a lockfile
-# (package-lock.json / Gemfile.lock / go.sum / Cargo.lock / uv.lock), so the
-# remaining PRs can no longer be merged without a manual rebase. This workflow
-# asks Dependabot to rebase each of its still-open PRs automatically whenever
-# main advances, so you only ever have to click "Merge" - never rebase by hand.
+# When one PR is merged into main, every other open PR falls behind main. For
+# Dependabot PRs this usually means a conflict on a lockfile (package-lock.json /
+# Gemfile.lock / go.sum / Cargo.lock / uv.lock), so the remaining PRs can no
+# longer be merged without a manual rebase. This workflow asks Dependabot to
+# rebase each of its still-open PRs whenever main advances (or on demand), so you
+# only ever have to click "Merge" - never rebase by hand.
 #
-# Why a GitHub App token (and NOT the built-in GITHUB_TOKEN):
-# Comments posted with GITHUB_TOKEN are attributed to github-actions[bot], and
-# GitHub deliberately does NOT let that token trigger Dependabot - so a
-# "@dependabot rebase" comment made with GITHUB_TOKEN is silently ignored.
-# A GitHub App installation token is a distinct identity that Dependabot does
-# act on, while remaining the safest available credential:
-#   - Minted fresh for each run by actions/create-github-app-token and revoked
-#     automatically when the job ends (short-lived, no standing secret value).
-#   - Scoped to this single repository and to exactly one permission
-#     (Pull requests: write) - far narrower and safer than a personal access
-#     token, which is long-lived and tied to a human account.
-# The App token can ONLY comment on PRs; it has no contents/write access, so it
-# cannot push to any branch or merge anything. The rebase itself is performed by
-# Dependabot using its own credentials, so manifests AND lockfiles are
-# regenerated correctly. Merging stays 100% manual.
+# Why PAT_FOR_PUSHES (and NOT GITHUB_TOKEN or a GitHub App):
+# Dependabot only honors "@dependabot <command>" from a commenter that has push
+# (write) access to the repository, AND it must be a real user identity:
+#   - GITHUB_TOKEN comments are attributed to github-actions[bot]; GitHub does
+#     not let that token trigger Dependabot, so the comment is silently ignored.
+#   - A GitHub App installation token is also a bot identity. Even with Contents
+#     AND Pull requests = Read and write granted/approved, Dependabot still
+#     rejects it: "Sorry, only users with push access can use that command"
+#     (verified on this repo). GitHub Apps cannot drive Dependabot commands.
+# So we comment with PAT_FOR_PUSHES - a personal access token of the repo owner,
+# a real user with push access - which Dependabot accepts. The PAT only posts a
+# comment; the rebase itself is performed by Dependabot with its own credentials,
+# so manifests AND lockfiles regenerate correctly. Merging stays 100% manual.
+# (PAT_FOR_PUSHES is already used by other workflows in this repo, e.g.
+# semantic-release and the post-Dependabot update jobs.)
 #
-# One-time setup required (see also docs):
-#   1. Create a GitHub App (Settings > Developer settings > GitHub Apps).
-#      Repository permissions: Pull requests = Read and write. Nothing else.
-#   2. Install the App on the 7rikazhexde/json2vars-setter repository only.
-#   3. Add two repository secrets:
-#        DEPENDABOT_REBASE_APP_ID       = the App's "App ID"
-#        DEPENDABOT_REBASE_PRIVATE_KEY  = the App's generated private key (.pem)
+# Setup: add the repository secret PAT_FOR_PUSHES (a token of a user with write
+# access to this repository). No GitHub App is required.
 
 on:
   push:
@@ -46,40 +41,31 @@ concurrency:
   group: dependabot-auto-rebase
   cancel-in-progress: true
 
-# No top-level permissions are needed: the job acts solely through the
-# short-lived GitHub App token minted below, not through GITHUB_TOKEN.
+# No GITHUB_TOKEN scopes are needed: the job acts solely through PAT_FOR_PUSHES.
 permissions: {}
 
 jobs:
   rebase:
     runs-on: ubuntu-latest
     steps:
-      # Allow this workflow to be merged before the App credentials are added:
-      # if they are missing, skip quietly instead of failing on every push.
-      - name: Check that App credentials are configured
+      # If the PAT secret is absent, skip quietly instead of failing on every
+      # push (e.g. on a fork that has no PAT_FOR_PUSHES).
+      - name: Check that PAT_FOR_PUSHES is configured
         id: check
         env:
-          APP_ID: ${{ secrets.DEPENDABOT_REBASE_APP_ID }}
+          PAT: ${{ secrets.PAT_FOR_PUSHES }}
         run: |
-          if [ -z "${APP_ID}" ]; then
-            echo "DEPENDABOT_REBASE_APP_ID is not set; skipping (see setup notes)."
+          if [ -z "${PAT}" ]; then
+            echo "PAT_FOR_PUSHES is not set; skipping."
             echo "configured=false" >> "${GITHUB_OUTPUT}"
           else
             echo "configured=true" >> "${GITHUB_OUTPUT}"
           fi
 
-      - name: Mint a short-lived GitHub App token
-        id: app-token
-        if: steps.check.outputs.configured == 'true'
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
-        with:
-          app-id: ${{ secrets.DEPENDABOT_REBASE_APP_ID }}
-          private-key: ${{ secrets.DEPENDABOT_REBASE_PRIVATE_KEY }}
-
       - name: Ask Dependabot to rebase its open PRs
         if: steps.check.outputs.configured == 'true'
         env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.PAT_FOR_PUSHES }}
           GH_REPO: ${{ github.repository }}
         run: |
           # Collect every open PR opened by Dependabot by its branch prefix.
