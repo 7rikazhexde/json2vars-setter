@@ -82,14 +82,16 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_REPO: ${{ github.repository }}
         run: |
-          # Collect every open PR opened by Dependabot. Filtering on the author
-          # login (rather than --author) keeps this robust regardless of how the
-          # bot account is referenced.
+          # Collect every open PR opened by Dependabot by its branch prefix.
+          # Dependabot always names its branches "dependabot/<ecosystem>/...",
+          # which is stable across gh versions — unlike the author login, which
+          # gh reports as "app/dependabot" (>= 2.x), not "dependabot[bot]", so an
+          # exact author-login match silently finds nothing.
           mapfile -t prs < <(
             gh pr list \
               --state open \
-              --json number,author \
-              --jq '.[] | select(.author.login == "dependabot[bot]") | .number'
+              --json number,headRefName \
+              --jq '.[] | select(.headRefName | startswith("dependabot/")) | .number'
           )
 
           if [ "${#prs[@]}" -eq 0 ]; then
