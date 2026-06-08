@@ -3,7 +3,8 @@ version: 2
 # Update policy
 # - The shipped Python package (pip) and GitHub Actions are updated daily,
 #   including major versions, so the action itself stays current and secure.
-# - The language examples (npm / bundler / gomod / cargo) are demos. They are
+# - The language examples (npm / bundler / gomod / cargo / composer / nuget /
+#   maven / pub / swift) are demos. They are
 #   updated weekly and **major-version bumps are ignored**, because a major bump
 #   can raise a dependency's required language runtime above what the example
 #   test matrix covers (e.g. parallel 1.x -> 2.1.0 requiring Ruby >= 3.3; see
@@ -66,6 +67,76 @@ updates:
   # Rust dependencies (example)
   - package-ecosystem: "cargo"
     directory: "/examples/rust"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 10
+
+  # PHP dependencies (example)
+  - package-ecosystem: "composer"
+    directory: "/examples/php"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 10
+
+  # .NET (C#) dependencies (example)
+  - package-ecosystem: "nuget"
+    directory: "/examples/dotnet"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 10
+
+  # Java dependencies (example)
+  - package-ecosystem: "maven"
+    directory: "/examples/java"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 10
+
+  # Dart dependencies (example)
+  - package-ecosystem: "pub"
+    directory: "/examples/dart"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 10
+
+  # Swift dependencies (example)
+  - package-ecosystem: "swift"
+    directory: "/examples/swift"
     schedule:
       interval: "weekly"
     groups:
