@@ -120,7 +120,15 @@ or the addition is incomplete:
 6. **Example project** — `examples/<lang>/`: a small JSON-parser project with source,
    tests, `<lang>_project_matrix.json`, build config, and `README.md` (mirror
    `examples/ruby/`). The matrix versions must be in the format the language's
-   `setup-*` action accepts.
+   `setup-*` action accepts. **Also decide on Dependabot coverage**: if the example
+   ships a dependency manifest that Dependabot supports (e.g. `composer.json`→`composer`,
+   `*.csproj`→`nuget`, `pom.xml`→`maven`, `pubspec.yaml`→`pub`, `Package.swift`→`swift`,
+   `go.mod`→`gomod`, `Cargo.toml`→`cargo`, `package.json`→`npm`, `Gemfile`→`bundler`), add a
+   matching `package-ecosystem` block in `.github/dependabot.yml` mirroring the existing
+   example entries (weekly, grouped `*`, **major-version bumps ignored**, limit 10).
+   Languages whose manifest Dependabot does **not** support — crystal (shards), haskell
+   (cabal), julia (Pkg), ocaml (opam), deno, zig — get **no** entry; note that in the PR so
+   the omission is intentional, not drift.
 7. **Example CI workflow** — `.github/workflows/<lang>_test.yml` (mirror
    `ruby_test.yml`): `set_variables` → `run_tests` (matrix) → `update_badge`. The
    `update_badge` job needs a **dedicated gist** (`<lang>-test-badge.json`, written via
