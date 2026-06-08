@@ -87,5 +87,11 @@ jobs:
 
           for pr in "${prs[@]}"; do
             echo "Requesting rebase for PR #${pr}"
-            gh pr comment "${pr}" --body "@dependabot rebase"
+            # Post via the REST issue-comments endpoint, NOT `gh pr comment`:
+            # `gh pr comment` uses the GraphQL `addComment` mutation, which a
+            # fine-grained PAT cannot call ("Resource not accessible by personal
+            # access token"), even with Pull requests / Issues = write. The REST
+            # endpoint works with a fine-grained PAT that has Issues: write.
+            gh api --method POST "repos/${GH_REPO}/issues/${pr}/comments" \
+              -f "body=@dependabot rebase"
           done
