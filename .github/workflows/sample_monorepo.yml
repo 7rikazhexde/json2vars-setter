@@ -24,6 +24,9 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  contents: read
+
 jobs:
   # --- Backend project: its own JSON -> its own Python matrix ---------------
   backend_vars:
