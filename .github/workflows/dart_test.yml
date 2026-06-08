@@ -149,6 +149,7 @@ jobs:
 
       - name: Create badge
         uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        continue-on-error: true
         with:
           auth: ${{ secrets.GIST_TOKEN }}
           gistID: 838b360075fcd8c54f8ccdb2a8ff2e88
