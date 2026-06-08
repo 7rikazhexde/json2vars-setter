@@ -1,3 +1,5 @@
+# [v1.10.2](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.1...v1.10.2) (2026-06-08)
+
 # [v1.10.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.0...v1.10.1) (2026-06-08)
 
 ## 🔒 Security Issues
