@@ -36,7 +36,7 @@ its newest 3 cached versions, so a large cache can back a small matrix.
 
 ```bash
 uv run json2vars cache-version --template-only \
-  --languages python nodejs --output-count 3 \
+  --languages python --languages nodejs --output-count 3 \
   --cache-file .github/json2vars-setter/cache/version_cache.json \
   --template-file out-matrix.json
 cat out-matrix.json
@@ -46,7 +46,7 @@ cat out-matrix.json
 
 ```powershell
 uv run json2vars cache-version --template-only `
-  --languages python nodejs --output-count 3 `
+  --languages python --languages nodejs --output-count 3 `
   --cache-file .github/json2vars-setter/cache/version_cache.json `
   --template-file out-matrix.json
 Get-Content out-matrix.json

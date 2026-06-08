@@ -2,11 +2,18 @@
 Tests for json2vars_setter.cli
 """
 
-import pytest
-from pytest_mock import MockerFixture
-from typer.testing import CliRunner
+from typing import cast
 
-from json2vars_setter.cli import app
+import click
+import pytest
+from click.testing import CliRunner
+from pytest_mock import MockerFixture
+
+from json2vars_setter.cli import app as _typer_group
+
+# `app` is a Typer/Click group at runtime; cast it to ``click.Group`` so the
+# stdlib-style ``click.testing.CliRunner`` and ``.commands`` access type-check.
+app = cast("click.Group", _typer_group)
 
 runner = CliRunner()
 
@@ -48,8 +55,8 @@ def test_version_option() -> None:
     assert "json2vars-setter" in result.stdout
 
 
-def test_parse_passthrough(mocker: MockerFixture) -> None:
-    """parse forwards the JSON path (and flags) to github_output.main in-process"""
+def test_parse_forwards_file_and_debug(mocker: MockerFixture) -> None:
+    """parse forwards the JSON path (and --debug) to github_output.main in-process"""
     mock_main = mocker.patch("json2vars_setter.cli.github_output.main")
 
     result = runner.invoke(app, ["parse", "matrix.json", "--debug"])
@@ -58,8 +65,18 @@ def test_parse_passthrough(mocker: MockerFixture) -> None:
     mock_main.assert_called_once_with(["matrix.json", "--debug"])
 
 
-def test_cache_version_passthrough(mocker: MockerFixture) -> None:
-    """cache-version forwards all extra args to version_cache.main in-process"""
+def test_parse_without_debug(mocker: MockerFixture) -> None:
+    """parse omits --debug when the flag is not given"""
+    mock_main = mocker.patch("json2vars_setter.cli.github_output.main")
+
+    result = runner.invoke(app, ["parse", "matrix.json"])
+
+    assert result.exit_code == 0
+    mock_main.assert_called_once_with(["matrix.json"])
+
+
+def test_cache_version_bridges_options(mocker: MockerFixture) -> None:
+    """cache-version reconstructs an argv list for version_cache.main"""
     mock_main = mocker.patch("json2vars_setter.cli.version_cache.main")
 
     result = runner.invoke(app, ["cache-version", "--languages", "python", "--force"])
@@ -68,21 +85,113 @@ def test_cache_version_passthrough(mocker: MockerFixture) -> None:
     mock_main.assert_called_once_with(["--languages", "python", "--force"])
 
 
-def test_update_matrix_passthrough(mocker: MockerFixture) -> None:
-    """update-matrix forwards all extra args to matrix_update.main in-process"""
-    mock_main = mocker.patch("json2vars_setter.cli.matrix_update.main")
+def test_cache_version_repeated_languages_and_typed_options(
+    mocker: MockerFixture,
+) -> None:
+    """Repeated --languages collapses to one flag; int/Path options round-trip"""
+    mock_main = mocker.patch("json2vars_setter.cli.version_cache.main")
 
-    result = runner.invoke(app, ["update-matrix", "--all", "latest"])
+    result = runner.invoke(
+        app,
+        [
+            "cache-version",
+            "--languages",
+            "python",
+            "--languages",
+            "nodejs",
+            "--max-age",
+            "7",
+            "--cache-file",
+            "cache.json",
+            "--template-only",
+        ],
+    )
 
     assert result.exit_code == 0
-    mock_main.assert_called_once_with(["--all", "latest"])
+    mock_main.assert_called_once_with(
+        [
+            "--languages",
+            "python",
+            "nodejs",
+            "--max-age",
+            "7",
+            "--cache-file",
+            "cache.json",
+            "--template-only",
+        ]
+    )
 
 
-def test_systemexit_help_returns_zero(mocker: MockerFixture) -> None:
-    """A SystemExit with code 0 (e.g. --help) is treated as success"""
+def test_update_matrix_bridges_options(mocker: MockerFixture) -> None:
+    """update-matrix reconstructs an argv list for matrix_update.main"""
+    mock_main = mocker.patch("json2vars_setter.cli.matrix_update.main")
+
+    result = runner.invoke(app, ["update-matrix", "--all", "latest", "--dry-run"])
+
+    assert result.exit_code == 0
+    mock_main.assert_called_once_with(["--all", "latest", "--dry-run"])
+
+
+def test_update_matrix_no_options_yields_empty_argv(mocker: MockerFixture) -> None:
+    """With no options set, the reconstructed argv is empty"""
+    mock_main = mocker.patch("json2vars_setter.cli.matrix_update.main")
+
+    result = runner.invoke(app, ["update-matrix"])
+
+    assert result.exit_code == 0
+    mock_main.assert_called_once_with([])
+
+
+def test_completion_exposes_options() -> None:
+    """The bridged commands expose their argparse options as Click params"""
+    cache = app.commands["cache-version"]
+    names = {opt for p in cache.params for opt in p.opts}
+    assert {"--languages", "--max-age", "--cache-file", "--template-only"} <= names
+
+    matrix = app.commands["update-matrix"]
+    matrix_names = {opt for p in matrix.params for opt in p.opts}
+    assert {"--python", "--all", "--dry-run"} <= matrix_names
+
+
+def test_option_values_complete() -> None:
+    """Choice-valued options complete their values (not just the option names).
+
+    This is the behaviour the argparse->Typer bridge exists for: building the
+    bridged params as ``TyperOption`` with a ``shell_complete`` callback lets
+    ``--languages <TAB>`` / ``--python <TAB>`` offer their choices. (Plain
+    ``click.Option`` params complete option *names* but never their values.)
+    """
+    from typer._completion_classes import PowerShellComplete
+
+    completer = PowerShellComplete(_typer_group, {}, "json2vars", "_JSON2VARS_COMPLETE")
+
+    # cache-version --languages -> the supported languages (+ "all")
+    langs = [
+        item.value
+        for item in completer.get_completions(["cache-version", "--languages"], "")
+    ]
+    assert "python" in langs
+    assert "all" in langs
+    # prefix filtering works
+    py = [
+        item.value
+        for item in completer.get_completions(["cache-version", "--languages"], "py")
+    ]
+    assert py == ["python"]
+
+    # update-matrix --python -> stable/latest/both
+    strategies = [
+        item.value
+        for item in completer.get_completions(["update-matrix", "--python"], "")
+    ]
+    assert set(strategies) == {"stable", "latest", "both"}
+
+
+def test_systemexit_zero_returns_zero(mocker: MockerFixture) -> None:
+    """A SystemExit with code 0 from the feature main is treated as success"""
     mocker.patch("json2vars_setter.cli.version_cache.main", side_effect=SystemExit(0))
 
-    result = runner.invoke(app, ["cache-version", "--help"])
+    result = runner.invoke(app, ["cache-version", "--template-only"])
 
     assert result.exit_code == 0
 
@@ -128,9 +237,9 @@ def test_generic_error_reported(mocker: MockerFixture) -> None:
     result = runner.invoke(app, ["cache-version"])
 
     assert result.exit_code == 1
-    # The error message is written to stderr via typer.echo(err=True);
-    # Click >=8.2 keeps stderr separate from stdout in CliRunner.
-    assert "Error: Failed to execute version_cache" in result.stderr
+    # The error message is written to stderr via typer.echo(err=True) and names
+    # the command that failed.
+    assert "Error: Failed to execute cache-version" in result.stderr
 
 
 if __name__ == "__main__":

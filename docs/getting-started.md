@@ -65,15 +65,19 @@ Each line is one workflow output: the full JSON list (`VERSIONS_PYTHON`), each i
 
 ### Tab completion (bash & PowerShell)
 
-The CLI ships shell completion for the command names (`parse`, `update-matrix`,
-`cache-version`, `usage`). Install it once with the built-in command, which
+The CLI ships shell completion for the commands (`parse`, `update-matrix`,
+`cache-version`, `usage`) **and their options** — `json2vars cache-version --<TAB>`
+lists `--languages`, `--max-age`, …, and value completion works too
+(`--languages <TAB>` → the supported languages, `--python <TAB>` →
+`stable/latest/both`). Install it once with the built-in command, which
 auto-detects your shell:
 
 ```bash
 json2vars --install-completion
 ```
 
-Then restart the shell. Typing `json2vars <TAB>` now lists the subcommands.
+Then restart the shell. Typing `json2vars <TAB>` now lists the subcommands, and
+each subcommand completes its own options.
 
 To wire it up by hand (or inspect what gets installed), print the script with
 `json2vars --show-completion` and add it to your shell profile:
@@ -92,11 +96,12 @@ To wire it up by hand (or inspect what gets installed), print the script with
     json2vars --show-completion | Out-String | Add-Content $PROFILE
     ```
 
-!!! note "Command names only"
-    Completion covers the **subcommand names**. Per-command options
-    (`--languages`, `--max-age`, `--cache-file`, …) are forwarded to each
-    feature's own parser, so they do **not** tab-complete — run
-    `json2vars <command> --help` (e.g. `json2vars cache-version --help`) to list them.
+!!! note "Multi-value `--languages`"
+    Because options are completed one value at a time, pass several languages by
+    **repeating the flag** when using the `json2vars` script:
+    `json2vars cache-version --languages python --languages nodejs`. (The
+    `python -m json2vars_setter.features.version_cache --languages python nodejs`
+    form still accepts the space-separated list.)
 
 ## Basic Setup
 
