@@ -66,35 +66,75 @@ Each line is one workflow output: the full JSON list (`VERSIONS_PYTHON`), each i
 ### Tab completion (bash & PowerShell)
 
 The CLI ships shell completion for the commands (`parse`, `update-matrix`,
-`cache-version`, `usage`) **and their options** — `json2vars cache-version --<TAB>`
-lists `--languages`, `--max-age`, …, and value completion works too
-(`--languages <TAB>` → the supported languages, `--python <TAB>` →
-`stable/latest/both`). Install it once with the built-in command, which
-auto-detects your shell:
+`cache-version`, `usage`), **their options, and option values**:
+
+- `json2vars <TAB>` → the subcommands
+- `json2vars cache-version -<TAB>` → that command's options (`--languages`,
+  `--max-age`, …). Type a leading `-` first — option names only complete once the
+  current word starts with a dash (standard Click/Typer behaviour).
+- `json2vars cache-version --languages <TAB>` → the supported languages;
+  `json2vars update-matrix --python <TAB>` → `stable/latest/both`
+
+#### bash
+
+Install once with the built-in command (it auto-detects your shell), then restart
+the shell:
 
 ```bash
 json2vars --install-completion
 ```
 
-Then restart the shell. Typing `json2vars <TAB>` now lists the subcommands, and
-each subcommand completes its own options.
+Or wire it up by hand:
 
-To wire it up by hand (or inspect what gets installed), print the script with
-`json2vars --show-completion` and add it to your shell profile:
+```bash
+json2vars --show-completion >> ~/.bashrc
+```
 
-=== "bash"
+#### PowerShell
 
-    ```bash
-    # Append the generated script to your shell profile, then restart the shell
-    json2vars --show-completion >> ~/.bashrc
-    ```
+Add the block below to your `$PROFILE` (open it with `notepad $PROFILE`), then
+restart the shell:
 
-=== "PowerShell"
+```powershell
+$json2varsCompleter = {
+    param($wordToComplete, $commandAst, $cursorPosition)
+    $Env:_JSON2VARS_COMPLETE = "complete_powershell"
+    $Env:_TYPER_COMPLETE_ARGS = $commandAst.ToString()
+    $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = $wordToComplete
+    try {
+        json2vars | Where-Object { $_ -like '*:::*' } | ForEach-Object {
+            $i = $_.IndexOf(':::')
+            $value = $_.Substring(0, $i)
+            if ([string]::IsNullOrWhiteSpace($value)) { return }
+            $help = $_.Substring($i + 3).Trim()
+            if ([string]::IsNullOrWhiteSpace($help)) { $help = $value }
+            [System.Management.Automation.CompletionResult]::new(
+                $value, $value, 'ParameterValue', $help)
+        }
+    } finally {
+        $Env:_JSON2VARS_COMPLETE = ""
+        $Env:_TYPER_COMPLETE_ARGS = ""
+        $Env:_TYPER_COMPLETE_WORD_TO_COMPLETE = ""
+    }
+}
+Register-ArgumentCompleter -Native -CommandName json2vars -ScriptBlock $json2varsCompleter
+```
 
-    ```powershell
-    # Append the generated script to your $PROFILE, then restart the shell
-    json2vars --show-completion | Out-String | Add-Content $PROFILE
-    ```
+!!! note "Why not `json2vars --show-completion` on PowerShell?"
+    Typer's generated PowerShell completer splits each candidate on `:::` and
+    builds a `CompletionResult` whose tooltip must be non-empty. When an option's
+    help is long, Typer wraps it across lines; the wrapped fragment has no `:::`,
+    so the tooltip is empty and `CompletionResult` **throws** — making a whole
+    command (e.g. `cache-version`) return *no* completions, and leaking the
+    completion env vars to boot. The block above keeps only lines containing
+    `:::`, splits on the first one, falls back to the value for an empty tooltip,
+    and resets the env vars in `finally`, so it stays robust.
+
+!!! tip "Seeing the candidate menu (PowerShell)"
+    PowerShell's default `Tab` inserts the first match and cycles one at a time.
+    To pop up a **navigable menu** and pick with the arrow keys, press
+    **Ctrl+Space** (PSReadLine's built-in `MenuComplete`) — no keybinding change
+    needed, so your existing key setup is left untouched.
 
 !!! note "Multi-value `--languages`"
     Because options are completed one value at a time, pass several languages by
