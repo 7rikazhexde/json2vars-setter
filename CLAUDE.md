@@ -59,6 +59,27 @@ All `uses:` actions in `.github/workflows/**` and `action.yml` are pinned to com
 SHAs (with the version tag as a trailing comment) — except the self-reference
 `uses: 7rikazhexde/json2vars-setter@vX.Y.Z`, which the Versioning Rule keeps as a tag.
 
+### Dependabot PR safety gate
+
+A passing test run shows the code still works; it does **not** prove a dependency bump
+is safe to merge. Four layers decide that, and **merging always stays manual** (repo
+auto-merge is disabled):
+
+1. **`cooldown`** (in `.github/dependabot.yml`) delays every bump until the release has
+   been public for a few days (longer for major), so a freshly-published / compromised
+   version is not pulled the instant it ships.
+2. **`dependency-review.yml`** (on every PR to `main`) fails the PR if the dependency diff
+   introduces a vulnerability ≥ moderate (GitHub Advisory DB). No-op on PRs with no
+   manifest change, so it is cheap to run on everything.
+3. **`dependabot-metadata.yml`** (`pull_request_target`, Dependabot PRs only) labels each
+   PR by semver bump (`dependency:patch` vs `dependency:major`) so the risk is obvious at a
+   glance. It only labels — it never checks out the PR's code, and never merges.
+4. **`dependabot-auto-rebase.yml`** only *rebases* open Dependabot PRs so they stay
+   mergeable (see [[dependabot-auto-rebase-setup]] in memory); a human still clicks Merge.
+
+`dependency-review` should be a **required** status check in branch protection so the gate
+cannot be skipped (branch protection is configured in the repo settings, not in-repo).
+
 ## Architecture
 
 ### Three Feature Modules (`json2vars_setter/features/`)
