@@ -50,6 +50,7 @@ jobs:
           echo "versions_python[1]: ${{ fromJson(steps.json2vars.outputs.versions_python)[1] }}"
           echo "versions_python[2]: ${{ fromJson(steps.json2vars.outputs.versions_python)[2] }}"
           echo "versions_python[3]: ${{ fromJson(steps.json2vars.outputs.versions_python)[3] }}"
+          echo "versions_python[4]: ${{ fromJson(steps.json2vars.outputs.versions_python)[4] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:
@@ -107,6 +108,7 @@ jobs:
           versions_python_1="${{ fromJson(needs.set_variables.outputs.versions_python)[1] }}"
           versions_python_2="${{ fromJson(needs.set_variables.outputs.versions_python)[2] }}"
           versions_python_3="${{ fromJson(needs.set_variables.outputs.versions_python)[3] }}"
+          versions_python_4="${{ fromJson(needs.set_variables.outputs.versions_python)[4] }}"
 
           echo "os: ${os}"
           echo "os_0: ${os_0}"
@@ -117,6 +119,7 @@ jobs:
           echo "versions_python_1: ${versions_python_1}"
           echo "versions_python_2: ${versions_python_2}"
           echo "versions_python_3: ${versions_python_3}"
+          echo "versions_python_4: ${versions_python_4}"
           echo "ghpages_branch: ${ghpages_branch}"
 
           # For loop case

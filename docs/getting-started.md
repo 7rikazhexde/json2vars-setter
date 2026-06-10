@@ -180,7 +180,9 @@ Here's a basic example:
         "python": [
             "3.10",
             "3.11",
-            "3.12"
+            "3.12",
+            "3.13",
+            "3.14"
         ]
     },
     "ghpages_branch": "gh-pages"
@@ -188,6 +190,20 @@ Here's a basic example:
 ```
 
 You only need to include the languages your project uses. For example, if your project only uses Python, you don't need to include other languages like Ruby or Node.js.
+
+!!! tip "Python 3.15 (pre-release)"
+    The action just passes version strings through, so you can list any version your
+    `setup-*` action accepts — including **Python 3.15**, which is currently a
+    pre-release. Because `actions/setup-python` does not resolve a bare `"3.15"` to a
+    beta by default, add it to the list **and** set `allow-prereleases: true` on the
+    setup step:
+
+    ```yaml
+    - uses: actions/setup-python@v6.2.0
+      with:
+        python-version: ${{ matrix.python-version }}  # e.g. "3.15"
+        allow-prereleases: true
+    ```
 
 ### Step 2: Configure Your Workflow
 

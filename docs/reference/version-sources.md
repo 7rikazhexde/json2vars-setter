@@ -71,6 +71,10 @@ source the fetcher reads (see the Swift caveat below).
   list. Direct fit for the GitHub-tags fetcher.
 - **Characteristics:** pre-releases (`a`/`b`/`rc`) are excluded; `stable` is the previous
   minor line of `latest`.
+- **Pre-release versions (e.g. 3.15):** the fetcher only returns *stable* releases, so a
+  beta like `3.15` will not appear in `latest`/`stable` until it ships. You can still test
+  against it by listing it in the matrix JSON by hand and setting `allow-prereleases: true`
+  on `actions/setup-python` (see the tip in [Getting Started](../getting-started.md)).
 
 ### Node.js — `nodejs/node`
 
