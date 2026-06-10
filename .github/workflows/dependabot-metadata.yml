@@ -1,0 +1,65 @@
+name: Dependabot Metadata
+
+# Why this exists (part of the Dependabot-PR safety gate):
+# To judge a Dependabot PR at a glance, label it by the semver bump type so a
+# reviewer immediately sees the risk: patch/minor bumps are routine, a major bump
+# can change behaviour or raise a runtime requirement and warrants a closer look.
+# This does NOT auto-merge anything - it only annotates, so the human merge
+# decision is better informed (see also dependency-review.yml + the `cooldown`
+# in dependabot.yml).
+#
+# Why pull_request_target (and why it is safe here):
+# Dependabot PRs run with a read-only GITHUB_TOKEN under the normal `pull_request`
+# trigger, so they cannot add labels. `pull_request_target` runs in the context of
+# the base repo with a writable token, which is required to label the PR. It is
+# safe because this job NEVER checks out or executes the PR's code - it only reads
+# Dependabot's own metadata and calls the labels API.
+
+on:
+  pull_request_target:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    # Only act on PRs actually opened by Dependabot.
+    if: ${{ github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: meta
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Label the PR by update type
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          UPDATE_TYPE: ${{ steps.meta.outputs.update-type }}
+        run: |
+          # Ensure the labels exist (idempotent: create or update, never fail).
+          gh label create "dependencies"       --color "0366d6" --description "Dependency updates"                  --force
+          gh label create "dependency:patch"   --color "0e8a16" --description "Patch/minor bump (routine, low risk)" --force
+          gh label create "dependency:major"   --color "b60205" --description "Major bump (review carefully)"        --force
+
+          gh pr edit "${PR}" --add-label "dependencies"
+
+          case "${UPDATE_TYPE}" in
+            version-update:semver-patch|version-update:semver-minor)
+              echo "Patch/minor bump (${UPDATE_TYPE}) -> low risk"
+              gh pr edit "${PR}" --add-label "dependency:patch"
+              ;;
+            version-update:semver-major)
+              echo "Major bump (${UPDATE_TYPE}) -> review carefully"
+              gh pr edit "${PR}" --add-label "dependency:major"
+              ;;
+            *)
+              echo "Unknown/empty update type: '${UPDATE_TYPE}' (no risk label added)"
+              ;;
+          esac

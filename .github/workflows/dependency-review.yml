@@ -1,0 +1,40 @@
+name: Dependency Review
+
+# Why this exists (part of the Dependabot-PR safety gate):
+# A green test suite proves the code still works - it does NOT prove the
+# dependency change is safe to merge. This job inspects the *dependency diff* of
+# every PR (base..head) against the GitHub Advisory Database and fails the PR if
+# it introduces a dependency with a known vulnerability (>= moderate) or a denied
+# license. Combined with the metadata labels (dependabot-metadata.yml) and the
+# Dependabot `cooldown` in dependabot.yml, this is how we judge whether a bump is
+# actually safe to merge - merging itself stays 100% manual.
+#
+# It is a no-op on PRs that change no manifest/lockfile (e.g. docs-only PRs), so
+# it is cheap to run on everything. Public repo => the dependency graph and
+# review API are available at no cost.
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  # Needed only so the action can post its summary comment on a failing PR.
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Review dependency changes
+        uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          # Fail the PR on a newly introduced vulnerability of moderate severity
+          # or higher. Lower to 'low' to be stricter, raise to 'high' to be laxer.
+          fail-on-severity: moderate
+          # Post a readable summary into the PR only when the check fails.
+          comment-summary-in-pr: on-failure
