@@ -1,0 +1,164 @@
+name: Kotlin Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/kotlin/**'
+      - '.github/workflows/kotlin_test.yml'
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+# Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)
+# have no Node 24 release yet; this forces them onto Node 24 per GitHub guidance.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_kotlin: ${{ steps.json2vars.outputs.versions_kotlin }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        # Two-phase reference (see CLAUDE.md): the `versions_kotlin` output does
+        # not exist in the published tag until the release that adds Kotlin, so
+        # this introducing PR points at the in-repo action. Swap to
+        # 7rikazhexde/json2vars-setter@vX.Y.Z after that release.
+        uses: ./
+        with:
+          json-file: examples/kotlin/kotlin_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "versions_kotlin: ${{ steps.json2vars.outputs.versions_kotlin }}"
+          echo "versions_kotlin[0]: ${{ fromJson(steps.json2vars.outputs.versions_kotlin)[0] }}"
+          echo "versions_kotlin[1]: ${{ fromJson(steps.json2vars.outputs.versions_kotlin)[1] }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      # Run every matrix combination even if one fails so the aggregated job
+      # result reflects the status of the whole matrix (used by the badge).
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        kotlin-version: ${{ fromJson(needs.set_variables.outputs.versions_kotlin) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Kotlin ${{ matrix.kotlin-version }}
+        uses: fwilhe2/setup-kotlin@7163c92e0f906bdf586bd76b14143aa61d6b49e4 # v1.8
+        with:
+          version: ${{ matrix.kotlin-version }}
+
+      - name: Set timezone
+        uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Kotlin version
+        run: kotlinc -version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_kotlin='${{ needs.set_variables.outputs.versions_kotlin }}'
+
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+
+          versions_kotlin_0="${{ fromJson(needs.set_variables.outputs.versions_kotlin)[0] }}"
+          versions_kotlin_1="${{ fromJson(needs.set_variables.outputs.versions_kotlin)[1] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "versions_kotlin: ${versions_kotlin}"
+          echo "versions_kotlin_0: ${versions_kotlin_0}"
+          echo "versions_kotlin_1: ${versions_kotlin_1}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          kotlin_versions_list=$(echo "${versions_kotlin}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${kotlin_versions_list}; do
+              echo "Current OS: ${current_os}, Current Kotlin Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: kotlin_test
+        working-directory: ./examples/kotlin
+        shell: bash
+        # Compile the parser + its framework-free test runner into one jar, then
+        # run the test main class. A failed assertion exits non-zero and fails
+        # this matrix leg.
+        run: |
+          kotlinc JsonParser.kt JsonParserTest.kt -include-runtime -d app.jar
+          kotlin -classpath app.jar JsonParserTestKt
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          # needs.run_tests.result aggregates every matrix combination:
+          # 'success' only when all passed, 'failure' if any leg failed.
+          case "${{ needs.run_tests.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            failure)   status=failing;   color=cf222e ;;
+            cancelled) status=cancelled; color=808080 ;;
+            skipped)   status=skipped;   color=808080 ;;
+            *)         status=pending;   color=dbab09 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        continue-on-error: true
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 7ec331c450b87dd841209a48c2b55e9c
+          filename: kotlin-test-badge.json
+          label: Kotlin Test
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "kotlin"
+          logoColor: "white"

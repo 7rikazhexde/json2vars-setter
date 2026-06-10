@@ -40,7 +40,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 - **JSON Parsing**: Convert JSON files into GitHub Actions output variables for use in your workflows
 - **Dynamic Version Management**: Automatically update your testing matrix with latest language versions from official sources
 - **Version Caching**: Cache version information to reduce API calls and improve workflow performance
-- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, Julia, Crystal, Haskell, and OCaml
+- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, Julia, Crystal, Haskell, OCaml, and Kotlin
 - **Flexible Configuration**: Maintain a single source of truth for your matrix testing environments
 
 ## Supported Matrix Components
@@ -65,6 +65,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![Crystal](https://img.shields.io/badge/Crystal-000000?style=flat&logo=crystal&logoColor=white) | [![install-crystal](https://img.shields.io/badge/install--crystal-000000?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/install-crystal) | [![Crystal Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/crystal_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/crystal_test.yml) |
 | ![Haskell](https://img.shields.io/badge/Haskell-5e5086?style=flat&logo=haskell&logoColor=white) | [![setup-haskell](https://img.shields.io/badge/setup--haskell-5e5086?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/setup-haskell) | [![Haskell Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/haskell_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/haskell_test.yml) |
 | ![OCaml](https://img.shields.io/badge/OCaml-EC6813?style=flat&logo=ocaml&logoColor=white) | [![setup-ocaml](https://img.shields.io/badge/setup--ocaml-EC6813?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/set-up-ocaml) | [![OCaml Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ocaml_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ocaml_test.yml) |
+| ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white) | [![setup-kotlin](https://img.shields.io/badge/setup--kotlin-7F52FF?style=flat&logo=github-actions&logoColor=white)](https://github.com/fwilhe2/setup-kotlin) | [![Kotlin Test](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/kotlin_test.yml/badge.svg)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/kotlin_test.yml) |
 
 ## Sample Workflows
 
