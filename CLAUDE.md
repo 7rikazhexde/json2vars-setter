@@ -228,6 +228,11 @@ Releases are **manually triggered** (`workflow_dispatch` on `semantic-release.ym
 
 - Matrix JSON: `.github/json2vars-setter/matrix.json`
 - Cache file: `.github/json2vars-setter/cache/version_cache.json`
+- **Refreshing the sample data** (`matrix.json`, `cache/`, `sample/matrix.json`): run the
+  `Refresh data files` workflow (`.github/workflows/refresh-data-files.yml`,
+  `workflow_dispatch`). It runs the version tooling on a Linux runner (the fetchers crash
+  on Windows OpenSSL locally) and opens a reviewable PR — never hand-edit the cache (its
+  per-release commit SHAs can only come from the fetchers).
 - Test fixtures: `tests/matrix_static.json`, `tests/python_project_matrix.json`
 - Docs site: `docs/` (MkDocs Material, deployed to GitHub Pages)
 - PowerShell completion script: `scripts/json2vars-completion.ps1`
