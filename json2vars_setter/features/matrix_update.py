@@ -330,6 +330,11 @@ Examples:
         help="Strategy for OCaml versions",
     )
     parser.add_argument(
+        "--kotlin",
+        choices=["stable", "latest", "both"],
+        help="Strategy for Kotlin versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -375,6 +380,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.crystal = args.all
         args.haskell = args.all
         args.ocaml = args.all
+        args.kotlin = args.all
 
     # Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -414,6 +420,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["haskell"] = args.haskell
     if args.ocaml:
         language_strategies["ocaml"] = args.ocaml
+    if args.kotlin:
+        language_strategies["kotlin"] = args.kotlin
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")

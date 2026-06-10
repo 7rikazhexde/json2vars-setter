@@ -34,6 +34,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `crystal-strategy` | Update strategy for Crystal versions | ✗ | - | Same valid values as `update-strategy` |
 | `haskell-strategy` | Update strategy for Haskell (GHC) versions | ✗ | - | Same valid values as `update-strategy` |
 | `ocaml-strategy` | Update strategy for OCaml versions | ✗ | - | Same valid values as `update-strategy` |
+| `kotlin-strategy` | Update strategy for Kotlin versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -76,6 +77,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_crystal` | List of Crystal versions | `["1.20.2", "1.19.2"]` |
 | `versions_haskell` | List of Haskell (GHC) versions | `["9.10.1", "9.8.4"]` |
 | `versions_ocaml` | List of OCaml versions | `["5.3.0", "5.2.1"]` |
+| `versions_kotlin` | List of Kotlin versions | `["2.4.0", "2.3.21"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes

@@ -205,6 +205,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `crystal-strategy` | Strategy for Crystal versions | No | - |
 | `haskell-strategy` | Strategy for Haskell (GHC) versions | No | - |
 | `ocaml-strategy` | Strategy for OCaml versions | No | - |
+| `kotlin-strategy` | Strategy for Kotlin versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -268,6 +269,7 @@ The Dynamic Matrix Updater currently supports:
 - **Crystal**: Fetches from Crystal releases via GitHub API
 - **Haskell**: Fetches from GHC releases via GitHub API
 - **OCaml**: Fetches from OCaml releases via GitHub API
+- **Kotlin**: Fetches from Kotlin releases via GitHub API (JetBrains/kotlin)
 
 ## Best Practices
 

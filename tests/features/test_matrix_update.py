@@ -314,6 +314,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "crystal": "stable",
             "haskell": "stable",
             "ocaml": "stable",
+            "kotlin": "stable",
         },
         False,
     )
@@ -353,6 +354,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "stable",
             "--ocaml",
             "latest",
+            "--kotlin",
+            "both",
             "--dry-run",
         ],
     )
@@ -376,6 +379,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "crystal": "latest",
             "haskell": "stable",
             "ocaml": "latest",
+            "kotlin": "both",
         },
         True,  # dry_run=True
     )

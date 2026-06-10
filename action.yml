@@ -77,6 +77,9 @@ inputs:
   ocaml-strategy:
     description: 'Update strategy for OCaml versions (stable, latest, or both)'
     required: false  # Optional
+  kotlin-strategy:
+    description: 'Update strategy for Kotlin versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -204,6 +207,9 @@ outputs:
   versions_ocaml:
     description: 'List of OCaml versions'
     value: ${{ steps.set_outputs.outputs.versions_ocaml }}
+  versions_kotlin:
+    description: 'List of Kotlin versions'
+    value: ${{ steps.set_outputs.outputs.versions_kotlin }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -306,6 +312,9 @@ runs:
           fi
           if [[ -n "${{ inputs.ocaml-strategy }}" ]]; then
             ARGS+=("--ocaml" "${{ inputs.ocaml-strategy }}")
+          fi
+          if [[ -n "${{ inputs.kotlin-strategy }}" ]]; then
+            ARGS+=("--kotlin" "${{ inputs.kotlin-strategy }}")
           fi
         fi
 
@@ -438,4 +447,5 @@ runs:
         echo "Crystal Versions: ${{ steps.set_outputs.outputs.versions_crystal }}"
         echo "Haskell Versions: ${{ steps.set_outputs.outputs.versions_haskell }}"
         echo "OCaml Versions: ${{ steps.set_outputs.outputs.versions_ocaml }}"
+        echo "Kotlin Versions: ${{ steps.set_outputs.outputs.versions_kotlin }}"
         echo "GitHub Pages Branch: ${{ steps.set_outputs.outputs.ghpages_branch }}"
