@@ -1,3 +1,12 @@
+# [v1.11.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.2...v1.11.0) (2026-06-10)
+
+## ✨ New Features
+- [`36a25c3`](https://github.com/7rikazhexde/json2vars-setter/commit/36a25c3)  feat: support Python 3.14 in CI matrix and document 3.15 (pre-release) (#568) (Issues: [`#568`](https://github.com/7rikazhexde/json2vars-setter/issues/568))
+- [`cb29ab7`](https://github.com/7rikazhexde/json2vars-setter/commit/cb29ab7)  feat: add Kotlin support (#571) (Issues: [`#571`](https://github.com/7rikazhexde/json2vars-setter/issues/571))
+
+## 🔒 Security Issues
+- [`bef26be`](https://github.com/7rikazhexde/json2vars-setter/commit/bef26be)  ci: add Dependabot PR merge-safety gate (dependency-review, metadata, cooldown) (#570) (Issues: [`#570`](https://github.com/7rikazhexde/json2vars-setter/issues/570))
+
 # [v1.10.2](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.1...v1.10.2) (2026-06-08)
 
 # [v1.10.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.0...v1.10.1) (2026-06-08)

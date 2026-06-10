@@ -32,7 +32,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.10.2
+        uses: 7rikazhexde/json2vars-setter@v1.11.0
         with:
           json-file: examples/php/php_project_matrix.json
 

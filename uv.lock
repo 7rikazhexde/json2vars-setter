@@ -397,7 +397,7 @@ wheels = [
 
 [[package]]
 name = "json2vars-setter"
-version = "1.10.2"
+version = "1.11.0"
 source = { editable = "." }
 dependencies = [
     { name = "requests" },
@@ -435,7 +435,7 @@ dev = [
     { name = "pytest-testmon", specifier = ">=2.1.4,<3.0.0" },
     { name = "ruff", specifier = ">=0.15.10,<0.16.0" },
     { name = "types-requests", specifier = ">=2.32.0,<3.0.0" },
-    { name = "zensical", specifier = ">=0.0.32,<0.0.45" },
+    { name = "zensical", specifier = ">=0.0.32,<0.0.46" },
 ]
 
 [[package]]
