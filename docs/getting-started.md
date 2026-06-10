@@ -271,15 +271,28 @@ test_matrix:
 
 The action provides the following outputs:
 
-| Output            | Description                |
-|-------------------|----------------------------|
-| `os`              | List of operating systems  |
-| `versions_python` | List of Python versions    |
-| `versions_ruby`   | List of Ruby versions      |
-| `versions_nodejs` | List of Node.js versions   |
-| `versions_go`     | List of Go versions        |
-| `versions_rust`   | List of Rust versions      |
-| `ghpages_branch`  | GitHub Pages branch name   |
+| Output             | Description                |
+|--------------------|----------------------------|
+| `os`               | List of operating systems  |
+| `versions_python`  | List of Python versions    |
+| `versions_ruby`    | List of Ruby versions      |
+| `versions_nodejs`  | List of Node.js versions   |
+| `versions_go`      | List of Go versions        |
+| `versions_rust`    | List of Rust versions      |
+| `versions_php`     | List of PHP versions       |
+| `versions_dotnet`  | List of .NET (C#) versions |
+| `versions_java`    | List of Java versions      |
+| `versions_deno`    | List of Deno versions      |
+| `versions_bun`     | List of Bun versions       |
+| `versions_zig`     | List of Zig versions       |
+| `versions_elixir`  | List of Elixir versions    |
+| `versions_dart`    | List of Dart versions      |
+| `versions_swift`   | List of Swift versions     |
+| `versions_julia`   | List of Julia versions     |
+| `versions_crystal` | List of Crystal versions   |
+| `versions_haskell` | List of Haskell versions   |
+| `versions_ocaml`   | List of OCaml versions     |
+| `ghpages_branch`   | GitHub Pages branch name   |
 
 !!! tip "How to refer to Output in subsequent steps or jobs"
 
