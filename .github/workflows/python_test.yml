@@ -9,7 +9,7 @@ on:
       - 'tests/**'
       - 'pyproject.toml'
       - 'uv.lock'
-      - '.github/json2vars-setter/python_test.yml'
+      - '.github/workflows/python_test.yml'
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
 # Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)

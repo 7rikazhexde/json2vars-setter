@@ -7,7 +7,6 @@ on:
     paths:
       - 'examples/nodejs/**'
       - '.github/workflows/nodejs_test.yml'
-      - '.github/json2vars-setter/nodejs_test.yml'
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
 # Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)

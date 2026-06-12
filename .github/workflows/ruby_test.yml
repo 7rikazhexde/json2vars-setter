@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/ruby/**'
-      - '.github/json2vars-setter/ruby_test.yml'
+      - '.github/workflows/ruby_test.yml'
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
 # Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)
