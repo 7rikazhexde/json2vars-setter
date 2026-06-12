@@ -32,11 +32,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        # Two-phase reference (see CLAUDE.md): the `versions_clang` output does
-        # not exist in the published tag until the release that adds Clang, so
-        # this introducing PR points at the in-repo action. Swap to
-        # 7rikazhexde/json2vars-setter@vX.Y.Z after that release.
-        uses: ./
+        uses: 7rikazhexde/json2vars-setter@v1.12.0
         with:
           json-file: examples/clang/clang_project_matrix.json
 
