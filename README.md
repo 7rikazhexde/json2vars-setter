@@ -40,7 +40,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 - **JSON Parsing**: Convert JSON files into GitHub Actions output variables for use in your workflows
 - **Dynamic Version Management**: Automatically update your testing matrix with latest language versions from official sources
 - **Version Caching**: Cache version information to reduce API calls and improve workflow performance
-- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, Julia, Crystal, Haskell, OCaml, Kotlin, and Clang/LLVM (C++)
+- **Support for Multiple Languages**: Compatible with Python, Ruby, Node.js, Go, Rust, PHP, .NET (C#), Java, Deno, Bun, Zig, Elixir, Dart, Swift, Julia, Crystal, Haskell, OCaml, Kotlin, and the Clang/LLVM and GCC C++ compilers
 - **Flexible Configuration**: Maintain a single source of truth for your matrix testing environments
 
 ## Supported Matrix Components
@@ -67,6 +67,7 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![OCaml](https://img.shields.io/badge/OCaml-EC6813?style=flat&logo=ocaml&logoColor=white) | [![setup-ocaml](https://img.shields.io/badge/setup--ocaml-EC6813?style=flat&logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/set-up-ocaml) | [![OCaml Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/ac8d039239f77264250f852a38143043/raw/ocaml-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/ocaml_test.yml) |
 | ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white) | [![kotlin-compiler](https://img.shields.io/badge/kotlin--compiler-7F52FF?style=flat&logo=kotlin&logoColor=white)](https://github.com/JetBrains/kotlin/releases) | [![Kotlin Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/7ec331c450b87dd841209a48c2b55e9c/raw/kotlin-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/kotlin_test.yml) |
 | ![Clang/LLVM](https://img.shields.io/badge/Clang%2FLLVM-262D3A?style=flat&logo=llvm&logoColor=white) | [![setup-cpp](https://img.shields.io/badge/setup--cpp-262D3A?style=flat&logo=github-actions&logoColor=white)](https://github.com/aminya/setup-cpp) | [![Clang Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/2c43b151be4ae76045051178ef6830e1/raw/clang-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/clang_test.yml) |
+| ![GCC](https://img.shields.io/badge/GCC-A42E2B?style=flat&logo=gnu&logoColor=white) | [![setup-cpp](https://img.shields.io/badge/setup--cpp-A42E2B?style=flat&logo=github-actions&logoColor=white)](https://github.com/aminya/setup-cpp) | [![GCC Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/34dd14046ac37ef6313c3c82daa6076a/raw/gcc-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/gcc_test.yml) |
 
 ## Sample Workflows
 

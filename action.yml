@@ -83,6 +83,9 @@ inputs:
   clang-strategy:
     description: 'Update strategy for Clang/LLVM versions (stable, latest, or both)'
     required: false  # Optional
+  gcc-strategy:
+    description: 'Update strategy for GCC versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -216,6 +219,9 @@ outputs:
   versions_clang:
     description: 'List of Clang/LLVM versions'
     value: ${{ steps.set_outputs.outputs.versions_clang }}
+  versions_gcc:
+    description: 'List of GCC versions'
+    value: ${{ steps.set_outputs.outputs.versions_gcc }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -324,6 +330,9 @@ runs:
           fi
           if [[ -n "${{ inputs.clang-strategy }}" ]]; then
             ARGS+=("--clang" "${{ inputs.clang-strategy }}")
+          fi
+          if [[ -n "${{ inputs.gcc-strategy }}" ]]; then
+            ARGS+=("--gcc" "${{ inputs.gcc-strategy }}")
           fi
         fi
 

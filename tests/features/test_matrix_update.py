@@ -316,6 +316,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "ocaml": "stable",
             "kotlin": "stable",
             "clang": "stable",
+            "gcc": "stable",
         },
         False,
     )
@@ -359,6 +360,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "both",
             "--clang",
             "latest",
+            "--gcc",
+            "stable",
             "--dry-run",
         ],
     )
@@ -384,6 +387,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "ocaml": "latest",
             "kotlin": "both",
             "clang": "latest",
+            "gcc": "stable",
         },
         True,  # dry_run=True
     )

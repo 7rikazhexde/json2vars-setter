@@ -63,6 +63,7 @@ source the fetcher reads (see the Swift caveat below).
 | OCaml | `ocaml/ocaml` tags (sorted) | newest stable | previous minor line | `ocaml/setup-ocaml` |
 | Kotlin | `JetBrains/kotlin` tags | newest stable | previous minor | JetBrains release zip (direct download) |
 | Clang | `llvm/llvm-project` tags | newest stable | previous line | `aminya/setup-cpp` |
+| GCC | `gcc-mirror/gcc` tags (sorted) | newest stable | previous major | `aminya/setup-cpp` |
 
 ## Per-language details
 
@@ -300,6 +301,21 @@ source the fetcher reads (see the Swift caveat below).
   inconsistently across versions/platforms, so the example uses
   [`aminya/setup-cpp`](https://github.com/aminya/setup-cpp) (the de-facto cross-platform
   compiler-install action) on `ubuntu`/`macos`.
+
+### GCC — `gcc-mirror/gcc`
+
+- **Source:** tags of the GCC mirror (`releases/gcc-X.Y.Z`).
+- **Why:** canonical source for the GCC compiler; the other dynamic C++ axis alongside
+  Clang.
+- **Characteristics:** the tag list interleaves release tags with `releases/libgcj-*`,
+  `releases/libf2c-*`, `vendors/*` and `basepoints/*` tags and is **not** reliably
+  newest-first, so the fetcher overrides `_get_github_tags` to filter to
+  `releases/gcc-X.Y.Z` and **sort by semantic version** (the Julia / Haskell / OCaml
+  pattern) before truncating. GCC's release **series is the major** (15.1.0 / 15.2.0 /
+  15.3.0 are all "GCC 15"), so `stable` is the newest release of the **previous major
+  series**, not the previous minor. There is no official GCC setup action, so the example
+  uses [`aminya/setup-cpp`](https://github.com/aminya/setup-cpp); GCC's apt/Homebrew
+  packaging is by major, so the example matrix pins majors (`14`, `13`).
 
 ## Adding another language
 

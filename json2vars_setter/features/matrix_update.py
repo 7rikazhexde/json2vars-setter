@@ -340,6 +340,11 @@ Examples:
         help="Strategy for Clang/LLVM versions",
     )
     parser.add_argument(
+        "--gcc",
+        choices=["stable", "latest", "both"],
+        help="Strategy for GCC versions",
+    )
+    parser.add_argument(
         "--all",
         choices=["stable", "latest", "both"],
         help="Apply the same strategy to all languages",
@@ -387,6 +392,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         args.ocaml = args.all
         args.kotlin = args.all
         args.clang = args.all
+        args.gcc = args.all
 
     #Collect language strategies
     language_strategies: Dict[str, str] = {}
@@ -430,6 +436,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         language_strategies["kotlin"] = args.kotlin
     if args.clang:
         language_strategies["clang"] = args.clang
+    if args.gcc:
+        language_strategies["gcc"] = args.gcc
 
     if not language_strategies:
         parser.error("At least one language strategy must be specified")
