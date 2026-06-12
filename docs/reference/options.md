@@ -37,6 +37,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `kotlin-strategy` | Update strategy for Kotlin versions | ✗ | - | Same valid values as `update-strategy` |
 | `clang-strategy` | Update strategy for Clang/LLVM versions | ✗ | - | Same valid values as `update-strategy` |
 | `gcc-strategy` | Update strategy for GCC versions | ✗ | - | Same valid values as `update-strategy` |
+| `flutter-strategy` | Update strategy for Flutter versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -82,6 +83,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_kotlin` | List of Kotlin versions | `["2.4.0", "2.3.21"]` |
 | `versions_clang` | List of Clang/LLVM versions | `["20.1.8", "19.1.7"]` |
 | `versions_gcc` | List of GCC versions | `["15.1.0", "14.3.0"]` |
+| `versions_flutter` | List of Flutter versions | `["3.44.2", "3.41.9"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes

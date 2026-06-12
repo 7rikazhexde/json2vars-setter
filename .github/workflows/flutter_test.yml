@@ -1,0 +1,167 @@
+name: Flutter Test
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/flutter/**'
+      - '.github/workflows/flutter_test.yml'
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+# Some pinned actions (szenius/set-timezone, mlugg/setup-zig, swift-actions/setup-swift)
+# have no Node 24 release yet; this forces them onto Node 24 per GitHub guidance.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  set_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_flutter: ${{ steps.json2vars.outputs.versions_flutter }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        # Two-phase reference (see CLAUDE.md): the `versions_flutter` output does
+        # not exist in the published tag until the release that adds Flutter, so
+        # this introducing PR points at the in-repo action. Swap to
+        # 7rikazhexde/json2vars-setter@vX.Y.Z after that release.
+        uses: ./
+        with:
+          json-file: examples/flutter/flutter_project_matrix.json
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "os[0]: ${{ fromJson(steps.json2vars.outputs.os)[0] }}"
+          echo "os[1]: ${{ fromJson(steps.json2vars.outputs.os)[1] }}"
+          echo "versions_flutter: ${{ steps.json2vars.outputs.versions_flutter }}"
+          echo "versions_flutter[0]: ${{ fromJson(steps.json2vars.outputs.versions_flutter)[0] }}"
+          echo "versions_flutter[1]: ${{ fromJson(steps.json2vars.outputs.versions_flutter)[1] }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  run_tests:
+    needs: set_variables
+    strategy:
+      # Run every matrix combination even if one fails so the aggregated job
+      # result reflects the status of the whole matrix (used by the badge).
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        flutter-version: ${{ fromJson(needs.set_variables.outputs.versions_flutter) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Flutter ${{ matrix.flutter-version }}
+        # No official Flutter setup action exists; subosito/flutter-action is the
+        # de-facto, actively-maintained action for installing a specific Flutter
+        # version (it also bundles the matching Dart SDK).
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: ${{ matrix.flutter-version }}
+          channel: stable
+
+      - name: Set timezone
+        uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+
+      - name: Display Flutter version
+        run: flutter --version
+
+      - name: Show matrix
+        shell: bash
+        run: |
+          # For non-list case
+          ghpages_branch="${{ needs.set_variables.outputs.ghpages_branch }}"
+
+          # For list case, explicitly enclose the list in "" to make it a string. (Note that it is not ''.)
+          os='${{ needs.set_variables.outputs.os }}'
+          versions_flutter='${{ needs.set_variables.outputs.versions_flutter }}'
+
+          # For list index case
+          os_0="${{ fromJson(needs.set_variables.outputs.os)[0] }}"
+          os_1="${{ fromJson(needs.set_variables.outputs.os)[1] }}"
+
+          versions_flutter_0="${{ fromJson(needs.set_variables.outputs.versions_flutter)[0] }}"
+          versions_flutter_1="${{ fromJson(needs.set_variables.outputs.versions_flutter)[1] }}"
+
+          echo "os: ${os}"
+          echo "os_0: ${os_0}"
+          echo "os_1: ${os_1}"
+          echo "versions_flutter: ${versions_flutter}"
+          echo "versions_flutter_0: ${versions_flutter_0}"
+          echo "versions_flutter_1: ${versions_flutter_1}"
+          echo "ghpages_branch: ${ghpages_branch}"
+
+          # For loop case
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          flutter_versions_list=$(echo "${versions_flutter}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          for current_os in ${os_list}; do
+            for version in ${flutter_versions_list}; do
+              echo "Current OS: ${current_os}, Current Flutter Version: ${version}"
+            done
+          done
+
+      - name: Run tests
+        id: flutter_test
+        working-directory: ./examples/flutter
+        shell: bash
+        # Resolve dependencies, then run the package's flutter_test suite.
+        # A failed expectation exits non-zero and fails this matrix leg.
+        run: |
+          flutter pub get
+          flutter test
+
+  update_badge:
+    needs: run_tests
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          # needs.run_tests.result aggregates every matrix combination:
+          # 'success' only when all passed, 'failure' if any leg failed.
+          case "${{ needs.run_tests.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            failure)   status=failing;   color=cf222e ;;
+            cancelled) status=cancelled; color=808080 ;;
+            skipped)   status=skipped;   color=808080 ;;
+            *)         status=pending;   color=dbab09 ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        continue-on-error: true
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 0415fe16fd46f42c662e433ee348cd9c
+          filename: flutter-test-badge.json
+          label: Flutter Test
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "flutter"
+          logoColor: "white"

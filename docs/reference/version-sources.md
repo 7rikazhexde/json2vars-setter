@@ -64,6 +64,7 @@ source the fetcher reads (see the Swift caveat below).
 | Kotlin | `JetBrains/kotlin` tags | newest stable | previous minor | JetBrains release zip (direct download) |
 | Clang | `llvm/llvm-project` tags | newest stable | previous line | `aminya/setup-cpp` |
 | GCC | `gcc-mirror/gcc` tags (sorted) | newest stable | previous major | `aminya/setup-cpp` |
+| Flutter | **Flutter release manifest** | newest stable | previous minor | `subosito/flutter-action` |
 
 ## Per-language details
 
@@ -316,6 +317,24 @@ source the fetcher reads (see the Swift caveat below).
   series**, not the previous minor. There is no official GCC setup action, so the example
   uses [`aminya/setup-cpp`](https://github.com/aminya/setup-cpp); GCC's apt/Homebrew
   packaging is by major, so the example matrix pins majors (`14`, `13`).
+
+### Flutter — official release manifest
+
+- **Source:** the official Flutter release manifest JSON
+  (`storage.googleapis.com/flutter_infra_release/releases/releases_linux.json`).
+- **Why:** the `flutter/flutter` GitHub tags are useless here (they return stale `1.x`
+  tags and are not newest-first). The manifest is the authoritative list of released
+  Flutter SDKs; the version numbers are platform-independent, so the Linux manifest is
+  sufficient (the fetcher overrides `fetch_versions` rather than reading GitHub tags,
+  like `dart.py` / `swift.py`).
+- **Characteristics:** the fetcher keeps the `stable`-channel entries with a clean
+  `X.Y.Z` version (older `1.x.y+hotfix.z` forms are excluded), de-duplicates and
+  semver-sorts them. Flutter's stable minors are not contiguous (e.g. 3.41 then 3.44),
+  so `stable` is the newest release on the **previous distinct `major.minor` line**.
+  Flutter bundles its own Dart SDK and is tracked as a separate language from `dart`.
+  There is no official Flutter setup action, so the example uses
+  [`subosito/flutter-action`](https://github.com/subosito/flutter-action) on
+  `ubuntu`/`macos`.
 
 ## Adding another language
 

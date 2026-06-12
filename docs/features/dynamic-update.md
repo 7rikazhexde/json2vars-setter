@@ -208,6 +208,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `kotlin-strategy` | Strategy for Kotlin versions | No | - |
 | `clang-strategy` | Strategy for Clang/LLVM versions | No | - |
 | `gcc-strategy` | Strategy for GCC versions | No | - |
+| `flutter-strategy` | Strategy for Flutter versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -274,6 +275,7 @@ The Dynamic Matrix Updater currently supports:
 - **Kotlin**: Fetches from Kotlin releases via GitHub API (JetBrains/kotlin)
 - **Clang**: Fetches from LLVM releases via GitHub API (llvm/llvm-project)
 - **GCC**: Fetches from GCC releases via GitHub API (gcc-mirror/gcc)
+- **Flutter**: Fetches from the official Flutter release manifest (stable channel)
 
 ## Best Practices
 

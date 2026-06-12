@@ -9,6 +9,7 @@ from json2vars_setter.version.fetchers.dart import DartVersionFetcher
 from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
 from json2vars_setter.version.fetchers.elixir import ElixirVersionFetcher
+from json2vars_setter.version.fetchers.flutter import FlutterVersionFetcher
 from json2vars_setter.version.fetchers.gcc import GccVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.haskell import HaskellVersionFetcher
@@ -49,6 +50,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("kotlin"), KotlinVersionFetcher)
     assert isinstance(get_version_fetcher("clang"), ClangVersionFetcher)
     assert isinstance(get_version_fetcher("gcc"), GccVersionFetcher)
+    assert isinstance(get_version_fetcher("flutter"), FlutterVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:

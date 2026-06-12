@@ -142,6 +142,10 @@ examples/nodejs/node_modules/
 # examples/ruby/libは除外から除く（含める）
 !examples/ruby/lib/
 
+# flutter: examples/flutter/lib is package source, not a build artifact — keep it
+!examples/flutter/lib/
+!examples/flutter/lib/**
+
 # rust
 # Compiled binary
 /target/
