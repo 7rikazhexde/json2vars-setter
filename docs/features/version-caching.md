@@ -64,7 +64,7 @@ graph TD
 !!! tip "\[*1\]: Specify language"
 
     - Specify languages separated by **spaces**; if `all` is specified (the default), all target languages are retrieved.
-    - Target languages: `python`, `nodejs`, `ruby`, `go`, `rust`, `php`, `dotnet`, `java`, `deno`, `bun`, `zig`, `elixir`, `dart`, `swift`, `julia`, `crystal`, `haskell`, `ocaml`, `kotlin`
+    - Target languages: `python`, `nodejs`, `ruby`, `go`, `rust`, `php`, `dotnet`, `java`, `deno`, `bun`, `zig`, `elixir`, `dart`, `swift`, `julia`, `crystal`, `haskell`, `ocaml`, `kotlin`, `clang`
 
 !!! tip "\[*2\]: specify a path"
 
@@ -86,7 +86,7 @@ graph TD
 | `--force` | Force update regardless of existing cache | None |
 | `--max-age N` | Update cache only after N days<br>Compares with `last_updated` value in existing cache | 1 day |
 | `--incremental` | Add new versions to existing cache (build history) | None |
-| `--languages` | Specify target languages<br>Separate multiple languages with spaces<br>Supported: python, nodejs, ruby, go, rust, php, dotnet, java, deno, bun, zig, elixir, dart, swift, julia, crystal, haskell, ocaml, kotlin | all |
+| `--languages` | Specify target languages<br>Separate multiple languages with spaces<br>Supported: python, nodejs, ruby, go, rust, php, dotnet, java, deno, bun, zig, elixir, dart, swift, julia, crystal, haskell, ocaml, kotlin, clang | all |
 | `--count N` | Number of versions to fetch and cache per language | 10 |
 | `--output-count N` | Number of versions to include in output template<br>When 0 or not specified, uses the value of `--count` | 0 |
 | `--keep-existing` | Maintain information for non-specified languages | None |

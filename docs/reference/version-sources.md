@@ -62,6 +62,7 @@ source the fetcher reads (see the Swift caveat below).
 | Haskell | `ghc/ghc` tags (sorted) | newest stable | previous minor line | `haskell-actions/setup` |
 | OCaml | `ocaml/ocaml` tags (sorted) | newest stable | previous minor line | `ocaml/setup-ocaml` |
 | Kotlin | `JetBrains/kotlin` tags | newest stable | previous minor | JetBrains release zip (direct download) |
+| Clang | `llvm/llvm-project` tags | newest stable | previous line | `aminya/setup-cpp` |
 
 ## Per-language details
 
@@ -282,6 +283,23 @@ source the fetcher reads (see the Swift caveat below).
   rather than depending on the third-party (and self-deprecated) `fwilhe2/setup-kotlin`.
   It targets `ubuntu`/`macos` (the Kotlin CLI is driven from a `bash` step, where the
   Windows `kotlinc.bat` is brittle; the compiled JVM bytecode is platform-independent).
+
+### Clang — `llvm/llvm-project`
+
+- **Source:** tags of the LLVM monorepo (`llvmorg-X.Y.Z`).
+- **Why:** canonical source for the Clang/LLVM compiler; the axis real C++ CI matrices
+  vary over. (The C++ language *standard* — `-std=c++17/20/23` — is a static list you
+  hand-write in your matrix JSON, so it needs no fetcher.)
+- **Characteristics:** release candidates carry a `-rcN` suffix and each dev cycle opens
+  with a non-release `llvmorg-NN-init` tag, both rejected by the anchored
+  `^llvmorg-\d+\.\d+\.\d+$` pattern. The tags are already newest-first, so no sort
+  override is needed. LLVM bumps the major roughly yearly while the minor is almost
+  always `1` (e.g. `22.1.x` follows `21.1.x`), so `stable` is the newest release on the
+  **previous version line** (the previous distinct `major.minor`), not "previous minor".
+  There is no official Clang setup action, and the LLVM release assets are named
+  inconsistently across versions/platforms, so the example uses
+  [`aminya/setup-cpp`](https://github.com/aminya/setup-cpp) (the de-facto cross-platform
+  compiler-install action) on `ubuntu`/`macos`.
 
 ## Adding another language
 

@@ -80,6 +80,9 @@ inputs:
   kotlin-strategy:
     description: 'Update strategy for Kotlin versions (stable, latest, or both)'
     required: false  # Optional
+  clang-strategy:
+    description: 'Update strategy for Clang/LLVM versions (stable, latest, or both)'
+    required: false  # Optional
 
   # Safe Mode
   dry-run:
@@ -210,6 +213,9 @@ outputs:
   versions_kotlin:
     description: 'List of Kotlin versions'
     value: ${{ steps.set_outputs.outputs.versions_kotlin }}
+  versions_clang:
+    description: 'List of Clang/LLVM versions'
+    value: ${{ steps.set_outputs.outputs.versions_clang }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}
@@ -315,6 +321,9 @@ runs:
           fi
           if [[ -n "${{ inputs.kotlin-strategy }}" ]]; then
             ARGS+=("--kotlin" "${{ inputs.kotlin-strategy }}")
+          fi
+          if [[ -n "${{ inputs.clang-strategy }}" ]]; then
+            ARGS+=("--clang" "${{ inputs.clang-strategy }}")
           fi
         fi
 

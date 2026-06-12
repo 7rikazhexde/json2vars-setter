@@ -206,6 +206,7 @@ The Dynamic Matrix Updater accepts the following inputs:
 | `haskell-strategy` | Strategy for Haskell (GHC) versions | No | - |
 | `ocaml-strategy` | Strategy for OCaml versions | No | - |
 | `kotlin-strategy` | Strategy for Kotlin versions | No | - |
+| `clang-strategy` | Strategy for Clang/LLVM versions | No | - |
 | `dry-run` | Run without updating the file | No | `'false'` |
 
 ## How It Works
@@ -270,6 +271,7 @@ The Dynamic Matrix Updater currently supports:
 - **Haskell**: Fetches from GHC releases via GitHub API
 - **OCaml**: Fetches from OCaml releases via GitHub API
 - **Kotlin**: Fetches from Kotlin releases via GitHub API (JetBrains/kotlin)
+- **Clang**: Fetches from LLVM releases via GitHub API (llvm/llvm-project)
 
 ## Best Practices
 
