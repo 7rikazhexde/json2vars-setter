@@ -293,6 +293,7 @@ The action provides the following outputs:
 | `versions_haskell` | List of Haskell versions   |
 | `versions_ocaml`   | List of OCaml versions     |
 | `versions_kotlin`  | List of Kotlin versions    |
+| `versions_clang`   | List of Clang/LLVM versions |
 | `ghpages_branch`   | GitHub Pages branch name   |
 
 !!! tip "How to refer to Output in subsequent steps or jobs"

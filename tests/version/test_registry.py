@@ -3,6 +3,7 @@
 import pytest
 
 from json2vars_setter.version.fetchers.bun import BunVersionFetcher
+from json2vars_setter.version.fetchers.clang import ClangVersionFetcher
 from json2vars_setter.version.fetchers.crystal import CrystalVersionFetcher
 from json2vars_setter.version.fetchers.dart import DartVersionFetcher
 from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
@@ -45,6 +46,7 @@ def test_get_version_fetcher_returns_expected_type() -> None:
     assert isinstance(get_version_fetcher("haskell"), HaskellVersionFetcher)
     assert isinstance(get_version_fetcher("ocaml"), OcamlVersionFetcher)
     assert isinstance(get_version_fetcher("kotlin"), KotlinVersionFetcher)
+    assert isinstance(get_version_fetcher("clang"), ClangVersionFetcher)
 
 
 def test_get_version_fetcher_unsupported_language() -> None:
