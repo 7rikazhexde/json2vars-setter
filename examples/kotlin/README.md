@@ -31,14 +31,24 @@ kotlin -classpath app.jar JsonParserKt
 ## How the matrix is used in CI
 
 `kotlin_test.yml` reads `kotlin_project_matrix.json` through json2vars-setter,
-then runs the tests once per Kotlin version with
-[`fwilhe2/setup-kotlin`](https://github.com/fwilhe2/setup-kotlin) (there is no
-official `setup-kotlin`; this is the de-facto action for the Kotlin CLI compiler):
+then runs the tests once per Kotlin version. There is no official Kotlin setup
+action, and the runner's pre-installed Kotlin is a single fixed version, so the
+example downloads the exact compiler for each matrix version straight from the
+[JetBrains release](https://github.com/JetBrains/kotlin/releases) (the same source
+the version fetcher reads), verifies its published SHA-256, and adds `kotlinc` to
+`PATH` — no third-party setup action required:
 
 ```yaml
-- uses: fwilhe2/setup-kotlin@<sha> # v1.8
-  with:
-    version: ${{ matrix.kotlin-version }}
+- name: Set up Kotlin ${{ matrix.kotlin-version }}
+  shell: bash
+  run: |
+    version="${{ matrix.kotlin-version }}"
+    base="https://github.com/JetBrains/kotlin/releases/download/v${version}"
+    curl -fsSL -o kotlin-compiler.zip "${base}/kotlin-compiler-${version}.zip"
+    curl -fsSL -o kotlin-compiler.zip.sha256 "${base}/kotlin-compiler-${version}.zip.sha256"
+    echo "$(cat kotlin-compiler.zip.sha256)  kotlin-compiler.zip" | shasum -a 256 -c -
+    unzip -q kotlin-compiler.zip -d "$HOME/kotlin"
+    echo "$HOME/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
 ```
 
 > **Note on OS coverage:** the matrix uses `ubuntu-latest` and `macos-latest`

@@ -32,11 +32,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        # Two-phase reference (see CLAUDE.md): the `versions_kotlin` output does
-        # not exist in the published tag until the release that adds Kotlin, so
-        # this introducing PR points at the in-repo action. Swap to
-        # 7rikazhexde/json2vars-setter@vX.Y.Z after that release.
-        uses: ./
+        uses: 7rikazhexde/json2vars-setter@v1.11.0
         with:
           json-file: examples/kotlin/kotlin_project_matrix.json
 
@@ -67,9 +63,21 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Kotlin ${{ matrix.kotlin-version }}
-        uses: fwilhe2/setup-kotlin@7163c92e0f906bdf586bd76b14143aa61d6b49e4 # v1.8
-        with:
-          version: ${{ matrix.kotlin-version }}
+        shell: bash
+        # No official Kotlin setup action exists, and the runner's pre-installed
+        # Kotlin is a single fixed version — this matrix needs a specific kotlinc
+        # per leg. Download the exact compiler from the JetBrains release (the same
+        # source the version fetcher reads), verify its published SHA-256, and add
+        # it to PATH. This avoids depending on the third-party (and self-deprecated)
+        # fwilhe2/setup-kotlin action. kotlinc runs on the runner's pre-installed JDK.
+        run: |
+          version="${{ matrix.kotlin-version }}"
+          base="https://github.com/JetBrains/kotlin/releases/download/v${version}"
+          curl -fsSL -o kotlin-compiler.zip "${base}/kotlin-compiler-${version}.zip"
+          curl -fsSL -o kotlin-compiler.zip.sha256 "${base}/kotlin-compiler-${version}.zip.sha256"
+          echo "$(cat kotlin-compiler.zip.sha256)  kotlin-compiler.zip" | shasum -a 256 -c -
+          unzip -q kotlin-compiler.zip -d "$HOME/kotlin"
+          echo "$HOME/kotlin/kotlinc/bin" >> "$GITHUB_PATH"
 
       - name: Set timezone
         uses: szenius/set-timezone@1f9716b0f7120e344f0c62bb7b1ee98819aefd42 # v2.0

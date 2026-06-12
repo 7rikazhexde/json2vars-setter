@@ -61,7 +61,7 @@ source the fetcher reads (see the Swift caveat below).
 | Crystal | `crystal-lang/crystal` tags (sorted) | newest stable | previous minor line | `crystal-lang/install-crystal` |
 | Haskell | `ghc/ghc` tags (sorted) | newest stable | previous minor line | `haskell-actions/setup` |
 | OCaml | `ocaml/ocaml` tags (sorted) | newest stable | previous minor line | `ocaml/setup-ocaml` |
-| Kotlin | `JetBrains/kotlin` tags | newest stable | previous minor | `fwilhe2/setup-kotlin` |
+| Kotlin | `JetBrains/kotlin` tags | newest stable | previous minor | JetBrains release zip (direct download) |
 
 ## Per-language details
 
@@ -277,8 +277,10 @@ source the fetcher reads (see the Swift caveat below).
   `-M1` milestones), which an anchored `^v\d+\.\d+\.\d+$` pattern rejects; unlike Julia /
   OCaml the tags are already newest-first, so no sort override is needed. `stable` is the
   previous minor line of `latest`. There is no official Kotlin setup action, so the
-  example uses `fwilhe2/setup-kotlin` (the de-facto Kotlin CLI compiler action) and
-  targets `ubuntu`/`macos` (the Kotlin CLI is driven from a `bash` step, where the
+  example downloads the exact `kotlin-compiler-<version>.zip` straight from the matching
+  JetBrains release (verifying its published SHA-256) and puts `kotlinc` on `PATH`,
+  rather than depending on the third-party (and self-deprecated) `fwilhe2/setup-kotlin`.
+  It targets `ubuntu`/`macos` (the Kotlin CLI is driven from a `bash` step, where the
   Windows `kotlinc.bat` is brittle; the compiled JVM bytecode is platform-independent).
 
 ## Adding another language
