@@ -76,5 +76,17 @@
     "security.workspace.trust.enabled": true,
     "security.workspace.trust.untrustedFiles": "prompt",
     // 拡張機能の自動更新を無効化し、更新内容を明示的に確認する
-    "extensions.autoUpdate": false
+    "extensions.autoUpdate": false,
+
+    // --- YAML schemas ---
+    // ルートの action.yml はワークフローではなく Composite Action 定義。Red Hat YAML
+    // 拡張が既定でワークフロースキーマ (on/jobs 必須) を当ててしまい、inputs/outputs/
+    // runs/author/branding を "Unexpected value"、on/jobs を "missing" と誤検知する。
+    // Action メタデータ用スキーマを明示的に紐付けて解消する（明示マッピングが最優先）。
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-action.json": [
+            "action.yml",
+            "action.yaml"
+        ]
+    }
 }
