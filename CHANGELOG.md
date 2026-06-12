@@ -1,3 +1,13 @@
+# [v1.12.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.11.0...v1.12.0) (2026-06-12)
+
+## ✨ New Features
+- [`2802a0e`](https://github.com/7rikazhexde/json2vars-setter/commit/2802a0e)  feat: add Clang/LLVM (C++ compiler) support (#577) (Issues: [`#577`](https://github.com/7rikazhexde/json2vars-setter/issues/577))
+- [`2011d0e`](https://github.com/7rikazhexde/json2vars-setter/commit/2011d0e)  feat: add GCC (C++ compiler) support (#578) (Issues: [`#578`](https://github.com/7rikazhexde/json2vars-setter/issues/578))
+- [`b94c828`](https://github.com/7rikazhexde/json2vars-setter/commit/b94c828)  feat: add Flutter support (#579) (Issues: [`#579`](https://github.com/7rikazhexde/json2vars-setter/issues/579))
+
+## 🐛 Bug Fixes
+- [`8b13c8a`](https://github.com/7rikazhexde/json2vars-setter/commit/8b13c8a)  fix: restore gist-endpoint language test badges and correct workflow path filters (#573) (Issues: [`#573`](https://github.com/7rikazhexde/json2vars-setter/issues/573) [`#546`](https://github.com/7rikazhexde/json2vars-setter/issues/546) [`#546`](https://github.com/7rikazhexde/json2vars-setter/issues/546))
+
 # [v1.11.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.10.2...v1.11.0) (2026-06-10)
 
 ## ✨ New Features

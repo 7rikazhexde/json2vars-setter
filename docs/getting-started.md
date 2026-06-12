@@ -226,7 +226,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.11.0
+        uses: 7rikazhexde/json2vars-setter@v1.12.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
 ```
