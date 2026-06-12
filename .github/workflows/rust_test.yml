@@ -6,7 +6,7 @@ on:
       - 'main'
     paths:
       - 'examples/rust/**'
-      - '.github/json2vars-setter/rust_test.yml'
+      - '.github/workflows/rust_test.yml'
   workflow_dispatch:
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
