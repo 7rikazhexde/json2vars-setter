@@ -1,0 +1,14 @@
+name: json2vars_flutter_example
+description: Example Flutter package that parses the json2vars-setter matrix file.
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

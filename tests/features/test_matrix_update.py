@@ -317,6 +317,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "kotlin": "stable",
             "clang": "stable",
             "gcc": "stable",
+            "flutter": "stable",
         },
         False,
     )
@@ -362,6 +363,8 @@ def test_main_function(mocker: MockerFixture) -> None:
             "latest",
             "--gcc",
             "stable",
+            "--flutter",
+            "both",
             "--dry-run",
         ],
     )
@@ -388,6 +391,7 @@ def test_main_function(mocker: MockerFixture) -> None:
             "kotlin": "both",
             "clang": "latest",
             "gcc": "stable",
+            "flutter": "both",
         },
         True,  # dry_run=True
     )

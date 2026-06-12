@@ -15,6 +15,7 @@ from json2vars_setter.version.fetchers.dart import DartVersionFetcher
 from json2vars_setter.version.fetchers.deno import DenoVersionFetcher
 from json2vars_setter.version.fetchers.dotnet import DotnetVersionFetcher
 from json2vars_setter.version.fetchers.elixir import ElixirVersionFetcher
+from json2vars_setter.version.fetchers.flutter import FlutterVersionFetcher
 from json2vars_setter.version.fetchers.gcc import GccVersionFetcher
 from json2vars_setter.version.fetchers.go import GoVersionFetcher
 from json2vars_setter.version.fetchers.haskell import HaskellVersionFetcher
@@ -54,6 +55,7 @@ LANGUAGE_FETCHERS: Dict[str, Callable[[], BaseVersionFetcher]] = {
     "kotlin": KotlinVersionFetcher,
     "clang": ClangVersionFetcher,
     "gcc": GccVersionFetcher,
+    "flutter": FlutterVersionFetcher,
 }
 
 
