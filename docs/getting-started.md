@@ -294,6 +294,7 @@ The action provides the following outputs:
 | `versions_ocaml`   | List of OCaml versions     |
 | `versions_kotlin`  | List of Kotlin versions    |
 | `versions_clang`   | List of Clang/LLVM versions |
+| `versions_gcc`     | List of GCC versions       |
 | `ghpages_branch`   | GitHub Pages branch name   |
 
 !!! tip "How to refer to Output in subsequent steps or jobs"

@@ -36,6 +36,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `ocaml-strategy` | Update strategy for OCaml versions | ✗ | - | Same valid values as `update-strategy` |
 | `kotlin-strategy` | Update strategy for Kotlin versions | ✗ | - | Same valid values as `update-strategy` |
 | `clang-strategy` | Update strategy for Clang/LLVM versions | ✗ | - | Same valid values as `update-strategy` |
+| `gcc-strategy` | Update strategy for GCC versions | ✗ | - | Same valid values as `update-strategy` |
 | `dry-run` | Run in dry-run mode without updating the JSON file | ✗ | `false` | For testing update strategies |
 
 ### Cache Version Options
@@ -80,6 +81,7 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_ocaml` | List of OCaml versions | `["5.3.0", "5.2.1"]` |
 | `versions_kotlin` | List of Kotlin versions | `["2.4.0", "2.3.21"]` |
 | `versions_clang` | List of Clang/LLVM versions | `["20.1.8", "19.1.7"]` |
+| `versions_gcc` | List of GCC versions | `["15.1.0", "14.3.0"]` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
 
 ## Usage Notes
