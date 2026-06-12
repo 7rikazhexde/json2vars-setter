@@ -71,6 +71,31 @@ def parse_json(data: object, prefix: str = "", debug: bool = False) -> Dict[str,
     return outputs
 
 
+def print_output_summary(data: object) -> None:
+    """Print a concise, matrix-proportional summary of the parsed outputs.
+
+    Only the keys actually present in the JSON are shown. For a matrix that lists
+    Python and Node.js, just those (plus ``os`` / ``ghpages_branch``) are printed,
+    rather than every supported language — so the log stays proportional to the
+    matrix as the set of supported languages grows.
+
+    Args:
+        data: The original JSON data (before flattening).
+    """
+    if not isinstance(data, dict):
+        return
+
+    print("Outputs summary:")
+    for key, value in data.items():
+        if key == "versions" and isinstance(value, dict):
+            for language, versions in value.items():
+                print(f"  {language} versions: {json.dumps(versions)}")
+        elif isinstance(value, (list, dict)):
+            print(f"  {key}: {json.dumps(value)}")
+        else:
+            print(f"  {key}: {value}")
+
+
 def main(argv: Optional[List[str]] = None) -> None:
     """Read a JSON file and write its contents to GITHUB_OUTPUT.
 
@@ -91,6 +116,10 @@ def main(argv: Optional[List[str]] = None) -> None:
     # Parse the JSON data and write to GITHUB_OUTPUT
     collected_outputs = parse_json(data, debug=debug)
     set_github_output(collected_outputs, debug=debug)
+
+    # Print a concise summary that scales with the matrix (only the keys present
+    # in the JSON), replacing the former static per-language debug echo block.
+    print_output_summary(data)
 
 
 if __name__ == "__main__":

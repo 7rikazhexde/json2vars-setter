@@ -8,7 +8,12 @@ from typing import Dict
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
-from json2vars_setter.features.github_output import parse_json, set_github_output
+from json2vars_setter.features.github_output import (
+    main,
+    parse_json,
+    print_output_summary,
+    set_github_output,
+)
 from json2vars_setter.version.core.utils import JsonObject
 
 MATRIX_JSON_PATH = "./tests/matrix_static.json"
@@ -116,6 +121,55 @@ def test_parse_json_scalar_list_with_debug(capsys: pytest.CaptureFixture[str]) -
     assert "Debug: Parsed list '' value='[\"a\", \"b\"]'" in captured.out
     assert "Debug: Parsed list item '0' value='a'" in captured.out
     assert "Debug: Parsed list item '1' value='b'" in captured.out
+
+
+# --- Test case for print_output_summary() ---
+
+
+def test_print_output_summary_is_matrix_proportional(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """The summary lists only the languages present in the matrix, not all of them."""
+    data = {
+        "os": ["ubuntu-latest", "macos-latest"],
+        "versions": {"python": ["3.13"], "nodejs": ["20"]},
+        "ghpages_branch": "gh-pages",
+    }
+    print_output_summary(data)
+
+    out = capsys.readouterr().out
+    assert "Outputs summary:" in out
+    assert '  os: ["ubuntu-latest", "macos-latest"]' in out
+    assert '  python versions: ["3.13"]' in out
+    assert '  nodejs versions: ["20"]' in out
+    assert "  ghpages_branch: gh-pages" in out
+    # Languages absent from the matrix must not appear in the log.
+    assert "ruby" not in out
+    assert "go versions" not in out
+
+
+def test_print_output_summary_ignores_non_dict(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """A non-dict top-level payload prints nothing (no summary)."""
+    print_output_summary(["a", "b"])
+    assert capsys.readouterr().out == ""
+
+
+def test_main_prints_matrix_proportional_summary(
+    monkeypatch: MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Running main() prints the proportional summary for the matrix's languages."""
+    output_file = tmp_path / "GITHUB_OUTPUT"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output_file))
+
+    main([MATRIX_JSON_PATH])
+
+    out = capsys.readouterr().out
+    assert "Outputs summary:" in out
+    assert "python versions:" in out
+    # matrix_static.json carries no Kotlin entry, so it must not be logged.
+    assert "kotlin" not in out
 
 
 # --- Test case for set_github_output() ---
