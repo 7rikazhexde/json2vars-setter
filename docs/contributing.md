@@ -70,6 +70,26 @@ Please be respectful to all contributors and users. I aim to foster an inclusive
     uv run pre-commit install
     ```
 
+    !!! tip "Optional: faster local hooks with prek"
+
+        [`prek`](https://github.com/j178/prek) is a Rust reimplementation of
+        pre-commit that reads the **same** `.pre-commit-config.yaml` and runs the
+        hooks faster (parallel execution, quicker hook-environment setup). It is a
+        drop-in for **local** use only — CI and the required checks still run
+        `pre-commit`, so adopting it is entirely optional and changes no workflow.
+
+        ```bash
+        # Install once (a self-contained binary; see prek's README for other methods)
+        uv tool install prek
+
+        # Then use it in place of `pre-commit`
+        prek install            # instead of: uv run pre-commit install
+        prek run --all-files    # instead of: uv run pre-commit run --all-files
+        ```
+
+        If a hook ever behaves differently under prek, fall back to
+        `uv run pre-commit` — the configuration is identical.
+
 ### Project Structure
 
 My project is organized as follows:
