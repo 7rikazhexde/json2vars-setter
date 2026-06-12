@@ -130,7 +130,10 @@ or the addition is incomplete:
    `--<lang>` argument, the `args.<lang> = args.all` line in the `--all` block, and
    the `if args.<lang>: language_strategies["<lang>"] = ...` wiring.
 4. **Action contract** — `action.yml`: add the `<lang>-strategy` input, the
-   `versions_<lang>` output, the strategy-arg building block, and the summary `echo`.
+   `versions_<lang>` output, and the strategy-arg building block. **No per-language
+   summary `echo` is needed**: `features/github_output.py` (`print_output_summary`)
+   logs a matrix-proportional summary of only the keys present in the JSON, so the
+   action's output log scales with the matrix, not the language set.
 5. **Tests (keep 100% coverage)** — `tests/version/fetchers/test_<lang>.py`, plus add
    the language to `tests/version/test_registry.py` and the `--all` / individual-flag
    assertions in `tests/features/test_matrix_update.py`. The version-cache tests are
