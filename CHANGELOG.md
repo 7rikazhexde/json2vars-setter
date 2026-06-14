@@ -1,3 +1,5 @@
+# [v1.12.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.12.0...v1.12.1) (2026-06-14)
+
 # [v1.12.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.11.0...v1.12.0) (2026-06-12)
 
 ## ✨ New Features
