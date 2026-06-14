@@ -84,7 +84,24 @@ This page provides a comprehensive reference for all configuration options avail
 | `versions_clang` | List of Clang/LLVM versions | `["20.1.8", "19.1.7"]` |
 | `versions_gcc` | List of GCC versions | `["15.1.0", "14.3.0"]` |
 | `versions_flutter` | List of Flutter versions | `["3.44.2", "3.41.9"]` |
+| `matrix_<lang>` | Ready-to-use matrix object for a language (`os` included when present) | `{"os": ["ubuntu-latest"], "version": ["3.12", "3.13"]}` |
 | `ghpages_branch` | GitHub Pages branch name | `"gh-pages"` |
+
+> `matrix_<lang>` (e.g. `matrix_python`, `matrix_nodejs`) lets a consumer assign a whole
+> matrix with a **single** `fromJson` and read `${{ matrix.version }}` / `${{ matrix.os }}`
+> directly — no per-axis `fromJson` and no index access:
+>
+> ```yaml
+> strategy:
+>   matrix: ${{ fromJson(needs.set_variables.outputs.matrix_python) }}
+> steps:
+>   - uses: actions/setup-python@v6.2.0
+>     with:
+>       python-version: ${{ matrix.version }}
+> ```
+>
+> It is purely additive — the `os` / `versions_<lang>` outputs above are unchanged. One
+> `fromJson` is the GitHub minimum (a matrix needs an array, but job outputs are strings).
 
 ## Usage Notes
 

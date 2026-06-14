@@ -9,6 +9,7 @@ import pytest
 from _pytest.monkeypatch import MonkeyPatch
 
 from json2vars_setter.features.github_output import (
+    build_matrix_outputs,
     main,
     parse_json,
     print_output_summary,
@@ -121,6 +122,63 @@ def test_parse_json_scalar_list_with_debug(capsys: pytest.CaptureFixture[str]) -
     assert "Debug: Parsed list '' value='[\"a\", \"b\"]'" in captured.out
     assert "Debug: Parsed list item '0' value='a'" in captured.out
     assert "Debug: Parsed list item '1' value='b'" in captured.out
+
+
+# --- Test case for build_matrix_outputs() ---
+
+
+def test_build_matrix_outputs_per_language() -> None:
+    """Each language under ``versions`` yields a ``{os, version}`` matrix object."""
+    data = {
+        "os": ["ubuntu-latest", "macos-latest"],
+        "versions": {"python": ["3.13", "3.12"], "nodejs": ["20"]},
+        "ghpages_branch": "gh-pages",
+    }
+    outputs = build_matrix_outputs(data)
+
+    assert json.loads(outputs["MATRIX_PYTHON"]) == {
+        "os": ["ubuntu-latest", "macos-latest"],
+        "version": ["3.13", "3.12"],
+    }
+    assert json.loads(outputs["MATRIX_NODEJS"]) == {
+        "os": ["ubuntu-latest", "macos-latest"],
+        "version": ["20"],
+    }
+    # Only languages present in the matrix are emitted.
+    assert set(outputs) == {"MATRIX_PYTHON", "MATRIX_NODEJS"}
+
+
+def test_build_matrix_outputs_without_os() -> None:
+    """When the JSON has no ``os`` key, the matrix object omits ``os``."""
+    data = {"versions": {"python": ["3.13"]}}
+    outputs = build_matrix_outputs(data)
+    assert json.loads(outputs["MATRIX_PYTHON"]) == {"version": ["3.13"]}
+
+
+def test_build_matrix_outputs_without_versions() -> None:
+    """A JSON with no ``versions`` mapping yields no matrix outputs."""
+    assert build_matrix_outputs({"os": ["ubuntu-latest"]}) == {}
+    # ``versions`` present but not a dict is also ignored.
+    assert build_matrix_outputs({"versions": ["python"]}) == {}
+
+
+def test_build_matrix_outputs_ignores_non_dict() -> None:
+    """A non-dict top-level payload yields no matrix outputs."""
+    assert build_matrix_outputs(["a", "b"]) == {}
+
+
+def test_main_writes_matrix_outputs(monkeypatch: MonkeyPatch, tmp_path: Path) -> None:
+    """main() writes the ready-to-use matrix object alongside the flat outputs."""
+    output_file = tmp_path / "GITHUB_OUTPUT"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(output_file))
+
+    main([MATRIX_JSON_PATH])
+
+    content = output_file.read_text()
+    line = next(ln for ln in content.splitlines() if ln.startswith("MATRIX_PYTHON="))
+    matrix = json.loads(line.split("=", 1)[1])
+    assert "os" in matrix and "version" in matrix
+    assert matrix["version"] == ["3.10", "3.11", "3.12", "3.13"]
 
 
 # --- Test case for print_output_summary() ---

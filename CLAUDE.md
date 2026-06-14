@@ -86,7 +86,7 @@ cannot be skipped (branch protection is configured in the repo settings, not in-
 
 The action has three processing stages with a priority chain: **dynamic update > cache version > JSON parse**. Each stage is a module under `json2vars_setter/features/` exposing a `build_parser()` + `main(argv=None)` pair (so it runs both via `python -m` and in-process from the CLI):
 
-1. **`features/github_output.py`** — Always runs. Recursively flattens a JSON file into `GITHUB_OUTPUT` key-value pairs. Nested keys are joined with underscores and uppercased (e.g., `versions.python` → `VERSIONS_PYTHON`). Lists are serialized as JSON strings.
+1. **`features/github_output.py`** — Always runs. Recursively flattens a JSON file into `GITHUB_OUTPUT` key-value pairs. Nested keys are joined with underscores and uppercased (e.g., `versions.python` → `VERSIONS_PYTHON`). Lists are serialized as JSON strings. `build_matrix_outputs()` additionally emits a per-language `matrix_<lang>` output (`{"os": [...], "version": [...]}`) so consumers can assign a whole matrix with a **single** `fromJson` and read `${{ matrix.version }}`/`${{ matrix.os }}` directly (no per-axis `fromJson`, no index access); it is purely additive (the `os`/`versions_<lang>` outputs are unchanged), and each `matrix_<lang>` must be declared statically in `action.yml`'s `outputs:`. One `fromJson` is the platform floor — a matrix needs an array but job outputs are always strings.
 
 2. **`features/matrix_update.py`** — Optionally runs (highest priority). Fetches latest/stable language versions from GitHub APIs and updates the matrix JSON in-place before parsing. Uses `VersionStrategy` (STABLE, LATEST, BOTH) per language.
 

@@ -1,0 +1,66 @@
+name: Sample - Zero fromJson (workflow_call library)
+
+# A REUSABLE workflow (workflow_call) that hides fromJson ENTIRELY from the caller: it
+# parses the JSON, builds the matrix, and runs the caller's test command across it. The
+# single required fromJson lives inside this library, so a caller writes ZERO fromJson
+# and no matrix block. It is not triggered on its own — it is invoked by
+# sample_zero_fromjson.yml. See examples/showcase/zero-fromjson/README.md.
+#
+# Demo is Python-focused; copy and adapt the "Set up <lang>" step for another language
+# (read matrix_<lang> in the `test` job's strategy). matrix_<lang> is introduced by this
+# change, so this uses `uses: ./`; swap to a pinned tag after the release that ships it.
+
+on:
+  workflow_call:
+    inputs:
+      json-file:
+        description: 'Path to the matrix JSON file to parse'
+        required: true
+        type: string
+      test-command:
+        description: 'Shell command to run for each matrix combination'
+        required: false
+        default: 'python --version'
+        type: string
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  vars:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix_python: ${{ steps.json2vars.outputs.matrix_python }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Parse the matrix JSON
+        id: json2vars
+        uses: ./
+        with:
+          json-file: ${{ inputs.json-file }}
+
+  test:
+    needs: vars
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      # The ONLY fromJson — kept inside the library so the caller never writes one.
+      matrix: ${{ fromJson(needs.vars.outputs.matrix_python) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+
+      - name: Set up Python ${{ matrix.version }}
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: ${{ matrix.version }}
+
+      - name: Run the caller's test command
+        shell: bash
+        run: ${{ inputs.test-command }}

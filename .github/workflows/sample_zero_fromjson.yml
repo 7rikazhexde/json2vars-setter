@@ -1,0 +1,70 @@
+name: Sample - Zero fromJson
+
+# A runnable demonstration that a CONSUMER can write ZERO fromJson: this caller delegates
+# the whole matrix + test run to the reusable library (sample_zero_fromjson_lib.yml),
+# which absorbs the single required fromJson internally. The caller only names the JSON
+# file and the test command. Trade-off: the test steps are delegated (a parameter), so
+# this suits simple jobs; for full control with one fromJson, see the matrix-aggregate
+# showcase. See examples/showcase/zero-fromjson/README.md.
+
+on:
+  schedule:
+    # Weekly run keeps the badge fresh; cron staggered per the policy in CLAUDE.md.
+    - cron: '37 11 * * 1'
+  pull_request:
+    branches:
+      - 'main'
+    paths:
+      - 'examples/showcase/zero-fromjson/**'
+      - '.github/workflows/sample_zero_fromjson.yml'
+      - '.github/workflows/sample_zero_fromjson_lib.yml'
+      - 'action.yml'
+      - 'json2vars_setter/features/github_output.py'
+  workflow_dispatch:
+
+# Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+
+jobs:
+  # The caller writes NO fromJson and NO matrix block — it just delegates.
+  test:
+    uses: ./.github/workflows/sample_zero_fromjson_lib.yml
+    with:
+      json-file: examples/showcase/zero-fromjson/matrix.json
+      test-command: 'python -c "import sys; print(sys.version)"'
+
+  update_badge:
+    needs: [test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Determine status and color
+        id: status
+        shell: bash
+        run: |
+          case "${{ needs.test.result }}" in
+            success)   status=passing;   color=2ea44f ;;
+            cancelled) status=cancelled; color=808080 ;;
+            *)         status=failing;   color=cf222e ;;
+          esac
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "color=$color" >> "$GITHUB_OUTPUT"
+
+      - name: Create badge
+        uses: schneegans/dynamic-badges-action@0e50b8bad39e7e1afd3e4e9c2b7dd145fad07501 # v1.8.0
+        continue-on-error: true
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: d62e1faca8835347dcada99fcc96bdbc
+          filename: sample-zero-fromjson-badge.json
+          label: "Sample: Zero fromJson"
+          message: ${{ steps.status.outputs.status }}
+          color: ${{ steps.status.outputs.color }}
+          labelColor: "24292f"
+          style: "flat"
+          namedLogo: "github"
+          logoColor: "white"

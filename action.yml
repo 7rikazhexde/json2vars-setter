@@ -228,6 +228,76 @@ outputs:
   versions_flutter:
     description: 'List of Flutter versions'
     value: ${{ steps.set_outputs.outputs.versions_flutter }}
+  # Ready-to-use per-language matrix objects: {"os": [...], "version": [...]}.
+  # Assign a whole matrix with a single fromJson and read ${{ matrix.version }} /
+  # ${{ matrix.os }} directly (no per-axis fromJson, no index access). Additive —
+  # the os / versions_<lang> outputs above are unchanged.
+  matrix_python:
+    description: 'Ready-to-use matrix object for Python ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_python }}
+  matrix_nodejs:
+    description: 'Ready-to-use matrix object for Node.js ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_nodejs }}
+  matrix_ruby:
+    description: 'Ready-to-use matrix object for Ruby ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_ruby }}
+  matrix_go:
+    description: 'Ready-to-use matrix object for Golang ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_go }}
+  matrix_rust:
+    description: 'Ready-to-use matrix object for Rust ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_rust }}
+  matrix_php:
+    description: 'Ready-to-use matrix object for PHP ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_php }}
+  matrix_dotnet:
+    description: 'Ready-to-use matrix object for .NET (C#) ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_dotnet }}
+  matrix_java:
+    description: 'Ready-to-use matrix object for Java ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_java }}
+  matrix_deno:
+    description: 'Ready-to-use matrix object for Deno ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_deno }}
+  matrix_bun:
+    description: 'Ready-to-use matrix object for Bun ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_bun }}
+  matrix_zig:
+    description: 'Ready-to-use matrix object for Zig ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_zig }}
+  matrix_elixir:
+    description: 'Ready-to-use matrix object for Elixir ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_elixir }}
+  matrix_dart:
+    description: 'Ready-to-use matrix object for Dart ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_dart }}
+  matrix_swift:
+    description: 'Ready-to-use matrix object for Swift ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_swift }}
+  matrix_julia:
+    description: 'Ready-to-use matrix object for Julia ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_julia }}
+  matrix_crystal:
+    description: 'Ready-to-use matrix object for Crystal ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_crystal }}
+  matrix_haskell:
+    description: 'Ready-to-use matrix object for Haskell (GHC) ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_haskell }}
+  matrix_ocaml:
+    description: 'Ready-to-use matrix object for OCaml ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_ocaml }}
+  matrix_kotlin:
+    description: 'Ready-to-use matrix object for Kotlin ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_kotlin }}
+  matrix_clang:
+    description: 'Ready-to-use matrix object for Clang/LLVM ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_clang }}
+  matrix_gcc:
+    description: 'Ready-to-use matrix object for GCC ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_gcc }}
+  matrix_flutter:
+    description: 'Ready-to-use matrix object for Flutter ({os, version})'
+    value: ${{ steps.set_outputs.outputs.matrix_flutter }}
   ghpages_branch:
     description: 'GitHub Pages branch'
     value: ${{ steps.set_outputs.outputs.ghpages_branch }}

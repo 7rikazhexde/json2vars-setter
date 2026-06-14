@@ -1,0 +1,12 @@
+{
+    "os": [
+        "ubuntu-latest"
+    ],
+    "versions": {
+        "python": [
+            "3.12",
+            "3.13"
+        ]
+    },
+    "ghpages_branch": "gh-pages"
+}

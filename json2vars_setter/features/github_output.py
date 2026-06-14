@@ -71,6 +71,41 @@ def parse_json(data: object, prefix: str = "", debug: bool = False) -> Dict[str,
     return outputs
 
 
+def build_matrix_outputs(data: object) -> Dict[str, str]:
+    """Build ready-to-use per-language matrix objects from the parsed JSON.
+
+    For every language under ``versions``, emit a ``matrix_<lang>`` output whose value
+    is a JSON object ``{"os": [...], "version": [...]}`` (``os`` omitted if the JSON has
+    none). A consumer can then assign a whole matrix with a single ``fromJson`` and read
+    ``${{ matrix.version }}`` / ``${{ matrix.os }}`` directly — no per-axis ``fromJson``
+    and no index access. The original ``os`` / ``versions_<lang>`` outputs are unaffected,
+    so this is purely additive.
+
+    Args:
+        data: The original JSON data (before flattening).
+
+    Returns:
+        A dictionary of ``MATRIX_<LANG>`` outputs (empty if the JSON has no ``versions``).
+    """
+    outputs: Dict[str, str] = {}
+    if not isinstance(data, dict):
+        return outputs
+
+    versions = data.get("versions")
+    if not isinstance(versions, dict):
+        return outputs
+
+    os_list = data.get("os")
+    for language, version_list in versions.items():
+        matrix: Dict[str, object] = {}
+        if os_list is not None:
+            matrix["os"] = os_list
+        matrix["version"] = version_list
+        outputs[f"MATRIX_{language.upper()}"] = json.dumps(matrix)
+
+    return outputs
+
+
 def print_output_summary(data: object) -> None:
     """Print a concise, matrix-proportional summary of the parsed outputs.
 
@@ -115,6 +150,9 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     # Parse the JSON data and write to GITHUB_OUTPUT
     collected_outputs = parse_json(data, debug=debug)
+    # Add the convenience per-language matrix objects so consumers can assign a whole
+    # matrix with a single fromJson and use ${{ matrix.version }} / ${{ matrix.os }}.
+    collected_outputs.update(build_matrix_outputs(data))
     set_github_output(collected_outputs, debug=debug)
 
     # Print a concise summary that scales with the matrix (only the keys present
