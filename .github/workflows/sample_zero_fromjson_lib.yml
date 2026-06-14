@@ -1,14 +1,17 @@
 name: Sample - Zero fromJson (workflow_call library)
 
-# A REUSABLE workflow (workflow_call) that hides fromJson ENTIRELY from the caller: it
-# parses the JSON, builds the matrix, and runs the caller's test command across it. The
-# single required fromJson lives inside this library, so a caller writes ZERO fromJson
-# and no matrix block. It is not triggered on its own — it is invoked by
-# sample_zero_fromjson.yml. See examples/showcase/zero-fromjson/README.md.
+# A REUSABLE workflow (workflow_call) that hides BOTH fromJson and the test command from
+# the caller: it parses the JSON, builds the matrix, and runs the project's tests by
+# CONVENTION (pytest) across it. The single required fromJson lives inside this library,
+# and the command is a convention with a default — so a caller writes ZERO fromJson, no
+# matrix block, and no command. It only points at the JSON and the project directory.
+# It is invoked by sample_zero_fromjson.yml. See examples/showcase/zero-fromjson/README.md.
 #
-# Demo is Python-focused; copy and adapt the "Set up <lang>" step for another language
-# (read matrix_<lang> in the `test` job's strategy). matrix_<lang> is introduced by this
-# change, so this uses `uses: ./`; swap to a pinned tag after the release that ships it.
+# Demo is Python-focused and runs pytest via uv (no install step — uv provisions the
+# matrix's Python and pytest in one ephemeral, PEP 723-compatible run). Copy and adapt
+# the convention step for another language (read matrix_<lang> in the `test` job's
+# strategy). matrix_<lang> is introduced by this change, so this uses `uses: ./`; swap to
+# a pinned tag after the release that ships it.
 
 on:
   workflow_call:
@@ -17,10 +20,10 @@ on:
         description: 'Path to the matrix JSON file to parse'
         required: true
         type: string
-      test-command:
-        description: 'Shell command to run for each matrix combination'
+      working-directory:
+        description: "Project directory whose tests are run (where pytest is invoked)"
         required: false
-        default: 'python --version'
+        default: '.'
         type: string
 
 # Opt JavaScript actions into Node.js 24 (deprecation of Node 20 on runners).
@@ -56,11 +59,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
-      - name: Set up Python ${{ matrix.version }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-        with:
-          python-version: ${{ matrix.version }}
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
 
-      - name: Run the caller's test command
+      - name: Run the project's tests (by convention, via uv — no install step)
         shell: bash
-        run: ${{ inputs.test-command }}
+        working-directory: ${{ inputs.working-directory }}
+        # uv provisions the matrix's Python and runs pytest in an ephemeral env
+        # (--with, PEP 723-compatible inline deps): no separate install command.
+        # --no-project isolates from any surrounding pyproject.toml.
+        run: uv run --no-project --python ${{ matrix.version }} --with pytest pytest

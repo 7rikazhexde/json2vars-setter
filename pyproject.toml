@@ -72,8 +72,9 @@ select = ["E", "F", "I", "B", "ANN", "RUF", "S"]
 ignore = ["E402", "E501"]
 # Bandit rules that are legitimate in the test suite, not production code:
 # S101 assert (pytest), S603/S607 subprocess (command-execution tests), and
-# S105 a fake "test-token" fixture string.
-per-file-ignores = { "tests/**" = ["S101", "S105", "S603", "S607"] }
+# S105 a fake "test-token" fixture string. Example pytest tests under examples/
+# use plain asserts too (idiomatic pytest), so S101 is ignored there as well.
+per-file-ignores = { "tests/**" = ["S101", "S105", "S603", "S607"], "examples/**/test_*.py" = ["S101"] }
 
 [tool.typos.files]
 extend-exclude = [

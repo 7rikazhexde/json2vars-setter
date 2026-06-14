@@ -1,11 +1,12 @@
 name: Sample - Zero fromJson
 
-# A runnable demonstration that a CONSUMER can write ZERO fromJson: this caller delegates
-# the whole matrix + test run to the reusable library (sample_zero_fromjson_lib.yml),
-# which absorbs the single required fromJson internally. The caller only names the JSON
-# file and the test command. Trade-off: the test steps are delegated (a parameter), so
-# this suits simple jobs; for full control with one fromJson, see the matrix-aggregate
-# showcase. See examples/showcase/zero-fromjson/README.md.
+# A runnable demonstration that a CONSUMER can write ZERO fromJson AND no command: this
+# caller delegates the whole matrix + test run to the reusable library
+# (sample_zero_fromjson_lib.yml), which absorbs the single required fromJson internally
+# and runs the project's tests by CONVENTION (pytest). The caller only points at the JSON
+# file and the project directory. Trade-off: the test run is delegated (convention-based),
+# so this suits projects that follow the convention; for full control with one fromJson,
+# see the matrix-aggregate showcase. See examples/showcase/zero-fromjson/README.md.
 
 on:
   schedule:
@@ -30,12 +31,13 @@ permissions:
   contents: read
 
 jobs:
-  # The caller writes NO fromJson and NO matrix block — it just delegates.
+  # The caller writes NO fromJson, NO matrix block, and NO command — it just points at
+  # the matrix JSON and the project directory; the library runs pytest by convention.
   test:
     uses: ./.github/workflows/sample_zero_fromjson_lib.yml
     with:
       json-file: examples/showcase/zero-fromjson/matrix.json
-      test-command: 'python -c "import sys; print(sys.version)"'
+      working-directory: examples/showcase/zero-fromjson
 
   update_badge:
     needs: [test]
