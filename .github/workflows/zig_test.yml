@@ -64,6 +64,13 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Zig
+        # mlugg/setup-zig moved its main repository to Codeberg
+        # (https://codeberg.org/mlugg/setup-zig). This GitHub repo is now an
+        # auto-synced MIRROR (issues/PRs not accepted there), but the maintainer
+        # explicitly commits to keep supporting GitHub Actions, so this
+        # `uses: mlugg/setup-zig@<sha>` reference and Dependabot tracking keep
+        # working unchanged. NOTE: this is unrelated to the Zig *version fetcher*,
+        # which reads the separate ziglang/zig compiler repo (still on GitHub).
         uses: mlugg/setup-zig@d1434d08867e3ee9daa34448df10607b98908d29 # v2.2.1
         with:
           version: ${{ matrix.zig-version }}
