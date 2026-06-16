@@ -1,0 +1,126 @@
+{{#if compareUrl}}
+# [v{{nextRelease.version}}]({{compareUrl}}) ({{datetime "UTC:yyyy-mm-dd"}})
+{{else}}
+# v{{nextRelease.version}} ({{datetime "UTC:yyyy-mm-dd"}})
+{{/if}}
+
+{{#with commits}}
+{{#if boom}}
+## 💥 Breaking Changes
+{{#each boom}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if sparkles}}
+## ✨ New Features
+{{#each sparkles}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if bug}}
+## 🐛 Bug Fixes
+{{#each bug}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if ambulance}}
+## 🚑 Critical Hotfixes
+{{#each ambulance}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if lock}}
+## 🔒 Security
+{{#each lock}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if zap}}
+## ⚡ Performance
+{{#each zap}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if rocket}}
+## 🚀 Deployment & CI
+{{#each rocket}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if recycle}}
+## ♻️ Refactoring
+{{#each recycle}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if fire}}
+## 🔥 Removals
+{{#each fire}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if wrench}}
+## 🔧 Configuration & Maintenance
+{{#each wrench}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if pencil2}}
+## ✏️ Typo Fixes
+{{#each pencil2}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if globe_with_meridians}}
+## 🌐 Internationalization
+{{#each globe_with_meridians}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if alien}}
+## 👽 External API Changes
+{{#each alien}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if card_file_box}}
+## 🗃️ Database
+{{#each card_file_box}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if arrow_up}}
+## ⬆️ Dependencies
+{{#each arrow_up}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if arrow_down}}
+## ⬇️ Dependency Downgrades
+{{#each arrow_down}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+
+{{#if pushpin}}
+## 📌 Pinned Dependencies
+{{#each pushpin}}
+- {{> commitTemplate}}
+{{/each}}
+{{/if}}
+{{/with}}

@@ -19,6 +19,11 @@ name: semantic-release
 
 on:
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: compute the next version and PREVIEW the release notes in the log without tagging, committing, or publishing."
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -65,4 +70,4 @@ jobs:
             -p @semantic-release/exec@7.1.0 \
             -p @semantic-release/git@10.0.1 \
             -p @semantic-release/changelog@6.0.3 \
-            semantic-release
+            semantic-release ${{ inputs.dry_run && '--dry-run' || '' }}
