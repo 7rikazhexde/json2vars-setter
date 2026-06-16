@@ -47,7 +47,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
 
@@ -78,7 +78,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
 
@@ -131,7 +131,7 @@ jobs:
 
       - name: Set variables with dynamic update
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
@@ -184,7 +184,7 @@ jobs:
 
       - name: Set variables with cached versions
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           use-cache: 'true'
@@ -217,7 +217,7 @@ jobs:
 
       - name: Set variables from custom JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/python_project_matrix.json
 
@@ -264,7 +264,7 @@ jobs:
 
       - name: Set variables from JSON
         id: json2vars
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
 
@@ -324,7 +324,7 @@ jobs:
         uses: actions/checkout@v6.0.3
 
       - name: Update matrix.json
-        uses: 7rikazhexde/json2vars-setter@v1.12.1
+        uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/matrix.json
           update-matrix: 'true'
