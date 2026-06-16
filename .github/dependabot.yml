@@ -342,12 +342,11 @@ updates:
       interval: "daily"
     # Wait until a release has been public for a few days before proposing it,
     # so a freshly-published (possibly compromised) version is not pulled the
-    # instant it ships. Longer window for higher-impact bumps.
+    # instant it ships. NOTE: the github-actions ecosystem does NOT support the
+    # semver-*-days granularity (Dependabot rejects them here), so only the flat
+    # default-days window applies.
     cooldown:
       default-days: 5
-      semver-major-days: 14
-      semver-minor-days: 7
-      semver-patch-days: 3
     groups:
       dependencies:
         patterns:
