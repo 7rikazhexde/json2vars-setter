@@ -1,0 +1,85 @@
+name: Sync doc action refs
+
+# Why this exists:
+# The README / docs carry ```yaml``` usage examples that reference third-party and
+# official actions (actions/checkout, actions/setup-python, ...). Those Markdown
+# references have NO automatic updater:
+#   - Dependabot's github-actions ecosystem only rewrites the real workflow /
+#     action.yml `uses:` entries -- it never touches Markdown code blocks.
+#   - sync-version-refs.sh (semantic-release) deliberately syncs only the
+#     7rikazhexde/json2vars-setter@vX.Y.Z self-reference.
+# So the example snippets silently drift behind the real workflows whenever
+# Dependabot bumps an action. The pre-commit hook `sync-doc-action-refs` fixes this
+# locally, but Dependabot never runs pre-commit, and there is no CI step for it.
+#
+# This workflow closes the gap: whenever a push to main changes the SHA-pinned
+# source of truth (.github/workflows/** or action.yml) -- e.g. a merged Dependabot
+# action bump -- it runs the existing sync script and commits the resulting doc
+# updates back to main. It runs in the trusted push-to-main context (full secrets),
+# the same pattern as dependabot-auto-rebase.yml and semantic-release, which avoids
+# the GitHub restriction that withholds repo secrets from Dependabot `pull_request`
+# runs.
+#
+# Why PAT_FOR_PUSHES (not GITHUB_TOKEN): a commit pushed with GITHUB_TOKEN does not
+# trigger downstream workflows and may be blocked by branch protection; the owner
+# PAT (already used by semantic-release to push to main) pushes cleanly. The commit
+# uses [skip ci] so it does not re-trigger CI, and it only ever touches Markdown, so
+# it cannot re-trigger this workflow (which is path-filtered to workflows/action.yml).
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/**'
+      - 'action.yml'
+  # Manual "sync the docs now" button.
+  workflow_dispatch:
+
+concurrency:
+  group: sync-doc-action-refs
+  cancel-in-progress: true
+
+# The job acts through PAT_FOR_PUSHES; no GITHUB_TOKEN scopes are required.
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # On a fork without the PAT secret, skip quietly instead of failing.
+      - name: Check that PAT_FOR_PUSHES is configured
+        id: check
+        env:
+          PAT: ${{ secrets.PAT_FOR_PUSHES }}
+        run: |
+          if [ -z "${PAT}" ]; then
+            echo "PAT_FOR_PUSHES is not set; skipping."
+            echo "configured=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "configured=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Checkout repository
+        if: steps.check.outputs.configured == 'true'
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          token: ${{ secrets.PAT_FOR_PUSHES }}
+          persist-credentials: true
+
+      - name: Sync documentation action references
+        if: steps.check.outputs.configured == 'true'
+        run: python3 .github/scripts/sync_doc_action_refs.py
+
+      - name: Commit and push if the docs changed
+        if: steps.check.outputs.configured == 'true'
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Documentation action references already up to date; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m ":memo: docs: sync action version refs in docs to workflows [skip ci]"
+          git push
