@@ -184,6 +184,13 @@ source the fetcher reads (see the Swift caveat below).
   `X.Y.Z-dev.*` nightly builds are excluded); Zig is still pre-1.0, so `stable` is
   the previous **minor** (second component) of `latest`. Example matrices use the
   exact form (`"0.14.1"`, `"0.15.2"`) that `mlugg/setup-zig` accepts.
+- **Setup action note:** `mlugg/setup-zig` has moved its main repository to
+  [Codeberg](https://codeberg.org/mlugg/setup-zig). The version fetcher is
+  **unaffected** — it reads the `ziglang/zig` *compiler* repo (still on GitHub),
+  which is a different project from the *setup action*. The `mlugg/setup-zig`
+  GitHub repo used by `zig_test.yml` is now an auto-synced mirror; the maintainer
+  commits to keep supporting GitHub Actions, so the pinned `uses:` reference and
+  Dependabot tracking continue to work.
 
 ### Elixir — `elixir-lang/elixir`
 
