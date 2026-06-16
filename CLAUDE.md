@@ -224,7 +224,7 @@ maintenance, reusable `workflow_call`, version caching) lives in the
 
 ## Code Conventions
 
-- **Commit messages**: Follow [gitmoji](https://gitmoji.dev/) conventions. Releases are automated by **semantic-release-gitmoji**, which reads the gitmoji to pick the next version: `:boom:` → major, `:sparkles:` → minor, and fixes/maintenance (`:bug:`, `:lock:`, `:ambulance:`, `:zap:`, `:wrench:`, `:recycle:`, `:arrow_up:`, …) → patch. Other gitmoji (e.g. `:memo:`, `:art:`, `:white_check_mark:`) don't trigger a release. The full mapping is the `releaseRules` in `.releaserc.json`.
+- **Commit messages**: Follow [gitmoji](https://gitmoji.dev/) conventions. Releases are automated by **semantic-release-gitmoji**, which reads the gitmoji to pick the next version: `:boom:` → major, `:sparkles:` → minor, and fixes/maintenance (`:bug:`, `:lock:`, `:ambulance:`, `:zap:`, `:wrench:`, `:recycle:`, `:arrow_up:`, …) → patch. Other gitmoji (e.g. `:memo:`, `:art:`, `:white_check_mark:`) don't trigger a release. The full mapping is the `releaseRules` in `.releaserc.cjs` (CommonJS so it can read the custom release-notes template from `.github/release-notes-template.hbs`, which adds a section per gitmoji so maintenance/patch releases get non-empty notes).
 - **Branch naming**: Use prefixes: `feature-`, `bugfix-`, `docs-`, `refactor-`
 - **GitHub Actions selection**: Prefer **official** actions (the `actions/*` org, or the
   language's first-party action such as `ruby/setup-ruby`, `actions/setup-dotnet`,

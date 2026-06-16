@@ -174,7 +174,7 @@ Before starting any work, please check existing issues or create a new one to di
         - 🐛 `:bug:`, 🚑 `:ambulance:`, 🔒 `:lock:`, ⚡ `:zap:`, 🔧 `:wrench:`, ♻️ `:recycle:`, ⬆️ `:arrow_up:`, … → **patch**
         - Other gitmoji (e.g. 📝 `:memo:`, 🎨 `:art:`, 🧪 `:white_check_mark:`) do **not** trigger a release.
 
-        The full mapping lives in `releaseRules` in `.releaserc.json`.
+        The full mapping lives in `releaseRules` in `.releaserc.cjs`.
 
 ### Testing Changes
 

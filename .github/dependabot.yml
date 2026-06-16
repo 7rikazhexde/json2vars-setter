@@ -36,6 +36,13 @@ updates:
       dependencies:
         patterns:
           - "*"
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Node.js dependencies (example)
@@ -58,6 +65,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Ruby dependencies (example)
@@ -80,6 +94,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Go dependencies (example)
@@ -102,6 +123,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Rust dependencies (example)
@@ -124,6 +152,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # PHP dependencies (example)
@@ -146,6 +181,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # .NET (C#) dependencies (example)
@@ -168,6 +210,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Java dependencies (example)
@@ -190,6 +239,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Dart dependencies (example)
@@ -212,6 +268,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Flutter dependencies (example)
@@ -234,6 +297,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # Swift dependencies (example)
@@ -256,6 +326,13 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
 
   # GitHub Actions
@@ -290,4 +367,11 @@ updates:
       # bump the major intentionally.
       - dependency-name: "swift-actions/setup-swift"
         update-types: ["version-update:semver-major"]
+    # Gitmoji prefix so semantic-release-gitmoji recognises Dependabot bumps:
+    # without a gitmoji the commit is dropped from the generated release notes
+    # (it has no group). ":arrow_up:" is already a patch rule in .releaserc.cjs,
+    # so bumps land under the release notes' Dependencies section and a bump-only
+    # batch yields a patch release.
+    commit-message:
+      prefix: ":arrow_up:"
     open-pull-requests-limit: 10
