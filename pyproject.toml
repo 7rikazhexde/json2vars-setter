@@ -16,6 +16,9 @@ dependencies = [
 json2vars = "json2vars_setter.cli:app"
 
 [build-system]
+# Dependency management is uv (uv.lock); the build backend is hatchling. The
+# project migrated off Poetry in 5157d99, so there is intentionally no
+# [tool.poetry] table and no poetry.lock.
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
