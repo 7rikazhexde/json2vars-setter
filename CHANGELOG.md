@@ -1,3 +1,14 @@
+# [v1.13.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.12.1...v1.13.0) (2026-06-16)
+
+## ✨ New Features
+- [`d5eba05`](https://github.com/7rikazhexde/json2vars-setter/commit/d5eba05)  ci: auto-sync docs action version refs on push to main (#587) (Issues: [`#587`](https://github.com/7rikazhexde/json2vars-setter/issues/587))
+
+## 🐛 Bug Fixes
+- [`a9a4aa5`](https://github.com/7rikazhexde/json2vars-setter/commit/a9a4aa5)  fix(dependabot): drop unsupported semver-*-days cooldown for github-actions (#585) (Issues: [`#585`](https://github.com/7rikazhexde/json2vars-setter/issues/585))
+
+## 🔧 Configuration & Maintenance
+- [`1cc19f0`](https://github.com/7rikazhexde/json2vars-setter/commit/1cc19f0)  ci: add release-notes sections for all gitmoji &amp; give Dependabot a gitmoji prefix (#584) (Issues: [`#584`](https://github.com/7rikazhexde/json2vars-setter/issues/584))
+
 # [v1.12.1](https://github.com/7rikazhexde/json2vars-setter/compare/v1.12.0...v1.12.1) (2026-06-14)
 
 # [v1.12.0](https://github.com/7rikazhexde/json2vars-setter/compare/v1.11.0...v1.12.0) (2026-06-12)
