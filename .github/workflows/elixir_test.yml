@@ -63,6 +63,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Normalize ImageOS for setup-beam on Windows
+        # GitHub's windows-latest image now reports ImageOS=win25-vs2026, but
+        # erlef/setup-beam v1.24.0 only maps the bare 'win25' label and aborts on
+        # the variant suffix (runner-images#14004; fix pending in setup-beam#461).
+        # Strip the suffix (win25-vs2026 -> win25) so the OS lookup succeeds; this
+        # is future-proof for later variants and a no-op for un-suffixed labels.
+        if: runner.os == 'Windows'
+        shell: bash
+        run: echo "ImageOS=${ImageOS%%-*}" >> "$GITHUB_ENV"
+
       - name: Set up Erlang/Elixir
         # erlef/setup-beam requires an OTP version; OTP 27 is compatible with
         # every Elixir version in the matrix (1.18 supports OTP 25-27, 1.19
