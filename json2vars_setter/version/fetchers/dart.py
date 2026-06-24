@@ -1,6 +1,8 @@
 import re
 from typing import List, Optional, Tuple, cast
 
+import requests
+
 from json2vars_setter.version.core.base import BaseVersionFetcher
 from json2vars_setter.version.core.utils import (
     JsonObject,
@@ -67,9 +69,10 @@ class DartVersionFetcher(BaseVersionFetcher):
             if page_token:
                 params["pageToken"] = page_token
 
-            response = self.session.get(
-                DART_ARCHIVE_LIST_URL, params=params, timeout=10
-            )
+            # Use a plain requests.get (not self.session) so the GitHub
+            # Authorization header is not forwarded to GCS — GCS rejects
+            # GitHub tokens with 401.
+            response = requests.get(DART_ARCHIVE_LIST_URL, params=params, timeout=10)
             response.raise_for_status()
             data = cast(JsonObject, response.json())
 

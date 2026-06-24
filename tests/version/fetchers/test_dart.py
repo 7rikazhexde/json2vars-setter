@@ -59,8 +59,9 @@ def test_list_stable_versions_single_page(
             extra=["channels/stable/release/latest/"],
         ),
     }
-    mock_get = mocker.patch.object(
-        dart_fetcher.session, "get", return_value=_FakeResponse(payload)
+    mock_get = mocker.patch(
+        "json2vars_setter.version.fetchers.dart.requests.get",
+        return_value=_FakeResponse(payload),
     )
 
     versions = dart_fetcher._list_stable_versions()
@@ -75,9 +76,8 @@ def test_list_stable_versions_paginated(
     """Pagination via nextPageToken is followed and results are merged"""
     page1 = {"prefixes": _prefixes(["3.11.0", "3.11.1"]), "nextPageToken": "tok"}
     page2 = {"prefixes": _prefixes(["3.12.0"])}
-    mock_get = mocker.patch.object(
-        dart_fetcher.session,
-        "get",
+    mock_get = mocker.patch(
+        "json2vars_setter.version.fetchers.dart.requests.get",
         side_effect=[_FakeResponse(page1), _FakeResponse(page2)],
     )
 
@@ -172,8 +172,9 @@ def test_list_stable_versions_real_url(
 ) -> None:
     """The listing request targets the Dart archive bucket with the stable prefix"""
     payload: JsonObject = {"prefixes": _prefixes(["3.12.1"])}
-    mock_get = mocker.patch.object(
-        dart_fetcher.session, "get", return_value=_FakeResponse(payload)
+    mock_get = mocker.patch(
+        "json2vars_setter.version.fetchers.dart.requests.get",
+        return_value=_FakeResponse(payload),
     )
 
     dart_fetcher._list_stable_versions()
