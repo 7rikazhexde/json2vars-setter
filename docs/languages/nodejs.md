@@ -27,7 +27,16 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "nodejs": ["18", "20", "22", "23"] }
+{
+  "versions": {
+    "nodejs": [
+      "18",
+      "20",
+      "22",
+      "23"
+    ]
+  }
+}
 ```
 
 Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):

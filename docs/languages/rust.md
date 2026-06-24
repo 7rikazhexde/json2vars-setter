@@ -27,7 +27,21 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "rust": ["1.79.0", "1.80.0", "1.81.0", "1.82.0", "1.83.0", "1.84.0", "1.84.1", "1.85.0", "stable"] }
+{
+  "versions": {
+    "rust": [
+      "1.79.0",
+      "1.80.0",
+      "1.81.0",
+      "1.82.0",
+      "1.83.0",
+      "1.84.0",
+      "1.84.1",
+      "1.85.0",
+      "stable"
+    ]
+  }
+}
 ```
 
 Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):

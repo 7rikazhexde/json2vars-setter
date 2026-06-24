@@ -27,7 +27,15 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "java": ["11", "17", "21"] }
+{
+  "versions": {
+    "java": [
+      "11",
+      "17",
+      "21"
+    ]
+  }
+}
 ```
 
 > Enable dynamic update (`java-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.

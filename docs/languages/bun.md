@@ -27,7 +27,14 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "bun": ["1.2.x", "1.3.x"] }
+{
+  "versions": {
+    "bun": [
+      "1.2.x",
+      "1.3.x"
+    ]
+  }
+}
 ```
 
 > Enable dynamic update (`bun-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.

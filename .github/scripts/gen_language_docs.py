@@ -327,7 +327,8 @@ def render_page(lang: Lang, cache: dict[str, dict[str, object]]) -> str:
     os_list, versions = load_matrix(lang.matrix)
     os_rendered = ", ".join(f"`{o}`" for o in os_list)
     os_human = " / ".join(OS_LABELS.get(o, o) for o in os_list)
-    versions_json = json.dumps(versions)
+    # Pretty-print (indented, multi-line) so the snippet is readable / copy-pasteable.
+    versions_block = json.dumps({"versions": {lang.slug: versions}}, indent=2)
 
     lines: list[str] = []
     lines.append(f"# {lang.display}")
@@ -375,7 +376,7 @@ def render_page(lang: Lang, cache: dict[str, dict[str, object]]) -> str:
     lines.append("Example matrix (what the example workflow runs):")
     lines.append("")
     lines.append("```json")
-    lines.append(f'"versions": {{ "{lang.slug}": {versions_json} }}')
+    lines.extend(versions_block.splitlines())
     lines.append("```")
     lines.append("")
 

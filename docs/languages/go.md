@@ -27,7 +27,20 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "go": ["1.23.0", "1.23.1", "1.23.2", "1.23.3", "1.23.4", "1.23.5", "1.23.6", "1.24.0"] }
+{
+  "versions": {
+    "go": [
+      "1.23.0",
+      "1.23.1",
+      "1.23.2",
+      "1.23.3",
+      "1.23.4",
+      "1.23.5",
+      "1.23.6",
+      "1.24.0"
+    ]
+  }
+}
 ```
 
 Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):

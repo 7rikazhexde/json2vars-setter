@@ -27,7 +27,14 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "dotnet": ["8.0", "9.0"] }
+{
+  "versions": {
+    "dotnet": [
+      "8.0",
+      "9.0"
+    ]
+  }
+}
 ```
 
 > Enable dynamic update (`dotnet-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.

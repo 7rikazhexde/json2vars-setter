@@ -27,7 +27,17 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "ruby": ["3.3.6", "3.3.7", "3.4.0", "3.4.1", "3.4.2"] }
+{
+  "versions": {
+    "ruby": [
+      "3.3.6",
+      "3.3.7",
+      "3.4.0",
+      "3.4.1",
+      "3.4.2"
+    ]
+  }
+}
 ```
 
 Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):

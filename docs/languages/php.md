@@ -27,7 +27,15 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "php": ["8.2", "8.3", "8.4"] }
+{
+  "versions": {
+    "php": [
+      "8.2",
+      "8.3",
+      "8.4"
+    ]
+  }
+}
 ```
 
 > Enable dynamic update (`php-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.

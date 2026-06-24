@@ -27,7 +27,14 @@ Any GitHub-hosted runner the setup action supports also works - the OS list is j
 Example matrix (what the example workflow runs):
 
 ```json
-"versions": { "julia": ["1.10", "1.11"] }
+{
+  "versions": {
+    "julia": [
+      "1.10",
+      "1.11"
+    ]
+  }
+}
 ```
 
 > Enable dynamic update (`julia-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.
