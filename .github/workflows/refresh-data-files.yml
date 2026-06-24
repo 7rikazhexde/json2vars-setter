@@ -118,12 +118,19 @@ jobs:
             --template-file .github/json2vars-setter/sample/matrix.json \
             --existing-template .github/json2vars-setter/sample/matrix.json
 
+      # Keep the generated language docs in sync with the refreshed cache (their
+      # `stable` / `latest` section is read from version_cache.json), so the refresh
+      # PR carries the doc updates too instead of leaving them for a follow-up.
+      - name: Regenerate language docs from the refreshed cache
+        if: steps.check.outputs.configured == 'true'
+        run: uv run python .github/scripts/gen_language_docs.py
+
       - name: Open a PR if anything changed
         if: steps.check.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ secrets.PAT_FOR_PUSHES }}
         run: |
-          if [ -z "$(git status --porcelain .github/json2vars-setter)" ]; then
+          if [ -z "$(git status --porcelain .github/json2vars-setter docs/languages)" ]; then
             echo "Data files are already up to date; nothing to do."
             exit 0
           fi
@@ -132,7 +139,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "${branch}"
-          git add .github/json2vars-setter
+          git add .github/json2vars-setter docs/languages
           git commit -m ":arrow_up: chore(data): refresh sample matrix + version cache"
           git push --set-upstream origin "${branch}"
 

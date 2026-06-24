@@ -101,6 +101,13 @@ repos:
         pass_filenames: false
         files: '^(README\.md|docs/.*\.md|\.github/workflows/.*\.ya?ml|action\.yml)$'
 
+      - id: gen-language-docs
+        name: Generate per-language docs pages from matrix JSON + workflows
+        entry: python .github/scripts/gen_language_docs.py
+        language: python
+        pass_filenames: false
+        files: '^(examples/.*_project_matrix\.json|tests/python_project_matrix\.json|\.github/workflows/.*_test\.yml|\.github/json2vars-setter/cache/version_cache\.json|\.github/scripts/gen_language_docs\.py|docs/languages/.*\.md)$'
+
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v2.1.0
     hooks:

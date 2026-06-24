@@ -1,0 +1,83 @@
+name: Sync language docs
+
+# Why this exists:
+# The per-language pages under docs/languages/ are GENERATED from the matrix JSON
+# files + the *_test.yml workflows + the version cache (see
+# .github/scripts/gen_language_docs.py). The `gen-language-docs` pre-commit hook
+# keeps them in sync on local commits, but Dependabot (which bumps the setup-action
+# SHAs in *_test.yml) and the "Refresh data files" PR (which updates the version
+# cache) never run pre-commit, so a merged bump could leave the docs stale.
+#
+# This workflow closes the gap: whenever a push to main changes a generator source
+# (a matrix JSON, a *_test.yml workflow, the version cache, or the script itself) it
+# regenerates the pages and commits the result back to main. Mirrors
+# sync-doc-action-refs.yml (trusted push-to-main context, PAT push, [skip ci]). The
+# commit only touches docs/languages/**, which is NOT a trigger path, so it cannot
+# re-trigger this workflow.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'examples/**/*_project_matrix.json'
+      - 'tests/python_project_matrix.json'
+      - '.github/workflows/*_test.yml'
+      - '.github/json2vars-setter/cache/version_cache.json'
+      - '.github/scripts/gen_language_docs.py'
+  # Manual "regenerate the language docs now" button.
+  workflow_dispatch:
+
+concurrency:
+  group: sync-language-docs
+  cancel-in-progress: true
+
+# The job acts through PAT_FOR_PUSHES; no GITHUB_TOKEN scopes are required.
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # On a fork without the PAT secret, skip quietly instead of failing.
+      - name: Check that PAT_FOR_PUSHES is configured
+        id: check
+        env:
+          PAT: ${{ secrets.PAT_FOR_PUSHES }}
+        run: |
+          if [ -z "${PAT}" ]; then
+            echo "PAT_FOR_PUSHES is not set; skipping."
+            echo "configured=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "configured=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Checkout repository
+        if: steps.check.outputs.configured == 'true'
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          token: ${{ secrets.PAT_FOR_PUSHES }}
+          persist-credentials: true
+
+      - name: Set up Python
+        if: steps.check.outputs.configured == 'true'
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: '3.13'
+
+      - name: Regenerate language docs
+        if: steps.check.outputs.configured == 'true'
+        run: python3 .github/scripts/gen_language_docs.py
+
+      - name: Commit and push if the docs changed
+        if: steps.check.outputs.configured == 'true'
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Language docs already up to date; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m ":memo: docs: regenerate language pages from matrix/workflow sources [skip ci]"
+          git push
