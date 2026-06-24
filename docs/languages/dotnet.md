@@ -37,7 +37,14 @@ Example matrix (what the example workflow runs):
 }
 ```
 
-> Enable dynamic update (`dotnet-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.
+Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):
+
+| Field | Version |
+| --- | --- |
+| `stable` | `10.0.301` |
+| `latest` | `11.0.100` |
+
+_Cache last updated: 2026-06-24T12:19:37.978826._
 
 ## Setup action (example workflow)
 

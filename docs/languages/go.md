@@ -47,10 +47,10 @@ Latest values tracked by the dynamic-update tooling (auto-refreshed from the rel
 
 | Field | Version |
 | --- | --- |
-| `stable` | `1.23.7` |
-| `latest` | `1.24.1` |
+| `stable` | `1.25.11` |
+| `latest` | `1.26.4` |
 
-_Cache last updated: 2025-03-26T14:19:24.541008._
+_Cache last updated: 2026-06-24T12:19:36.599392._
 
 ## Setup action (example workflow)
 
