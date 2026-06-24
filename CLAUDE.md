@@ -80,6 +80,31 @@ auto-merge is disabled):
 `dependency-review` should be a **required** status check in branch protection so the gate
 cannot be skipped (branch protection is configured in the repo settings, not in-repo).
 
+### Merge Gate (CI failure blocks squash-merge)
+
+CI errors must **block merge** — including a per-language failure (e.g. the Elixir
+Windows leg) even when the Python core gate is green, because the action as a whole is
+then NG. The per-language `*_test.yml` workflows are **paths-filtered** (they only run when
+their own files change), so they **cannot** be named directly as required checks: a PR that
+doesn't touch a language would never run that workflow and would deadlock on
+"Expected — Waiting for status".
+
+`.github/workflows/merge_gate.yml` resolves this. It is a `workflow_run` **aggregator**:
+when any blocking test workflow completes on a PR, it re-queries every PR-triggered run for
+that commit SHA and writes a single commit status named **`Merge Gate`** — `failure` if any
+leg failed, `pending` while any is still running, else `success`. The always-on core
+workflows (`prch_test_matrix_json.yml` / `dependabot_prch.yml`) run on every PR, so the gate
+always fires at least once → **no deadlock**. Set **only `Merge Gate`** (plus
+`Dependency Review`) as the **required** status check in branch protection; that one check
+reflects whatever actually ran.
+
+The aggregation is **path-based / self-maintaining** (it counts every `*_test.yml`, every
+`sample_*.yml` except the `workflow_call`-only `sample_reusable_lib.yml`, and the two core
+workflows by path), so a new language is included automatically. The **one** thing to keep
+in sync is the `on.workflow_run.workflows:` trigger list in `merge_gate.yml` — a workflow
+absent from it won't re-fire the gate on its completion. **Adding a language → add its
+`"<Lang> Test"` line there** (see the Adding-a-New-Language checklist).
+
 ## Architecture
 
 ### Three Feature Modules (`json2vars_setter/features/`)
@@ -158,7 +183,10 @@ or the addition is incomplete:
    `ruby_test.yml`): `set_variables` → `run_tests` (matrix) → `update_badge`. The
    `update_badge` job needs a **dedicated gist** (`<lang>-test-badge.json`, written via
    `GIST_TOKEN`) — its `gistID` must be created by the repo owner and cannot be
-   generated programmatically.
+   generated programmatically. **Also add the new `"<Lang> Test"` to the
+   `on.workflow_run.workflows:` trigger list in `.github/workflows/merge_gate.yml`** so a
+   failure on a language-only PR blocks merge (the Merge Gate's aggregation is path-based
+   and needs no edit — only the trigger list does; see the Merge Gate section above).
 8. **Status badges** — add a row to the language table in `README.md` **and** the
    matching badge in `docs/index.md`, pointing at the new gist
    (`gist.githubusercontent.com/7rikazhexde/<GIST_ID>/raw/<lang>-test-badge.json`) and
