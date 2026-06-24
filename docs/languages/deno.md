@@ -37,7 +37,14 @@ Example matrix (what the example workflow runs):
 }
 ```
 
-> Enable dynamic update (`deno-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.
+Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):
+
+| Field | Version |
+| --- | --- |
+| `stable` | `2.7.14` |
+| `latest` | `2.8.3` |
+
+_Cache last updated: 2026-06-24T12:28:41.530983._
 
 ## Setup action (example workflow)
 
