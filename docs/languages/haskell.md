@@ -37,7 +37,14 @@ Example matrix (what the example workflow runs):
 }
 ```
 
-> Enable dynamic update (`haskell-strategy`) to have json2vars-setter fill these in from the latest releases. The `stable` / `latest` values for this language are populated into the version cache by the **Refresh data files** workflow.
+Latest values tracked by the dynamic-update tooling (auto-refreshed from the release APIs into the version cache):
+
+| Field | Version |
+| --- | --- |
+| `stable` | `9.12.4` |
+| `latest` | `9.14.1` |
+
+_Cache last updated: 2026-06-24T12:28:44.326886._
 
 ## Setup action (example workflow)
 
