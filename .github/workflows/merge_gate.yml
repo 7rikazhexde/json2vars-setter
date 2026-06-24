@@ -1,0 +1,157 @@
+name: Merge Gate
+
+# Single required status check that aggregates every per-language / sample /
+# core test workflow that actually ran on a PR, so a red leg (e.g. the Elixir
+# Windows failure) blocks squash-merge even when the Python core gate is green.
+#
+# Why an aggregator (not "require each *_test.yml" directly): the per-language
+# workflows are paths-filtered, so a PR that doesn't touch a language never runs
+# its workflow. A directly-required check that never runs would deadlock the PR
+# ("Expected - Waiting for status"). This gate instead reports the *combined*
+# result of whatever ran, as one commit status named "Merge Gate" -- set that,
+# and only that, as the required status check in branch protection.
+#
+# How it fires: workflow_run (completed) for each blocking workflow re-evaluates
+# the PR head SHA. The always-on core workflows (prch / dependabot_prch) run on
+# every PR, so the gate always fires at least once -> no deadlock. The last
+# blocking workflow to finish produces the authoritative success/failure.
+
+on:
+  workflow_run:
+    # KEEP IN SYNC: every *blocking* workflow must be listed here so the gate
+    # re-fires when it completes. Adding a language -> add its "<Lang> Test"
+    # here (the aggregation below is path-based and needs no edit). Non-blocking
+    # workflows (Modern Quality, Dependency Review, Cleanup Caches, ...) are
+    # intentionally absent.
+    workflows:
+      # core (always run on every PR)
+      - "Test on PR by matrix.json (Except Dependabot)"
+      - "Dependabot PR Check"
+      # per-language tests
+      - "Bun Test"
+      - "Clang Test"
+      - "Crystal Test"
+      - "Dart Test"
+      - "Deno Test"
+      - ".NET Test"
+      - "Elixir Test"
+      - "Flutter Test"
+      - "GCC Test"
+      - "Go Test"
+      - "Haskell Test"
+      - "Java Test"
+      - "Julia Test"
+      - "Kotlin Test"
+      - "Node.js Test"
+      - "OCaml Test"
+      - "PHP Test"
+      - "Python Test"
+      - "Ruby Test"
+      - "Rust Test"
+      - "Swift Test"
+      - "Zig Test"
+      # sample (use-case) workflows
+      - "Sample - Conditional Matrix (PR vs full)"
+      - "Sample - Dynamic Update (scheduled maintenance)"
+      - "Sample - Monorepo"
+      - "Sample - Reusable Workflow (workflow_call)"
+      - "Sample - Single Source of Truth"
+      - "Sample - Template from Cache"
+      - "Sample - Version Cache (fewer API calls)"
+    types:
+      - completed
+
+permissions:
+  contents: read
+  actions: read
+  statuses: write
+
+# Evaluate one gate run at a time per commit; the newest evaluation wins (each
+# run recomputes the full state from scratch, so cancelling a stale one is safe).
+concurrency:
+  group: merge-gate-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    # Only PR-triggered runs have a PR to gate; skip schedule/dispatch runs of
+    # the sample workflows.
+    if: github.event.workflow_run.event == 'pull_request'
+    steps:
+      - name: Aggregate test workflow results into the "Merge Gate" status
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const sha = context.payload.workflow_run.head_sha;
+
+            // Aggregation is path-based and self-maintaining: every *_test.yml,
+            // every sample_*.yml (except the workflow_call-only library), and the
+            // two always-on core workflows count toward the gate. A new language's
+            // <lang>_test.yml is therefore included automatically.
+            const watchedPath = /^\.github\/workflows\/(.*_test\.yml|sample_.*\.yml|prch_test_matrix_json\.yml|dependabot_prch\.yml)$/;
+            const excludedPaths = new Set([
+              // workflow_call library: runs inside its caller, no standalone PR run
+              ".github/workflows/sample_reusable_lib.yml",
+            ]);
+
+            const workflows = await github.paginate(
+              github.rest.actions.listRepoWorkflows,
+              { owner, repo, per_page: 100 },
+            );
+            const watchedIds = new Set(
+              workflows
+                .filter((w) => watchedPath.test(w.path) && !excludedPaths.has(w.path))
+                .map((w) => w.id),
+            );
+
+            // All PR-triggered runs for this commit, newest first.
+            const runs = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              { owner, repo, head_sha: sha, event: "pull_request", per_page: 100 },
+            );
+
+            // Keep only the latest run per watched workflow.
+            const latest = new Map();
+            for (const run of runs) {
+              if (!watchedIds.has(run.workflow_id)) continue;
+              if (!latest.has(run.workflow_id)) latest.set(run.workflow_id, run);
+            }
+            const considered = [...latest.values()];
+
+            const okConclusions = new Set(["success", "skipped", "neutral"]);
+            const pending = considered.filter((r) => r.status !== "completed");
+            const failed = considered.filter(
+              (r) => r.status === "completed" && !okConclusions.has(r.conclusion),
+            );
+
+            let state, description;
+            if (failed.length > 0) {
+              // Report NG as soon as any leg fails -- preserves the failure
+              // accurately even while other legs are still running.
+              state = "failure";
+              const names = failed.map((r) => r.name).sort();
+              description = `Failing: ${names.join(", ")}`.slice(0, 140);
+            } else if (pending.length > 0) {
+              state = "pending";
+              description = `Waiting on ${pending.length} workflow(s)`;
+            } else {
+              state = "success";
+              description = `All ${considered.length} test workflow(s) passed`;
+            }
+
+            core.info(`Merge Gate for ${sha}: ${state} (${description})`);
+            core.info(
+              `considered=${considered.length} pending=${pending.length} failed=${failed.length}`,
+            );
+
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state,
+              context: "Merge Gate",
+              description,
+              target_url: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+            });
