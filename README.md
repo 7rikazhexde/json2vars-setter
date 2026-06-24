@@ -70,6 +70,8 @@ By centralizing your configuration in JSON files, you gain the ability to easily
 | ![GCC](https://img.shields.io/badge/GCC-A42E2B?style=flat&logo=gnu&logoColor=white) | [![setup-cpp](https://img.shields.io/badge/setup--cpp-A42E2B?style=flat&logo=github-actions&logoColor=white)](https://github.com/aminya/setup-cpp) | [![GCC Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/34dd14046ac37ef6313c3c82daa6076a/raw/gcc-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/gcc_test.yml) |
 | ![Flutter](https://img.shields.io/badge/Flutter-02569B?style=flat&logo=flutter&logoColor=white) | [![flutter-action](https://img.shields.io/badge/flutter--action-02569B?style=flat&logo=github-actions&logoColor=white)](https://github.com/subosito/flutter-action) | [![Flutter Test](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/7rikazhexde/0415fe16fd46f42c662e433ee348cd9c/raw/flutter-test-badge.json&cacheSeconds=0)](https://github.com/7rikazhexde/json2vars-setter/actions/workflows/flutter_test.yml) |
 
+> 📖 **Per-language details** — supported OS, versions, and the setup action each example drives — are on the [Languages](https://7rikazhexde.github.io/json2vars-setter/languages/) section of the documentation.
+
 ## Sample Workflows
 
 Beyond the per-language tests above, these **runnable use-case samples** live in this repository and execute on real GitHub Actions. The green badge is proof you can reproduce the result, then copy the files into your own project — no local setup required to gain confidence.

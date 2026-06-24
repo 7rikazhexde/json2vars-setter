@@ -165,6 +165,14 @@ or the addition is incomplete:
    the new workflow. Also update any "supported languages" prose (README intro,
    `docs/features/dynamic-update.md`, `docs/features/version-caching.md`,
    `docs/reference/options.md`, this file's Project Overview + fetcher list).
+8b. **Language docs page** — add a `Lang(...)` entry to the `LANGS` list in
+   `.github/scripts/gen_language_docs.py` and a nav line under `Languages` in
+   `zensical.toml`, then run `python .github/scripts/gen_language_docs.py`. The page
+   `docs/languages/<lang>.md` is **generated, never hand-written** (OS + example versions
+   from the matrix JSON, the setup-action snippet auto-extracted from `<lang>_test.yml`,
+   `stable`/`latest` from the version cache); the `gen-language-docs` pre-commit hook and
+   `sync-language-docs.yml` keep it synced, so a Dependabot action bump or a cache refresh
+   flows into the docs automatically. **Never edit `docs/languages/*.md` by hand.**
 9. **Release ordering (two-phase action reference)** — a new language's
    `versions_<lang>` output does not exist in the published tag until the release that
    adds it, so a tag ref (`@vX.Y.Z`) in `<lang>_test.yml` would fail on the introducing
@@ -260,6 +268,10 @@ Releases are **manually triggered** (`workflow_dispatch` on `semantic-release.ym
   per-release commit SHAs can only come from the fetchers).
 - Test fixtures: `tests/matrix_static.json`, `tests/python_project_matrix.json`
 - Docs site: `docs/` (MkDocs Material, deployed to GitHub Pages)
+- Per-language docs: `docs/languages/*.md` — **generated** by
+  `.github/scripts/gen_language_docs.py` from the matrix JSONs + `*_test.yml` + version
+  cache (kept synced by the `gen-language-docs` pre-commit hook + `sync-language-docs.yml`).
+  Never hand-edit; edit the source + regenerate.
 - PowerShell completion script: `scripts/json2vars-completion.ps1`
 - Future-improvement backlog: `.issues/`
 
