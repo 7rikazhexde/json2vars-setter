@@ -72,6 +72,7 @@ jobs:
       - name: Commit and push if the docs changed
         if: steps.check.outputs.configured == 'true'
         run: |
+          msg=":memo: docs: regenerate language pages from matrix/workflow sources [skip ci]"
           if [ -z "$(git status --porcelain)" ]; then
             echo "Language docs already up to date; nothing to commit."
             exit 0
@@ -79,5 +80,26 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m ":memo: docs: regenerate language pages from matrix/workflow sources [skip ci]"
-          git push
+          git commit -m "${msg}"
+          # Another push-to-main workflow (notably sync-doc-action-refs, which the
+          # same *_test.yml Dependabot bump also triggers) can land between our
+          # checkout and push and reject this one as non-fast-forward. On rejection,
+          # resync to the updated main, regenerate from the now-authoritative
+          # sources, and retry -- so the result stays correct instead of failing.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt ${attempt}); resyncing with main and regenerating."
+            git fetch origin main
+            git reset --hard origin/main
+            python3 .github/scripts/gen_language_docs.py
+            if [ -z "$(git status --porcelain)" ]; then
+              echo "Language docs already current on the updated main; nothing to push."
+              exit 0
+            fi
+            git add -A
+            git commit -m "${msg}"
+          done
+          echo "::error::Failed to push language docs after multiple attempts."
+          exit 1

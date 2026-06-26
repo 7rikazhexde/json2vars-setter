@@ -74,6 +74,7 @@ jobs:
       - name: Commit and push if the docs changed
         if: steps.check.outputs.configured == 'true'
         run: |
+          msg=":memo: docs: sync action version refs in docs to workflows [skip ci]"
           if [ -z "$(git status --porcelain)" ]; then
             echo "Documentation action references already up to date; nothing to commit."
             exit 0
@@ -81,5 +82,26 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m ":memo: docs: sync action version refs in docs to workflows [skip ci]"
-          git push
+          git commit -m "${msg}"
+          # Another push-to-main workflow (notably sync-language-docs, which the same
+          # *_test.yml Dependabot bump also triggers) can land between our checkout
+          # and push and reject this one as non-fast-forward. On rejection, resync to
+          # the updated main, re-run the sync script against the now-authoritative
+          # sources, and retry -- so the result stays correct instead of failing.
+          for attempt in 1 2 3 4 5; do
+            if git push; then
+              exit 0
+            fi
+            echo "Push rejected (attempt ${attempt}); resyncing with main and re-syncing refs."
+            git fetch origin main
+            git reset --hard origin/main
+            python3 .github/scripts/sync_doc_action_refs.py
+            if [ -z "$(git status --porcelain)" ]; then
+              echo "Documentation action references already current on the updated main; nothing to push."
+              exit 0
+            fi
+            git add -A
+            git commit -m "${msg}"
+          done
+          echo "::error::Failed to push documentation action references after multiple attempts."
+          exit 1
