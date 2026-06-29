@@ -34,7 +34,7 @@ jobs:
         uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/cicd_matrix.json
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}
       - name: Install uv
@@ -44,7 +44,7 @@ jobs:
       - run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
       - name: Create cache directory
         run: mkdir -p .cache
-      - uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v5
         with:
           key: zensical-${{ env.cache_id }}
           path: .cache
