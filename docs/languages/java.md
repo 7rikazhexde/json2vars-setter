@@ -53,7 +53,7 @@ _Cache last updated: 2026-06-24T12:28:41.325097._
 
 ```yaml
 - name: Set up Java
-  uses: actions/setup-java@v5.3.0
+  uses: actions/setup-java@v5.4.0
   with:
     distribution: 'temurin'
     java-version: ${{ matrix.java-version }}

@@ -199,7 +199,7 @@ You only need to include the languages your project uses. For example, if your p
     setup step:
 
     ```yaml
-    - uses: actions/setup-python@v6.2.0
+    - uses: actions/setup-python@v6.3.0
       with:
         python-version: ${{ matrix.python-version }}  # e.g. "3.15"
         allow-prereleases: true
@@ -262,7 +262,7 @@ test_matrix:
 
   steps:
     - name: Set up Python
-      uses: actions/setup-python@v6.2.0
+      uses: actions/setup-python@v6.3.0
       with:
         python-version: ${{ matrix.python-version }}
 ```

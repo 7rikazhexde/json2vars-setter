@@ -55,7 +55,7 @@ _Cache last updated: 2026-06-24T12:28:39.323011._
 
 ```yaml
 - name: Set up Python
-  uses: actions/setup-python@v6.2.0
+  uses: actions/setup-python@v6.3.0
   with:
     python-version: ${{ matrix.python-version }}
 ```

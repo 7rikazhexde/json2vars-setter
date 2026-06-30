@@ -58,7 +58,7 @@ _Cache last updated: 2026-06-24T12:28:40.260892._
 
 ```yaml
 - name: Set up Go
-  uses: actions/setup-go@v6.4.0
+  uses: actions/setup-go@v6.5.0
   with:
     go-version: ${{ matrix.go-version }}
     cache: false

@@ -133,7 +133,7 @@ jobs:
     runs-on: ${{ fromJson(needs.set_variables.outputs.os)[0] }}
     steps:
       - name: Set up Python
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v6.3.0
         with:
           python-version: ${{ fromJson(needs.set_variables.outputs.versions_python)[0] }}
 ```
