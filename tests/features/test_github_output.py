@@ -16,67 +16,50 @@ from json2vars_setter.features.github_output import (
 )
 from json2vars_setter.version.core.utils import JsonObject
 
-MATRIX_JSON_PATH = "./tests/matrix_static.json"
+MATRIX_JSON_PATH = "./tests/python_project_matrix.json"
+
+
+def _expected_from_json(data: object, prefix: str = "") -> Dict[str, str]:
+    """Derive the expected parse_json output from raw data.
+
+    Mirrors parse_json's flattening rules independently so that
+    test_parse_project_matrix_json stays self-maintaining: adding a version to
+    python_project_matrix.json requires no manual edit here.
+    Algorithm correctness (key naming, list serialisation, etc.) is covered by
+    test_parse_json_nested_list and test_parse_json_scalar_list_with_debug.
+    """
+    result: Dict[str, str] = {}
+    if isinstance(data, dict):
+        for key, value in data.items():
+            child_prefix = prefix + key.upper() + "_"
+            if isinstance(value, (dict, list)):
+                result.update(_expected_from_json(value, child_prefix))
+            else:
+                result[prefix + key.upper()] = str(value)
+    elif isinstance(data, list):
+        result[prefix[:-1]] = json.dumps(data)
+        for i, item in enumerate(data):
+            if isinstance(item, dict):
+                result.update(_expected_from_json(item, f"{prefix}{i}_"))
+            else:
+                result[f"{prefix}{i}"] = str(item)
+    return result
 
 
 # --- Test case for parse_json() ---
 
 
-def test_parse_matrix_static_json() -> None:
-    """Read matrix_static.json.json and test parse_json"""
+def test_parse_project_matrix_json() -> None:
+    """parse_json on python_project_matrix.json matches the expected flattened structure.
+
+    Expected outputs are derived from the JSON file itself via _expected_from_json,
+    so this test stays green when versions are added to the fixture without any
+    manual update.
+    """
     with open(MATRIX_JSON_PATH, "r") as f:
         data = json.load(f)
 
-    expected_outputs = {
-        "OS": '["ubuntu-latest", "windows-latest", "macos-latest"]',
-        "OS_0": "ubuntu-latest",
-        "OS_1": "windows-latest",
-        "OS_2": "macos-latest",
-        "VERSIONS_PYTHON": '["3.10", "3.11", "3.12", "3.13"]',
-        # if empty list
-        # "VERSIONS_PYTHON": "[]",
-        "VERSIONS_PYTHON_0": "3.10",
-        "VERSIONS_PYTHON_1": "3.11",
-        "VERSIONS_PYTHON_2": "3.12",
-        "VERSIONS_PYTHON_3": "3.13",
-        "VERSIONS_RUBY": '["3.0.6", "3.1.6", "3.2.6", "3.3.6", "3.4.0", "3.4.1", "3.3.7", "3.2.7", "3.4.2"]',
-        "VERSIONS_RUBY_0": "3.0.6",
-        "VERSIONS_RUBY_1": "3.1.6",
-        "VERSIONS_RUBY_2": "3.2.6",
-        "VERSIONS_RUBY_3": "3.3.6",
-        "VERSIONS_RUBY_4": "3.4.0",
-        "VERSIONS_RUBY_5": "3.4.1",
-        "VERSIONS_RUBY_6": "3.3.7",
-        "VERSIONS_RUBY_7": "3.2.7",
-        "VERSIONS_RUBY_8": "3.4.2",
-        "VERSIONS_NODEJS": '["16", "18", "20", "22", "23"]',
-        "VERSIONS_NODEJS_0": "16",
-        "VERSIONS_NODEJS_1": "18",
-        "VERSIONS_NODEJS_2": "20",
-        "VERSIONS_NODEJS_3": "22",
-        "VERSIONS_NODEJS_4": "23",
-        "VERSIONS_GO": '["1.23.0", "1.23.1", "1.23.2", "1.23.3", "1.23.4", "1.23.5", "1.23.6", "1.24.0"]',
-        "VERSIONS_GO_0": "1.23.0",
-        "VERSIONS_GO_1": "1.23.1",
-        "VERSIONS_GO_2": "1.23.2",
-        "VERSIONS_GO_3": "1.23.3",
-        "VERSIONS_GO_4": "1.23.4",
-        "VERSIONS_GO_5": "1.23.5",
-        "VERSIONS_GO_6": "1.23.6",
-        "VERSIONS_GO_7": "1.24.0",
-        "VERSIONS_RUST": '["1.79.0", "1.80.0", "1.81.0", "1.82.0", "1.83.0", "1.84.0", "1.84.1", "1.85.0", "stable"]',
-        "VERSIONS_RUST_0": "1.79.0",
-        "VERSIONS_RUST_1": "1.80.0",
-        "VERSIONS_RUST_2": "1.81.0",
-        "VERSIONS_RUST_3": "1.82.0",
-        "VERSIONS_RUST_4": "1.83.0",
-        "VERSIONS_RUST_5": "1.84.0",
-        "VERSIONS_RUST_6": "1.84.1",
-        "VERSIONS_RUST_7": "1.85.0",
-        "VERSIONS_RUST_8": "stable",
-        "GHPAGES_BRANCH": "gh-gapes",
-    }
-
+    expected_outputs = _expected_from_json(data)
     outputs = parse_json(data)
     assert outputs == expected_outputs
 
@@ -168,7 +151,7 @@ def test_main_prints_matrix_proportional_summary(
     out = capsys.readouterr().out
     assert "Outputs summary:" in out
     assert "python versions:" in out
-    # matrix_static.json carries no Kotlin entry, so it must not be logged.
+    # python_project_matrix.json carries no Kotlin entry, so it must not be logged.
     assert "kotlin" not in out
 
 
@@ -214,7 +197,7 @@ def test_set_github_output_without_debug(
 # --- Test cases with sub-processes ---
 
 
-def test_main_execution_with_matrix_json(
+def test_main_execution_with_project_matrix_json(
     monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """Test executing a script in a sub-process using matrix.json"""

@@ -48,7 +48,7 @@ jobs:
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
-          json-file: tests/matrix_static.json
+          json-file: tests/python_project_matrix.json
 
       - name: Debug output values
         run: |
@@ -61,6 +61,7 @@ jobs:
           echo "versions_python[1]: ${{ fromJson(steps.json2vars.outputs.versions_python)[1] }}"
           echo "versions_python[2]: ${{ fromJson(steps.json2vars.outputs.versions_python)[2] }}"
           echo "versions_python[3]: ${{ fromJson(steps.json2vars.outputs.versions_python)[3] }}"
+          echo "versions_python[4]: ${{ fromJson(steps.json2vars.outputs.versions_python)[4] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   # Remove the coverage comments from previous runs so the PR always shows only

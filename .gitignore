@@ -131,9 +131,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# pytest
-.coverage
-
 # Node.js
 examples/nodejs/node_modules/
 #examples/nodejs/package-lock.json
