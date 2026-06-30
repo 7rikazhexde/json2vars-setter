@@ -16,15 +16,15 @@ from json2vars_setter.features.github_output import (
 )
 from json2vars_setter.version.core.utils import JsonObject
 
-MATRIX_JSON_PATH = "./tests/matrix_static.json"
+MATRIX_JSON_PATH = "./tests/python_project_matrix.json"
 
 
 def _expected_from_json(data: object, prefix: str = "") -> Dict[str, str]:
     """Derive the expected parse_json output from raw data.
 
     Mirrors parse_json's flattening rules independently so that
-    test_parse_matrix_static_json stays self-maintaining: adding a language or
-    version to matrix_static.json requires no manual edit here.
+    test_parse_project_matrix_json stays self-maintaining: adding a version to
+    python_project_matrix.json requires no manual edit here.
     Algorithm correctness (key naming, list serialisation, etc.) is covered by
     test_parse_json_nested_list and test_parse_json_scalar_list_with_debug.
     """
@@ -49,12 +49,12 @@ def _expected_from_json(data: object, prefix: str = "") -> Dict[str, str]:
 # --- Test case for parse_json() ---
 
 
-def test_parse_matrix_static_json() -> None:
-    """parse_json on matrix_static.json matches the expected flattened structure.
+def test_parse_project_matrix_json() -> None:
+    """parse_json on python_project_matrix.json matches the expected flattened structure.
 
     Expected outputs are derived from the JSON file itself via _expected_from_json,
-    so this test stays green when languages or versions are added to the fixture
-    without any manual update.
+    so this test stays green when versions are added to the fixture without any
+    manual update.
     """
     with open(MATRIX_JSON_PATH, "r") as f:
         data = json.load(f)
@@ -151,7 +151,7 @@ def test_main_prints_matrix_proportional_summary(
     out = capsys.readouterr().out
     assert "Outputs summary:" in out
     assert "python versions:" in out
-    # matrix_static.json carries no Kotlin entry, so it must not be logged.
+    # python_project_matrix.json carries no Kotlin entry, so it must not be logged.
     assert "kotlin" not in out
 
 
@@ -197,7 +197,7 @@ def test_set_github_output_without_debug(
 # --- Test cases with sub-processes ---
 
 
-def test_main_execution_with_matrix_json(
+def test_main_execution_with_project_matrix_json(
     monkeypatch: MonkeyPatch, tmp_path: Path
 ) -> None:
     """Test executing a script in a sub-process using matrix.json"""

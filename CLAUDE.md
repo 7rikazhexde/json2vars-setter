@@ -294,7 +294,7 @@ Releases are **manually triggered** (`workflow_dispatch` on `semantic-release.ym
   `workflow_dispatch`). It runs the version tooling on a Linux runner (the fetchers crash
   on Windows OpenSSL locally) and opens a reviewable PR — never hand-edit the cache (its
   per-release commit SHAs can only come from the fetchers).
-- Test fixtures: `tests/matrix_static.json`, `tests/python_project_matrix.json`
+- Test fixtures: `tests/python_project_matrix.json`
 - Docs site: `docs/` (MkDocs Material, deployed to GitHub Pages)
 - Per-language docs: `docs/languages/*.md` — **generated** by
   `.github/scripts/gen_language_docs.py` from the matrix JSONs + `*_test.yml` + version
