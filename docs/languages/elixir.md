@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:42.181636._
 
 ```yaml
 - name: Set up Erlang/Elixir
-  uses: erlef/setup-beam@v1.24.0
+  uses: erlef/setup-beam@v1.24.1
   with:
     otp-version: "27"
     elixir-version: ${{ matrix.elixir-version }}
