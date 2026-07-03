@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:47.597015._
 
 ```yaml
 - name: Set up GCC ${{ matrix.gcc-version }}
-  uses: aminya/setup-cpp@v1.8.0
+  uses: aminya/setup-cpp@v1.8.1
   with:
     compiler: gcc-${{ matrix.gcc-version }}
 ```

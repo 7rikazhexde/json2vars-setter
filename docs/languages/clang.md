@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:47.118004._
 
 ```yaml
 - name: Set up Clang ${{ matrix.clang-version }}
-  uses: aminya/setup-cpp@v1.8.0
+  uses: aminya/setup-cpp@v1.8.1
   with:
     compiler: llvm-${{ matrix.clang-version }}
 ```
