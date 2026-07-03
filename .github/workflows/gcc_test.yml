@@ -66,7 +66,7 @@ jobs:
         # No official GCC setup action exists. aminya/setup-cpp is the de-facto,
         # actively-maintained action for installing a specific compiler version
         # cross-platform; it exports CC/CXX pointing at the installed GCC.
-        uses: aminya/setup-cpp@1f17f92d6a52bfcb1a25348e2c526c2e5cbb1134 # v1.8.0
+        uses: aminya/setup-cpp@8170d66c458f4a045220b7b0966c10940bb2a15d # v1.8.1
         with:
           compiler: gcc-${{ matrix.gcc-version }}
 
