@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:41.530983._
 
 ```yaml
 - name: Set up Deno
-  uses: denoland/setup-deno@v2.0.4
+  uses: denoland/setup-deno@v2.0.5
   with:
     deno-version: ${{ matrix.deno-version }}
 ```
