@@ -53,7 +53,7 @@ repos:
   # https://github.com/astral-sh/uv-pre-commit
   # Keep uv.lock in sync with pyproject.toml
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.26
+    rev: 0.11.28
     hooks:
       - id: uv-lock
         verbose: true
@@ -82,7 +82,7 @@ repos:
         args: ["--config", ".markdownlint.jsonc", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.15.20
+    rev: v0.15.21
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
@@ -109,7 +109,7 @@ repos:
         files: '^(examples/.*_project_matrix\.json|tests/python_project_matrix\.json|\.github/workflows/.*_test\.yml|\.github/json2vars-setter/cache/version_cache\.json|\.github/scripts/gen_language_docs\.py|docs/languages/.*\.md)$'
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.1.0
+    rev: v2.2.0
     hooks:
       - id: mypy
         # Type stubs / typed libs the isolated hook env needs so mypy strict mode
