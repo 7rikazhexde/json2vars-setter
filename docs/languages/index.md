@@ -17,7 +17,7 @@ Per-language reference: the runners and versions each example exercises, and the
 | [Java](java.md) | Ubuntu / Windows / macOS | `actions/setup-java` |
 | [Deno](deno.md) | Ubuntu / Windows / macOS | `denoland/setup-deno` |
 | [Bun](bun.md) | Ubuntu / Windows / macOS | `oven-sh/setup-bun` |
-| [Zig](zig.md) | Ubuntu / Windows / macOS | `mlugg/setup-zig` |
+| [Zig](zig.md) | Ubuntu / Windows | `mlugg/setup-zig` |
 | [Elixir](elixir.md) | Ubuntu / Windows / macOS | `erlef/setup-beam` |
 | [Dart](dart.md) | Ubuntu / Windows / macOS | `dart-lang/setup-dart` |
 | [Swift](swift.md) | Ubuntu / macOS | `swift-actions/setup-swift` |

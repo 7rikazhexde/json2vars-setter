@@ -1,8 +1,7 @@
 {
     "os": [
         "ubuntu-latest",
-        "windows-latest",
-        "macos-latest"
+        "windows-latest"
     ],
     "versions": {
         "zig": [
