@@ -56,10 +56,13 @@ jobs:
       matrix:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         zig-version: ${{ fromJson(needs.set_variables.outputs.versions_zig) }}
-    # Zig 0.14.x / 0.15.x cannot link against the macOS 26 SDK
-    # (undefined symbols: _abort, _bzero, _free, etc.). The matrix JSON
-    # keeps macos-latest to show json2vars-setter supports that platform;
-    # the runner is pinned to macos-15 here until Zig adds macOS 26 support.
+    # WORKAROUND: Zig 0.14.x / 0.15.x cannot link against the macOS 26 SDK
+    # (undefined symbols: _abort, _bzero, _free, etc. in Zig's bundled libc shim).
+    # The matrix JSON keeps macos-latest to accurately declare json2vars-setter's
+    # platform support; the actual runner is pinned to macos-15 here until Zig
+    # releases macOS 26 SDK support.
+    # Restore to `${{ matrix.os }}` once Zig supports macOS 26.
+    # See: docs/reference/compatibility-notes.md — "Zig — macOS runner pinned to macos-15"
     runs-on: ${{ matrix.os == 'macos-latest' && 'macos-15' || matrix.os }}
     steps:
       - name: Checkout repository
