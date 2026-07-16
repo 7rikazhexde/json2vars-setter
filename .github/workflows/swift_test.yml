@@ -62,6 +62,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      # WORKAROUND: swift-actions/setup-swift@v2.4.0 has a hardcoded version list
+      # ending at 6.2.1; versions 6.2.2+ and 6.3.x return "Version not available".
+      # The matrix uses 6.2 / 6.2.1 — the highest v2.4.0-supported releases that
+      # also work with the macOS 26 SDK (6.1.x fails: SDK built with Swift 6.3.2
+      # rejects older compilers). Update the matrix to version-cache stable/latest
+      # (currently 6.2.4 / 6.3.2) once setup-swift v3 stable releases (it uses
+      # Swiftly and supports any swift.org version dynamically).
+      # See: docs/reference/compatibility-notes.md — "Swift — versions capped at 6.2.1"
       - name: Set up Swift
         uses: swift-actions/setup-swift@7ca6abe6b3b0e8b5421b88be48feee39cbf52c6a # v2.4.0
         with:

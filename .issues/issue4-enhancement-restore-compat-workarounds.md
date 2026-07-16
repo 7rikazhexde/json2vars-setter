@@ -9,7 +9,26 @@ for the full rationale and restore instructions.
 
 ---
 
-## 1. Zig — macOS runner pinned to `macos-15`
+## 1. Swift — versions capped at 6.2.1 (setup-swift@v2.4.0 limit)
+
+**File**: `examples/swift/swift_project_matrix.json` + `swift_test.yml` comment  
+**Introduced**: PR #618 (2026-07)
+
+**Upstream condition**: `swift-actions/setup-swift` v3 stable releases (uses Swiftly,
+supports any swift.org version dynamically — no hardcoded version list).
+
+**Restore steps**:
+1. Confirm v3 stable is released and remove any Dependabot `ignore` rule for
+   major bumps on `swift-actions/setup-swift` in `.github/dependabot.yml`.
+2. Update the SHA pin in `swift_test.yml` to v3 stable.
+3. Update `examples/swift/swift_project_matrix.json` to version-cache
+   `stable` / `latest` (currently `6.2.4` / `6.3.2`).
+4. Remove the WORKAROUND comment in `swift_test.yml`.
+5. Open a PR.
+
+---
+
+## 2. Zig — macOS runner pinned to `macos-15`
 
 **File**: `.github/workflows/zig_test.yml` (`run_tests.runs-on`)  
 **Introduced**: PR #618 (2026-07)

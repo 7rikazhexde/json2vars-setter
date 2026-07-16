@@ -11,6 +11,46 @@ surface stays accurate even while a temporary CI fix is in place.
 
 ---
 
+## Swift — versions capped at 6.2.1 (setup-swift@v2.4.0 limit)
+
+| Field | Detail |
+|---|---|
+| **Affected setup action** | `swift-actions/setup-swift@v2.4.0` |
+| **Workaround** | `swift_project_matrix.json` uses `["6.2", "6.2.1"]` instead of version-cache `stable`/`latest` (`6.2.4`/`6.3.2`) |
+| **Introduced** | PR #618 (2026-07) |
+
+### Root cause
+
+`swift-actions/setup-swift@v2.4.0` contains a **hardcoded version list**
+(`src/swift-versions.ts`) that ends at `6.2.1`. Versions `6.2.2`, `6.2.3`,
+`6.2.4`, and `6.3.x` are not in the list and produce:
+
+```text
+Error: Version "6.3.2" is not available
+```
+
+At the same time, the `macos-latest` runner was upgraded to macOS 26 (Xcode 26.5,
+Swift 6.3.2 SDK), which made Swift 6.1.x incompatible. The highest version in the
+v2.4.0 list that still works on macOS 26 is `6.2.1`.
+
+`setup-swift@v3.0.0-beta.1` (2025-11-30) rewrites the action to use
+[Swiftly](https://github.com/swiftlang/swiftly) and installs any version from
+swift.org dynamically — no hardcoded list. It is beta and has not reached a stable
+release yet.
+
+### How to restore
+
+1. Confirm `swift-actions/setup-swift` v3 stable is released.
+2. Update the `uses: swift-actions/setup-swift@<sha>` pin in `swift_test.yml` to
+   the v3 stable SHA (via Dependabot or manually; remove the Dependabot `ignore`
+   rule for major-version bumps if one exists).
+3. Update `examples/swift/swift_project_matrix.json` to the version-cache
+   `stable` and `latest` values (currently `6.2.4` / `6.3.2`).
+4. Remove the WORKAROUND comment in `swift_test.yml`.
+5. Open a PR and close this item.
+
+---
+
 ## Zig — macOS runner pinned to `macos-15`
 
 | Field | Detail |
