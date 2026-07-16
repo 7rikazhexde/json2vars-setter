@@ -46,8 +46,10 @@ the Actions tab for a failing weekly run.
      `gen-language-docs` hook regenerates `docs/languages/swift.md` automatically.
 
 3. **Zig (or other language) linker/SDK errors on macOS**:
-   - Remove `macos-latest` from `examples/zig/zig_project_matrix.json` temporarily.
-   - Add a comment in the PR explaining why (upstream doesn't support the new SDK yet).
+   - Do NOT remove macOS from the OS list entirely — that would suggest the language is
+     unsupported on macOS, which is misleading.
+   - Instead, **pin to the previous macOS runner** (e.g. `macos-15`) so macOS coverage
+     continues at a version the toolchain actually supports.
    - Restore `macos-latest` once the language releases support for the new macOS SDK.
 
 4. **Open a PR** with the matrix changes. The Merge Gate will re-aggregate and turn
