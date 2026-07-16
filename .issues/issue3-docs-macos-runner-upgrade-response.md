@@ -32,7 +32,16 @@ the Actions tab for a failing weekly run.
 
 2. **Swift SDK mismatch** (`this SDK is not supported by the compiler`):
    - Check `version_cache.json` for current `stable` and `latest` Swift versions.
-   - Update `examples/swift/swift_project_matrix.json` to those versions.
+   - **Also check setup-swift's hardcoded version list** — `swift-actions/setup-swift@v2`
+     has a hardcoded `VERSIONS_LIST` in `src/swift-versions.ts`. Versions not in that list
+     produce "Version X.Y.Z is not available" even if they exist on swift.org. The list
+     maxes out at `6.2.1` as of v2.4.0. Do NOT blindly copy cache `stable`/`latest` into
+     the matrix; verify first that setup-swift supports those version strings.
+   - Use the highest versions available in setup-swift's list that also work with the new
+     macOS SDK (e.g. `["6.2", "6.2.1"]` for the macOS 26 / setup-swift v2.4.0 combo).
+   - When **setup-swift v3 stable** releases (it uses Swiftly and supports any version
+     from swift.org dynamically), update the action pin in `swift_test.yml` and then
+     update the matrix to the cache `stable`/`latest`.
    - Run `uv run pre-commit run --all-files` locally (or let CI do it) — the
      `gen-language-docs` hook regenerates `docs/languages/swift.md` automatically.
 
