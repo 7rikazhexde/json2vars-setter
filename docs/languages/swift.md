@@ -30,7 +30,7 @@ Example matrix (what the example workflow runs):
 {
   "versions": {
     "swift": [
-      "6.1.3",
+      "6.2",
       "6.2.1"
     ]
   }
