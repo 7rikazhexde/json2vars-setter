@@ -60,6 +60,13 @@ jobs:
         os: ${{ fromJson(needs.set_variables.outputs.os) }}
         ruby-version: ${{ fromJson(needs.set_variables.outputs.versions_ruby) }}
         exclude:
+          # WORKAROUND: Ruby 3.4.0 has a known build/runtime issue on Windows
+          # (native-extension / MSYS2 toolchain incompatibility) that was fixed in
+          # Ruby 3.4.1. The matrix JSON keeps 3.4.0 so the version is still tested
+          # on Linux and macOS; only the windows-latest leg is skipped.
+          # Remove this exclusion once 3.4.0 is confirmed fixed on Windows, or when
+          # 3.4.0 is dropped from ruby_project_matrix.json as stable moves forward.
+          # See: docs/reference/compatibility-notes.md — "Ruby — 3.4.0 excluded on windows-latest"
           - os: windows-latest
             ruby-version: '3.4.0'
     runs-on: ${{ matrix.os }}
