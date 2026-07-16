@@ -16,9 +16,9 @@ How `json2vars-setter` handles Zig, and how the example workflow provisions it.
 
 ## Supported runners
 
-The example matrix runs on **Ubuntu / Windows / macos-15**:
+The example matrix runs on **Ubuntu / Windows / macOS**:
 
-`ubuntu-latest`, `windows-latest`, `macos-15`
+`ubuntu-latest`, `windows-latest`, `macos-latest`
 
 Any GitHub-hosted runner the setup action supports also works - the OS list is just the `os` array in your matrix JSON.
 
