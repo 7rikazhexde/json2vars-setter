@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:41.273595._
 
 ```yaml
 - name: Set up .NET
-  uses: actions/setup-dotnet@v5.4.0
+  uses: actions/setup-dotnet@v6.0.0
   with:
     dotnet-version: ${{ matrix.dotnet-version }}
 ```

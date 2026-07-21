@@ -54,7 +54,7 @@ _Cache last updated: 2026-06-24T12:28:39.643464._
 
 ```yaml
 - name: Set up Node.js
-  uses: actions/setup-node@v6.4.0
+  uses: actions/setup-node@v7.0.0
   with:
     node-version: ${{ matrix.node-version }}
     cache: 'npm'

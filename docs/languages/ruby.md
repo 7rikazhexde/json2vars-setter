@@ -55,7 +55,7 @@ _Cache last updated: 2026-06-24T12:28:39.850107._
 
 ```yaml
 - name: Set up Ruby
-  uses: ruby/setup-ruby@v1.316.0
+  uses: ruby/setup-ruby@v1.319.0
   with:
     ruby-version: ${{ matrix.ruby-version }}
     bundler-cache: true
