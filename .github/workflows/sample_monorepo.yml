@@ -36,7 +36,7 @@ jobs:
       versions_python: ${{ steps.json2vars.outputs.versions_python }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set variables from the backend JSON
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@v1.13.0
@@ -67,7 +67,7 @@ jobs:
       versions_nodejs: ${{ steps.json2vars.outputs.versions_nodejs }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set variables from the frontend JSON
         id: json2vars
         uses: 7rikazhexde/json2vars-setter@v1.13.0
