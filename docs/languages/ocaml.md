@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:44.926107._
 
 ```yaml
 - name: Set up OCaml
-  uses: ocaml/setup-ocaml@v3.6.1
+  uses: ocaml/setup-ocaml@v3.7.0
   with:
     ocaml-compiler: ${{ matrix.ocaml-version }}
 ```
