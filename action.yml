@@ -2,7 +2,7 @@ name: 'JSON to Variables Setter'
 description: 'Parse JSON file and set GitHub Actions outputs'
 author: '7rikazhexde'
 branding:
-  icon: 'file'
+  icon: 'code'
   color: 'green'
 inputs:
   # Basic Settings
