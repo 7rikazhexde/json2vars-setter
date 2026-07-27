@@ -1,5 +1,11 @@
 # JSON to Variables Setter
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/img/banner-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/img/banner-light.png">
+  <img alt="JSON to Variables Setter" src="docs/assets/img/banner-light.png">
+</picture>
+
 <details>
 <summary>Project Info</summary>
 <p align="center">

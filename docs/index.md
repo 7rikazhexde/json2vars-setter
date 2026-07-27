@@ -1,5 +1,11 @@
 # JSON to Variables Setter
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/img/banner-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="assets/img/banner-light.png">
+  <img alt="JSON to Variables Setter" src="assets/img/banner-light.png">
+</picture>
+
 <p align="center">
 <a href="https://github.com/marketplace/actions/json-to-variables-setter"><img src="https://img.shields.io/badge/Marketplace-JSON%20to%20Variables%20Setter-green?colorA=24292e&colorB=3fb950&logo=github" alt="GitHub Marketplace"/></a>
 <a href="https://7rikazhexde.github.io/json2vars-setter/"><img src="https://img.shields.io/badge/docs-zensical-526CFE?logo=data%3Aimage%2Fpng%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAPbSURBVDhPhZJdTNtlGMV7ZXQar%2fxYNM4L491moskSb4wLlWTRzM0RDHEpoGQB20wHG8VkMBBxFg1xW5oNR9durJaWwkoLpRnQ9QPowH%2b7lgGjhfK12m4gIKyIguYcQ5ljlG3%2b7t73Oee8yXlekegxMOrdhpj6NAI5SggfKzEmVzKmUwDRt5K1%2fwuXRrfBKx3k0F4ymkXeySRvf0TGUsmRvUSszI34tTeSfY%2bEQ5psBiWEryKEaV8xZgZK8aulFH15P8C7b5bRt4lQ6hKiqqJk70NBuHE7fFl%2fwF%2fWs2kGPIXJynKOv0%2bO7CQmqjaHcnFxK2bHP8fcqAxTQRnmp6RwHp1lZyZxx1uJuREZfrspw91xKbDwQSL4d0HOSDo5KSZiut33w%2bA1pMB%2bYpr%2b78k%2bBdn%2fDTlYRjo%2bI42pZG8OOfIFOSYjJ3PJ0WwiVNWR8MZMRzi8kwhKJgC8KCL5DGxVYTYUEK3lDWyvqKe9tJ7O4np0VdiozSA0%2b%2f6GcMwCj7QOnoPn4E4fZSiNiJjSEqEDh3s4LSZuG4pE7HfsovUEcfX8wHoB6%2bBSYQiqjH8wEUlJnIF34T0UYCidiFhyE3e3DLsZfIcYOtwrQo%2ftNB1niN7mr5PDVqFDmU2ThGhTNGOgupb9h8jBA8TgyRCAZxMaciuFdMKf8ZcIVs0Zui4QYwMlyWGrAHgdtoI5WiSkW0K4pVO41VCc6Gtd8xIC%2bXF4dsVFuKxS0qkjJoKlDwaRfALBqzn86VMvq%2feQ1izCf84D4PkHdfe0z8GfH0GneEkEp01Fu57wd9%2f%2fS4x6t8B9oZ2tx0jVJ4Q6zwFr3gp7q50bo9YA8Aqv5xPdaYsiXOs6yMsaot1sWh2SfBIufRtNx4kWhYChrrVNWuSjdB3nagWbAv%2bcfI1d%2bwnf0ZgIMzMvo7ZmAY21dwE8TXILnQaytoTwth9At%2fFNdOtSYD%2fVTEchIVzUwKcSo7daDJ9SjD6lGJ4SDYcziVCNau0Fe3sbG7WkvUWROLvNcjadIpsUZGsleeVb0vwVqc4iTTLSUUB2fkl6ZGRPLilIiG5pBPHwjrXA2dkd0OuWadQS4eFEl%2biypOF6RyeEKwEI1gACNj%2fq5Cs8uYf4RTuCGw0B9BkCuKELIKw9j3DbxirQ119IvY5sMhD%2bHvmG4T3gVJ%2blKp3o1KmTZw8FglBEs4m8VEOYdS4MBY4AS6%2bubjGxyfj8ezDKl1FfLCR7HwlGxj6EtXmSJh3ZqifrzpKtP5MdesJYtUJLOeFSG5J9jwXACwjd3M%2bWxgs0queh%2fXEBF79bgFm5AL%2fVheX49mTPf%2fwLUg4jy0%2bUo5EAAAAASUVORK5CYII%3d" alt="Docs"/></a>
