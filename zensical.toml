@@ -67,6 +67,8 @@ nav = [
 [project.theme]
 variant = "modern"
 custom_dir = "overrides"
+logo = "assets/img/logo.svg"
+favicon = "assets/img/favicon.png"
 features = [
   "navigation.instant",
   "navigation.tracking",
