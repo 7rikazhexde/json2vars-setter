@@ -1,0 +1,8 @@
+/* Swap the homepage banner with the manual light/dark toggle (data-md-color-scheme),
+   since that toggle does not affect prefers-color-scheme used by <picture> elements. */
+[data-md-color-scheme="default"] .banner-dark {
+  display: none;
+}
+[data-md-color-scheme="slate"] .banner-light {
+  display: none;
+}

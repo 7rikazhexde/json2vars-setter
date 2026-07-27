@@ -10,6 +10,7 @@ copyright = "&copy; 2025 7rikazhexde"
 extra_css = [
   "stylesheets/mermaid-custom.css",
   "stylesheets/header-title-link.css",
+  "stylesheets/banner-theme.css",
 ]
 
 extra_javascript = [

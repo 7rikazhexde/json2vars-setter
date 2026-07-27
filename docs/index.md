@@ -1,10 +1,7 @@
 # JSON to Variables Setter
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/img/banner-dark.png">
-  <source media="(prefers-color-scheme: light)" srcset="assets/img/banner-light.png">
-  <img alt="JSON to Variables Setter" src="assets/img/banner-light.png">
-</picture>
+<img alt="JSON to Variables Setter" src="assets/img/banner-light.png" class="banner-light">
+<img alt="JSON to Variables Setter" src="assets/img/banner-dark.png" class="banner-dark">
 
 <p align="center">
 <a href="https://github.com/marketplace/actions/json-to-variables-setter"><img src="https://img.shields.io/badge/Marketplace-JSON%20to%20Variables%20Setter-green?colorA=24292e&colorB=3fb950&logo=github" alt="GitHub Marketplace"/></a>
