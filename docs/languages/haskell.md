@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:44.326886._
 
 ```yaml
 - name: Set up Haskell
-  uses: haskell-actions/setup@v2.11.0
+  uses: haskell-actions/setup@v2.12.0
   with:
     ghc-version: ${{ matrix.ghc-version }}
 ```
