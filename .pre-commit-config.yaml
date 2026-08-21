@@ -23,7 +23,7 @@ repos:
   # https://github.com/abravalheri/validate-pyproject
   # Validate pyproject.toml against the PEP 517/621 schema
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.25
+    rev: '0.26'
     hooks:
       - id: validate-pyproject
 
@@ -41,7 +41,7 @@ repos:
 
   # https://github.com/shellcheck-py/shellcheck-py?tab=readme-ov-file#usage
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1
+    rev: v0.11.0.1-1
     hooks:
       - id: shellcheck
 
@@ -53,7 +53,7 @@ repos:
   # https://github.com/astral-sh/uv-pre-commit
   # Keep uv.lock in sync with pyproject.toml
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.4
+    rev: 0.12.5
     hooks:
       - id: uv-lock
         verbose: true
@@ -82,7 +82,7 @@ repos:
         args: ["--config", ".markdownlint.jsonc", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.16.3
+    rev: v0.16.4
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
@@ -109,7 +109,7 @@ repos:
         files: '^(examples/.*_project_matrix\.json|tests/python_project_matrix\.json|\.github/workflows/.*_test\.yml|\.github/json2vars-setter/cache/version_cache\.json|\.github/scripts/gen_language_docs\.py|docs/languages/.*\.md)$'
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.3.0
+    rev: v2.3.1
     hooks:
       - id: mypy
         # Type stubs / typed libs the isolated hook env needs so mypy strict mode
