@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:42.274556._
 
 ```yaml
 - name: Set up Dart
-  uses: dart-lang/setup-dart@v1.8.0
+  uses: dart-lang/setup-dart@v1.8.1
   with:
     sdk: ${{ matrix.dart-version }}
 ```
