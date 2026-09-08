@@ -68,7 +68,7 @@ jobs:
         # would be brittle. aminya/setup-cpp is the de-facto, actively-maintained
         # action for installing a specific compiler version cross-platform; it
         # exports CC/CXX pointing at the installed LLVM clang.
-        uses: aminya/setup-cpp@8170d66c458f4a045220b7b0966c10940bb2a15d # v1.8.1
+        uses: aminya/setup-cpp@c4e5daa333e7b32a6d1d5e462bede4e1f98435b7 # v1.9.1
         with:
           compiler: llvm-${{ matrix.clang-version }}
 
