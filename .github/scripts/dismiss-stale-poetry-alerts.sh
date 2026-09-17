@@ -27,10 +27,17 @@ fi
 
 comment='poetry.lock removed in Poetry->uv migration (5157d99, 2026-06-01). Stale orphan manifest confirmed via GraphQL (dead blobPath). Real dep (uv.lock) already patched or not a real dep. No API/UI exists to purge a stale manifest on public repos. See also #57.'
 
-mapfile -t open_alerts < <(
+# Fetch into a variable (not a process substitution) so `set -e` actually catches a
+# failed `gh api` call - piping/substituting into mapfile would otherwise silently
+# swallow the failure and let the loop below run on empty or garbage data (e.g. an
+# error JSON body printed to stdout, which happened when PAT_FOR_PUSHES lacked
+# Dependabot alerts access: it produced one bogus "alert" from the error text).
+alerts_tsv="$(
   gh api repos/"${GH_REPO}"/dependabot/alerts --paginate \
     --jq '.[] | select(.state == "open") | [.number, .dependency.manifest_path] | @tsv'
-)
+)"
+
+mapfile -t open_alerts <<< "${alerts_tsv}"
 
 dismissed=()
 needs_review=()
