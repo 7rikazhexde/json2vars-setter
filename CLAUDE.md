@@ -80,6 +80,30 @@ auto-merge is disabled):
 `dependency-review` should be a **required** status check in branch protection so the gate
 cannot be skipped (branch protection is configured in the repo settings, not in-repo).
 
+### Stale `poetry.lock` Dependabot alerts (auto-dismissed)
+
+`poetry.lock` was removed in the Poetry→uv migration (commit `5157d99`, 2026-06-01), but
+GitHub's dependency graph kept a stale snapshot of it and keeps matching **newly-published**
+advisories against that dead snapshot indefinitely — there is no public-repo API/UI to purge
+a stale manifest from the graph (confirmed via the GraphQL `dependencyGraphManifests` query:
+`poetry.lock` is still listed with a `blobPath` that 404s on `main`). So Dependabot
+periodically reopens security alerts against a file that no longer exists.
+
+`.github/workflows/dismiss-stale-poetry-alerts.yml` (weekly + `workflow_dispatch`) runs
+`.github/scripts/dismiss-stale-poetry-alerts.sh`, which:
+
+- Auto-dismisses **only** alerts whose `manifest_path` is exactly `poetry.lock`, and only
+  after re-verifying `poetry.lock` is genuinely absent from the repo (`git ls-files`) — if it
+  ever exists again, the script refuses to touch anything.
+- Leaves every other open alert untouched and instead files/updates a single tracking GitHub
+  issue titled "Dependabot alerts need manual review" listing them, so anything it isn't
+  certain about surfaces for a human (or a future Claude Code session) instead of being
+  silently ignored or wrongly auto-resolved.
+
+Uses `PAT_FOR_PUSHES` (same secret as `dependabot-auto-rebase.yml`) because writing to the
+Dependabot alerts API needs the repo owner's "Dependabot alerts" write permission, which
+`GITHUB_TOKEN` cannot be granted.
+
 ### Merge Gate (CI failure blocks squash-merge)
 
 CI errors must **block merge** — including a per-language failure (e.g. the Elixir
@@ -301,6 +325,9 @@ Releases are **manually triggered** (`workflow_dispatch` on `semantic-release.ym
   cache (kept synced by the `gen-language-docs` pre-commit hook + `sync-language-docs.yml`).
   Never hand-edit; edit the source + regenerate.
 - PowerShell completion script: `scripts/json2vars-completion.ps1`
+- Stale Dependabot alert cleanup: `.github/scripts/dismiss-stale-poetry-alerts.sh` (see the
+  "Stale `poetry.lock` Dependabot alerts" section above) — never hand-edit its dismissal
+  comment without keeping it under 280 characters (the API 422s past that).
 - Future-improvement backlog: `.issues/`
 
 ## Future-Improvement Backlog (`.issues/`)
