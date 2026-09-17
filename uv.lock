@@ -435,7 +435,7 @@ dev = [
     { name = "pytest-testmon", specifier = ">=2.1.4,<3.0.0" },
     { name = "ruff", specifier = ">=0.15.10,<0.17.0" },
     { name = "types-requests", specifier = ">=2.32.0,<3.0.0" },
-    { name = "zensical", specifier = ">=0.0.32,<0.0.53" },
+    { name = "zensical", specifier = ">=0.0.32,<0.0.61" },
 ]
 
 [[package]]
