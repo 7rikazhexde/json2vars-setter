@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:43.551556._
 
 ```yaml
 - name: Set up Crystal
-  uses: crystal-lang/install-crystal@v1.9.2
+  uses: crystal-lang/install-crystal@v1.9.3
   with:
     crystal: ${{ matrix.crystal-version }}
 ```
