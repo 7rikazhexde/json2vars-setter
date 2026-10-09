@@ -30,7 +30,7 @@ repos:
   # https://github.com/crate-ci/typos
   # Source-code spell checker (config in pyproject.toml [tool.typos])
   - repo: https://github.com/crate-ci/typos
-    rev: typos-dict-v0.14.2
+    rev: v1.51.1
     hooks:
       - id: typos
 
@@ -53,7 +53,7 @@ repos:
   # https://github.com/astral-sh/uv-pre-commit
   # Keep uv.lock in sync with pyproject.toml
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.12.22
+    rev: 0.12.24
     hooks:
       - id: uv-lock
         verbose: true
@@ -109,7 +109,7 @@ repos:
         files: '^(examples/.*_project_matrix\.json|tests/python_project_matrix\.json|\.github/workflows/.*_test\.yml|\.github/json2vars-setter/cache/version_cache\.json|\.github/scripts/gen_language_docs\.py|docs/languages/.*\.md)$'
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v2.3.1
+    rev: v2.4.0
     hooks:
       - id: mypy
         # Type stubs / typed libs the isolated hook env needs so mypy strict mode
