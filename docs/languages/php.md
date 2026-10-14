@@ -53,7 +53,7 @@ _Cache last updated: 2026-06-24T12:28:41.035845._
 
 ```yaml
 - name: Set up PHP
-  uses: shivammathur/setup-php@2.37.2
+  uses: shivammathur/setup-php@2.40.0
   with:
     php-version: ${{ matrix.php-version }}
     tools: composer
