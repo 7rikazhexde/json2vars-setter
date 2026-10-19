@@ -63,7 +63,7 @@ jobs:
           fetch-depth: 0
 
       - name: Set up Crystal
-        uses: crystal-lang/install-crystal@46e48b6238ee23b1a6ef08ec39f12fb234676006 # v1.9.3
+        uses: crystal-lang/install-crystal@19ef8675e43f44f0d38b79f732df7ad4b6b669ed # v1.9.4
         with:
           crystal: ${{ matrix.crystal-version }}
 
