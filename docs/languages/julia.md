@@ -52,7 +52,7 @@ _Cache last updated: 2026-06-24T12:28:43.120278._
 
 ```yaml
 - name: Set up Julia
-  uses: julia-actions/setup-julia@v3.0.2
+  uses: julia-actions/setup-julia@v3.0.3
   with:
     version: ${{ matrix.julia-version }}
 ```
