@@ -23,7 +23,7 @@ repos:
   # https://github.com/abravalheri/validate-pyproject
   # Validate pyproject.toml against the PEP 517/621 schema
   - repo: https://github.com/abravalheri/validate-pyproject
-    rev: '0.26'
+    rev: 'v0.27'
     hooks:
       - id: validate-pyproject
 
@@ -53,7 +53,7 @@ repos:
   # https://github.com/astral-sh/uv-pre-commit
   # Keep uv.lock in sync with pyproject.toml
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.13.1
+    rev: 0.13.5
     hooks:
       - id: uv-lock
         verbose: true
@@ -82,7 +82,7 @@ repos:
         args: ["--config", ".markdownlint.jsonc", "README.md"]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: v0.17.1
+    rev: v0.17.2
     hooks:
       - id: ruff
         args: ["--fix","json2vars_setter"]
