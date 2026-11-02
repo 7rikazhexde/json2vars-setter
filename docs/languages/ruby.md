@@ -30,11 +30,10 @@ Example matrix (what the example workflow runs):
 {
   "versions": {
     "ruby": [
-      "3.3.6",
-      "3.3.7",
-      "3.4.0",
-      "3.4.1",
-      "3.4.2"
+      "3.2.11",
+      "3.3.13",
+      "3.4.12",
+      "4.0.9"
     ]
   }
 }
