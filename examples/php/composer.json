@@ -24,6 +24,9 @@
         "start": "php src/JsonParser.php"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "platform": {
+            "php": "8.2"
+        }
     }
 }

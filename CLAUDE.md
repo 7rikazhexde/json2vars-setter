@@ -80,6 +80,18 @@ auto-merge is disabled):
 `dependency-review` should be a **required** status check in branch protection so the gate
 cannot be skipped (branch protection is configured in the repo settings, not in-repo).
 
+**`ignore: update-types` needs a committed lockfile to actually apply.** Without one (seen
+twice on `examples/php`, which had no `composer.lock`: #706, #708), Dependabot proposes an
+"update the requirement to permit the latest version" PR instead of a normal version-bump
+PR, and that PR type bypasses the ecosystem's `ignore` rule even though it's correctly
+labeled `dependency:major`. `.github/workflows/generate-composer-lock.yml`
+(`workflow_dispatch`) fixes this for PHP by running `composer update` on a Linux runner
+(no local PHP/composer) and opening a PR with the generated `composer.lock`, resolved
+against `examples/php/composer.json`'s `config.platform.php` floor (8.2, matching
+`php_project_matrix.json`) so the lock only ever contains package versions that support
+every PHP version in the test matrix. Any other lockfile-less manifest ecosystem added to
+`.github/dependabot.yml` in the future needs the same treatment.
+
 ### Stale `poetry.lock` Dependabot alerts (auto-dismissed)
 
 `poetry.lock` was removed in the Poetry→uv migration (commit `5157d99`, 2026-06-01), but
