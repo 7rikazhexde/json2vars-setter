@@ -82,39 +82,6 @@ only the actual runner used in CI is temporarily downgraded.
 
 ---
 
-## Ruby — 3.4.0 excluded on `windows-latest`
-
-| Field | Detail |
-|---|---|
-| **Affected version** | Ruby 3.4.0 |
-| **Affected runner** | `windows-latest` |
-| **Workaround** | `ruby_test.yml` matrix `exclude:` block skips `(windows-latest, 3.4.0)` |
-| **Introduced** | commit `e22a9b83` (pre-v1.9.0) |
-
-### Root cause
-
-Ruby 3.4.0 has a known build/runtime issue on Windows that was fixed in Ruby 3.4.1.
-The exact failure mode is a native-extension or MSYS2 toolchain incompatibility
-specific to the 3.4.0 point release; 3.4.1 and later run cleanly on Windows.
-
-The matrix JSON keeps 3.4.0 so that `json2vars-setter`'s version-variable output
-for that release string is still exercised on Linux and macOS. Only the
-`windows-latest` + `3.4.0` leg is skipped.
-
-### How to restore
-
-Once Ruby 3.4.0 is confirmed fixed on Windows (or once 3.4.0 is no longer in the
-supported matrix because newer patch releases supersede it):
-
-1. Remove the `exclude:` block from `.github/workflows/ruby_test.yml`.
-2. Open a PR; the `(windows-latest, 3.4.0)` leg should pass.
-
-Alternatively, if 3.4.0 is dropped from `ruby_project_matrix.json` because
-`stable` has moved to 3.4.x+ in the version cache, simply remove the version
-from the matrix JSON and the exclusion becomes moot.
-
----
-
 ## Adding a new workaround
 
 When you discover a new OS / version incompatibility that is **not** a
