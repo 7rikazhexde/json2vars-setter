@@ -6,7 +6,7 @@ authors = [
     { name = "7rikazhexde", email = "33836132+7rikazhexde@users.noreply.github.com" },
 ]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "requests>=2.32.0,<3.0.0",
     "typer>=0.24.1,<0.28.0",
@@ -63,7 +63,7 @@ exclude = [
     "node_modules",
     "venv",
 ]
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 # S = flake8-bandit (SAST): flags shell=True, eval, unsafe yaml.load, requests
@@ -90,11 +90,11 @@ extend-exclude = [
 
 [tool.mypy]
 files = ["json2vars_setter", "tests", "scripts"]
-# Match the project's minimum supported runtime (requires-python = ">=3.10" and
-# ruff target-version = "py310"). mypy's python_version is the *lowest* version
-# the code must run on, not the newest — setting it to 3.10 makes mypy flag any
-# syntax/stdlib API unavailable on 3.10/3.11 across the whole support range.
-python_version = "3.10"
+# Match the project's minimum supported runtime (requires-python = ">=3.11" and
+# ruff target-version = "py311"). mypy's python_version is the *lowest* version
+# the code must run on, not the newest — setting it to 3.11 makes mypy flag any
+# syntax/stdlib API unavailable on 3.11/3.12 across the whole support range.
+python_version = "3.11"
 # Strict mode + an explicit ban on the Any type (project-wide, incl. tests).
 strict = true
 disallow_any_explicit = true

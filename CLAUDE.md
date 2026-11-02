@@ -293,7 +293,7 @@ maintenance, reusable `workflow_call`, version caching) lives in the
   `shivammathur/setup-php` for PHP. Pin every `uses:` to a commit SHA with the version
   tag as a trailing comment (except the `7rikazhexde/json2vars-setter@vX.Y.Z`
   self-reference, which the Versioning Rule keeps as a tag).
-- **Python version**: 3.10+ (mypy `python_version` and ruff `target-version` both track the 3.10 support floor)
+- **Python version**: 3.11+ (mypy `python_version` and ruff `target-version` both track the 3.11 support floor; raised from 3.10 because filelock, a transitive dev dependency via pre-commit→virtualenv, dropped 3.10 support exactly at the release that fixed GHSA alerts #101/#103/#104/#106/#108/#109/#110/#111 — no 3.10-compatible patched release exists upstream)
 - **Linting**: Ruff with E, F, I rules (E402 and E501 ignored)
 - **Type checking**: mypy with strict settings (`disallow_untyped_defs`, `warn_return_any`)
 - **Test coverage**: Minimum 95%, goal 100%. Branch coverage is disabled in config due to testmon compatibility

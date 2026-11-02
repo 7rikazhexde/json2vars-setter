@@ -9,7 +9,7 @@
 <a href="https://github.com/7rikazhexde/json2vars-setter/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"/></a>
 <br/>
 <a href="https://github.com/7rikazhexde/json2vars-setter/actions/workflows/prch_test_matrix_json.yml"><img src="https://github.com/7rikazhexde/json2vars-setter/actions/workflows/prch_test_matrix_json.yml/badge.svg" alt="Test on PR"/></a>
-<a href="https://www.python.org"><img src="https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white" alt="Python"/></a>
+<a href="https://www.python.org"><img src="https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?logo=python&logoColor=white" alt="Python"/></a>
 <br/>
 <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv"/></a>
 <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff"/></a>
