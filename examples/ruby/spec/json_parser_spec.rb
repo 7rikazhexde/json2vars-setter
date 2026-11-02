@@ -17,11 +17,9 @@ RSpec.describe JsonVarsSetter::JsonParser do
       expect(result).to be_a(Hash)
       expect(result['os']).to include('ubuntu-latest', 'windows-latest', 'macos-latest')
       expect(result['versions']['ruby']).to include(
-            "3.3.6",
-            "3.3.7",
-            "3.4.0",
-            "3.4.1",
-            "3.4.2"
+            "3.3.13",
+            "3.4.12",
+            "4.0.9"
             )
       expect(result['ghpages_branch']).to eq('ghgapes')
     end
