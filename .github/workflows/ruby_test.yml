@@ -46,7 +46,6 @@ jobs:
           echo "versions_ruby[0]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[0] }}"
           echo "versions_ruby[1]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[1] }}"
           echo "versions_ruby[2]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[2] }}"
-          echo "versions_ruby[3]: ${{ fromJson(steps.json2vars.outputs.versions_ruby)[3] }}"
           echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
 
   run_tests:

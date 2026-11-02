@@ -32,7 +32,7 @@ source ~/.bashrc
 git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
 
 # Install Ruby
-rbenv install 3.4.2
+rbenv install 3.4.12
 ```
 
 Clone the repository and install
@@ -43,7 +43,7 @@ git clone https://github.com/7rikazhexde/json2vars-setter.git
 cd json2vars-setter/examples/ruby
 
 # Set .ruby-version
-rbenv local 3.4.2
+rbenv local 3.4.12
 
 # Install dependencies
 gem install bundler
@@ -104,11 +104,9 @@ Please check [Ruby Releases](https://www.ruby-lang.org/en/downloads/releases/) a
     ],
     "versions": {
         "ruby": [
-            "3.3.6",
-            "3.3.7",
-            "3.4.0",
-            "3.4.1",
-            "3.4.2"
+            "3.3.13",
+            "3.4.12",
+            "4.0.9"
         ]
     },
     "ghpages_branch": "ghgapes"
