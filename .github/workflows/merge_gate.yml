@@ -22,7 +22,9 @@ on:
     # re-fires when it completes. Adding a language -> add its "<Lang> Test"
     # here (the aggregation below is path-based and needs no edit). Non-blocking
     # workflows (Modern Quality, Dependency Review, Cleanup Caches, ...) are
-    # intentionally absent.
+    # intentionally absent. retry-macos-runner-timeouts.yml watches this same
+    # list for a different reason (auto-retrying a macOS runner-timeout
+    # failure) - keep both lists in sync together.
     workflows:
       # core (always run on every PR)
       - "Test on PR by matrix.json (Except Dependabot)"

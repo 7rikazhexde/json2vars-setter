@@ -141,6 +141,29 @@ in sync is the `on.workflow_run.workflows:` trigger list in `merge_gate.yml` —
 absent from it won't re-fire the gate on its completion. **Adding a language → add its
 `"<Lang> Test"` line there** (see the Adding-a-New-Language checklist).
 
+### Retrying macOS runner timeouts
+
+GitHub's hosted `macos-latest` runners periodically fail to start a job at all: it sits
+queued, acquires no runner, and GitHub itself cancels it after ~15–25 minutes with zero
+steps recorded (`conclusion: "cancelled"`, `steps: []`). This has hit unrelated workflows
+on unrelated dates (Ruby Test + the core Python matrix on PR #713; Crystal Test on PR
+#727; Dart Test and Crystal Test again a day apart) — always `macos-latest`, never
+ubuntu/windows, always zero steps — and a plain re-run (`gh run rerun --failed`) almost
+always succeeds. It is GitHub Actions infra flakiness, not a bug in this repo.
+
+`.github/workflows/retry-macos-runner-timeouts.yml` automates that re-run so a PR doesn't
+sit red until someone notices. It watches the **same** `workflows:` trigger list as
+`merge_gate.yml` (core + per-language + sample workflows, so this also covers scheduled
+sample-workflow runs on `main`, which saw the same signature on 2026-11-16) and, on each
+`completed` event with `conclusion: "failure"`, inspects that run's jobs via
+`actions/github-script`. It calls `reRunWorkflowFailedJobs` **only if** at least one job
+matches the exact signature — `cancelled` + zero steps + a `macos` runner label — and only
+on the run's first attempt (`run_attempt == 1`), so a run that fails the same way twice in
+a row is left alone for a human instead of retried forever. A genuine test failure (any
+job with an actual failed step) is never touched. **Adding a language → add its
+`"<Lang> Test"` line to this trigger list too**, alongside `merge_gate.yml`'s (see the
+Adding-a-New-Language checklist).
+
 ## Architecture
 
 ### Three Feature Modules (`json2vars_setter/features/`)
@@ -220,9 +243,12 @@ or the addition is incomplete:
    `update_badge` job needs a **dedicated gist** (`<lang>-test-badge.json`, written via
    `GIST_TOKEN`) — its `gistID` must be created by the repo owner and cannot be
    generated programmatically. **Also add the new `"<Lang> Test"` to the
-   `on.workflow_run.workflows:` trigger list in `.github/workflows/merge_gate.yml`** so a
-   failure on a language-only PR blocks merge (the Merge Gate's aggregation is path-based
-   and needs no edit — only the trigger list does; see the Merge Gate section above).
+   `on.workflow_run.workflows:` trigger list in both `.github/workflows/merge_gate.yml`**
+   (so a failure on a language-only PR blocks merge — the Merge Gate's aggregation is
+   path-based and needs no edit, only the trigger list does; see the Merge Gate section
+   above) **and `.github/workflows/retry-macos-runner-timeouts.yml`** (same list, so the
+   new language's macOS leg gets auto-retried on a runner timeout too; see the
+   Retrying macOS runner timeouts section below).
 8. **Status badges** — add a row to the language table in `README.md` **and** the
    matching badge in `docs/index.md`, pointing at the new gist
    (`gist.githubusercontent.com/7rikazhexde/<GIST_ID>/raw/<lang>-test-badge.json`) and

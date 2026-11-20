@@ -1,0 +1,110 @@
+name: Retry macOS runner timeouts
+
+# Why this exists:
+# GitHub's hosted macos-latest runners periodically fail to even start a job:
+# the job sits queued, acquires no runner, and is eventually cancelled by
+# GitHub itself with zero steps recorded (conclusion "cancelled", `steps: []`)
+# after roughly 15-25 minutes. This has hit several unrelated workflows on
+# several unrelated dates (e.g. Ruby Test and the core Python matrix on PR
+# #713, Crystal Test on PR #727, Dart Test and Crystal Test again on
+# 2026-11-17/18) - always macos-latest, never ubuntu/windows, always zero
+# steps. It is GitHub Actions infra flakiness, not a bug in this repo, and a
+# plain re-run almost always succeeds. This workflow automates that re-run so
+# a PR doesn't sit red until someone notices and manually runs
+# `gh run rerun --failed`.
+#
+# Why this is narrowly scoped (not "retry every failure"): a genuine test
+# failure must stay red and visible, not get silently retried away. This only
+# re-runs a failed workflow run when at least one of its jobs matches the
+# exact runner-timeout signature - conclusion "cancelled", no steps recorded,
+# and a macos-latest (or other macOS) label - and only on the run's first
+# attempt (run_attempt 1), so a run that fails the SAME way twice in a row
+# stops here and is left for a human rather than retried forever.
+
+on:
+  workflow_run:
+    # KEEP IN SYNC with the trigger list in merge_gate.yml - this should watch
+    # the same blocking workflows (plus it also covers main/schedule runs of
+    # the sample workflows, which saw the same signature on 2026-11-16).
+    workflows:
+      # core (always run on every PR)
+      - "Test on PR by matrix.json (Except Dependabot)"
+      - "Dependabot PR Check"
+      # per-language tests
+      - "Bun Test"
+      - "Clang Test"
+      - "Crystal Test"
+      - "Dart Test"
+      - "Deno Test"
+      - ".NET Test"
+      - "Elixir Test"
+      - "Flutter Test"
+      - "GCC Test"
+      - "Go Test"
+      - "Haskell Test"
+      - "Java Test"
+      - "Julia Test"
+      - "Kotlin Test"
+      - "Node.js Test"
+      - "OCaml Test"
+      - "PHP Test"
+      - "Python Test"
+      - "Ruby Test"
+      - "Rust Test"
+      - "Swift Test"
+      - "Zig Test"
+      # sample (use-case) workflows
+      - "Sample - Conditional Matrix (PR vs full)"
+      - "Sample - Dynamic Update (scheduled maintenance)"
+      - "Sample - Monorepo"
+      - "Sample - Reusable Workflow (workflow_call)"
+      - "Sample - Single Source of Truth"
+      - "Sample - Template from Cache"
+      - "Sample - Version Cache (fewer API calls)"
+    types:
+      - completed
+
+permissions:
+  actions: write
+
+# One evaluation per run+attempt at a time; a duplicate workflow_run delivery
+# for the same attempt is a no-op, not a second rerun.
+concurrency:
+  group: retry-macos-runner-timeouts-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}
+  cancel-in-progress: false
+
+jobs:
+  retry:
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'failure'
+    steps:
+      - name: Re-run if (and only if) this failed on the macOS runner-timeout signature
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const run = context.payload.workflow_run;
+
+            if (run.run_attempt >= 2) {
+              core.info(`Run ${run.id} (${run.name}) is already on attempt ${run.run_attempt}; not retrying again (cap is one retry).`);
+              return;
+            }
+
+            const jobs = await github.paginate(
+              github.rest.actions.listJobsForWorkflowRunAttempt,
+              { owner, repo, run_id: run.id, attempt_number: run.run_attempt, per_page: 100 },
+            );
+
+            const timedOut = jobs.filter((j) =>
+              j.conclusion === "cancelled" &&
+              (j.steps || []).length === 0 &&
+              (j.labels || []).some((l) => l.toLowerCase().includes("macos")),
+            );
+
+            if (timedOut.length === 0) {
+              core.info(`Run ${run.id} (${run.name}) failed, but no job matched the macOS runner-timeout signature (cancelled + zero steps + macOS label). Leaving it for a human.`);
+              return;
+            }
+
+            core.info(`Run ${run.id} (${run.name}): ${timedOut.length} job(s) matched the macOS runner-timeout signature (${timedOut.map((j) => j.name).join(", ")}). Re-running failed jobs.`);
+            await github.rest.actions.reRunWorkflowFailedJobs({ owner, repo, run_id: run.id });
