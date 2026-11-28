@@ -4,7 +4,7 @@
     ],
     "versions": {
         "python": [
-            "3.13.2"
+            "3.13"
         ]
     },
     "ghpages_branch": "gh-pages"

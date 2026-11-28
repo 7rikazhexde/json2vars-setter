@@ -34,6 +34,12 @@ jobs:
         uses: 7rikazhexde/json2vars-setter@v1.13.0
         with:
           json-file: .github/json2vars-setter/sample/cicd_matrix.json
+      # cicd_matrix.json pins only the minor (e.g. "3.13", not "3.13.2") on purpose:
+      # an exact patch can vanish from actions/setup-python's manifest for a *new*
+      # ubuntu-latest image before a matching build is published, which broke this
+      # workflow (2026-11, Ubuntu 26.04 rollout: "3.13.2" not found for x64/26.04).
+      # Minor-only always resolves to whatever patch setup-python does have for the
+      # runner's actual OS. This file drives nothing else, so there is no downside.
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: ${{ fromJson(steps.json2vars.outputs.versions_python)[0] }}
