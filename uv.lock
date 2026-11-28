@@ -379,7 +379,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "requests", specifier = ">=2.32.0,<3.0.0" },
-    { name = "typer", specifier = ">=0.24.1,<0.28.0" },
+    { name = "typer", specifier = ">=0.24.1,<0.30.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -393,7 +393,7 @@ dev = [
     { name = "pytest-testmon", specifier = ">=2.1.4,<3.0.0" },
     { name = "ruff", specifier = ">=0.15.10,<0.18.0" },
     { name = "types-requests", specifier = ">=2.32.0,<3.0.0" },
-    { name = "zensical", specifier = ">=0.0.32,<0.0.68" },
+    { name = "zensical", specifier = ">=0.0.32,<0.1.4" },
 ]
 
 [[package]]
